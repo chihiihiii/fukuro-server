@@ -14,8 +14,57 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   PremiumBill.init({
-    name: DataTypes.STRING
-  }, {
+    name: {
+      type: DataTypes.STRING
+    },
+    price: {
+      type: DataTypes.DOUBLE
+    },
+    expire: {
+      type: DataTypes.INTEGER
+    },
+    totalPrice: {
+      type: DataTypes.DOUBLE,
+      field: 'total_price'
+    },
+    paymentStatus: {
+      type: DataTypes.INTEGER,
+      field: 'payment_status'
+    },
+    status: {
+      type: DataTypes.STRING
+    },
+    customerId: {
+      type: DataTypes.INTEGER,
+      field: 'customer_id',
+      references: {
+        model: {
+          tableName: 'Customers',
+        },
+        key: 'id'
+      },
+    },
+    premiumId: {
+      type: DataTypes.INTEGER,
+      field: 'premium_id',
+      references: {
+        model: {
+          tableName: 'Premiums',
+        },
+        key: 'id'
+      },
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'created_at'
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'updated_at'
+    }
+}, {
     sequelize,
     modelName: 'PremiumBill',
   });

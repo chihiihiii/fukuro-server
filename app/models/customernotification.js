@@ -14,8 +14,37 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   CustomerNotification.init({
-    name: DataTypes.STRING
-  }, {
+    message: {
+      type: DataTypes.TEXT
+    },
+    detailUrl: {
+      type: DataTypes.TEXT,
+      field: 'detail_url'
+    },
+    status: {
+      type: DataTypes.STRING
+    },
+    customerId: {
+      type: DataTypes.INTEGER,
+      field: 'customer_id',
+      references: {
+        model: {
+          tableName: 'Customers',
+        },
+        key: 'id'
+      },
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'created_at'
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'updated_at'
+    }
+}, {
     sequelize,
     modelName: 'CustomerNotification',
   });

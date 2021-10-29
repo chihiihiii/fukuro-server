@@ -14,8 +14,39 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Premium.init({
-    name: DataTypes.STRING
-  }, {
+    name: {
+      type: DataTypes.STRING
+    },
+    price: {
+      type: DataTypes.DOUBLE
+    },
+    description: {
+      type: DataTypes.TEXT
+    },
+    status: {
+      type: DataTypes.STRING
+    },
+    promotionId: {
+      type: DataTypes.INTEGER,
+      field: 'promotion_id',
+      references: {
+        model: {
+          tableName: 'Promotions',
+        },
+        key: 'id'
+      },
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'created_at'
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'updated_at'
+    }
+}, {
     sequelize,
     modelName: 'Premium',
   });

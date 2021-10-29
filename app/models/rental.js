@@ -14,8 +14,42 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Rental.init({
-    name: DataTypes.STRING
-  }, {
+    name: {
+      type: DataTypes.STRING
+    },
+    price: {
+      type: DataTypes.DOUBLE
+    },
+    renter: {
+      type: DataTypes.STRING
+    },
+    note: {
+      type: DataTypes.TEXT
+    },
+    status: {
+      type: DataTypes.STRING
+    },
+    customerId: {
+      type: DataTypes.INTEGER,
+      field: 'customer_id',
+      references: {
+        model: {
+          tableName: 'Customers',
+        },
+        key: 'id'
+      },
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'created_at'
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'updated_at'
+    }
+}, {
     sequelize,
     modelName: 'Rental',
   });

@@ -21,10 +21,21 @@ const db = require('./app/models');
 db.sequelize.sync();
 
 
-require('./app/routes/customer.route')(app);
 
 require('./app/routes/admin.route')(app);
 require('./app/routes/admincontact.route')(app);
+require('./app/routes/adminnotification.route')(app);
+require('./app/routes/blog.route')(app);
+require('./app/routes/blogcategory.route')(app);
+require('./app/routes/customer.route')(app);
+require('./app/routes/customernotification.route')(app);
+require('./app/routes/customerpremium.route')(app);
+require('./app/routes/premium.route')(app);
+require('./app/routes/premiumbill.route')(app);
+require('./app/routes/promotion.route')(app);
+require('./app/routes/rental.route')(app);
+require('./app/routes/rentalbill.route')(app);
+require('./app/routes/rentalnews.route')(app);
 
 
 // simple route

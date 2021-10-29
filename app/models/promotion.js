@@ -14,8 +14,37 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Promotion.init({
-    name: DataTypes.STRING
-  }, {
+    name: {
+      type: DataTypes.STRING
+    },
+    price: {
+      type: DataTypes.DOUBLE
+    },
+    discount: {
+      type: DataTypes.DOUBLE
+    },
+    startDate: {
+      type: DataTypes.DATE,
+      field: 'start_date'
+    },
+    endDate: {
+      type: DataTypes.DATE,
+      field: 'end_date'
+    },
+    status: {
+      type: DataTypes.STRING
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'created_at'
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'updated_at'
+    }
+}, {
     sequelize,
     modelName: 'Promotion',
   });

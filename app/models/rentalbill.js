@@ -14,8 +14,81 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   RentalBill.init({
-    name: DataTypes.STRING
-  }, {
+    name: {
+      type: DataTypes.STRING
+    },
+    price: {
+      type: DataTypes.DOUBLE
+    },
+    electricityFee: {
+      type: DataTypes.DOUBLE,
+      field: 'electricity_fee'
+    },
+    waterFee: {
+      type: DataTypes.DOUBLE,
+      field: 'water_fee'
+    },
+    internetFee: {
+      type: DataTypes.DOUBLE,
+      field: 'internet_fee'
+    },
+    otherFee: {
+      type: DataTypes.DOUBLE,
+      field: 'other_fee'
+    },
+    feeDesc: {
+      type: DataTypes.TEXT,
+      field: 'fee_desc'
+    },
+    prepay: {
+      type: DataTypes.DOUBLE
+    },
+    discountPrice: {
+      type: DataTypes.DOUBLE,
+      field: 'discount_price'
+    },
+    totalPrice: {
+      type: DataTypes.DOUBLE,
+      field: 'total_price'
+    },
+    note: {
+      type: DataTypes.TEXT
+    },
+    status: {
+      type: DataTypes.STRING
+    },
+    rentalId: {
+      type: DataTypes.INTEGER,
+      field: 'rental_id',
+      references: {
+        model: {
+          tableName: 'Rentals',
+        },
+        key: 'id'
+      },
+    },
+    customerId: {
+      type: DataTypes.INTEGER,
+      field: 'customer_id',
+      references: {
+        model: {
+          tableName: 'Customers',
+        },
+        key: 'id'
+      },
+    },
+
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'created_at'
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'updated_at'
+    }
+}, {
     sequelize,
     modelName: 'RentalBill',
   });

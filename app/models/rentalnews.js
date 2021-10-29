@@ -14,8 +14,61 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   RentalNews.init({
-    name: DataTypes.STRING
-  }, {
+    name: {
+      type: DataTypes.STRING
+    },
+    image: {
+      type: DataTypes.TEXT
+    },
+    price: {
+      type: DataTypes.DOUBLE
+    },
+    quantity: {
+      type: DataTypes.INTEGER
+    },
+    type: {
+      type: DataTypes.STRING
+    },
+    address: {
+      type: DataTypes.TEXT
+    },
+    description: {
+      type: DataTypes.TEXT
+    },
+    status: {
+      type: DataTypes.STRING
+    },
+    promotionId: {
+      type: DataTypes.INTEGER,
+      field: 'promotion_id',
+      references: {
+        model: {
+          tableName: 'Promotions',
+        },
+        key: 'id'
+      },
+    },
+    customerId: {
+      type: DataTypes.INTEGER,
+      field: 'customer_id',
+      references: {
+        model: {
+          tableName: 'Customers',
+        },
+        key: 'id'
+      },
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'created_at'
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      field: 'updated_at'
+    }
+}, {
     sequelize,
     modelName: 'RentalNews',
   });

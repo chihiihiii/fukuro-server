@@ -14,9 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Admin.init({
-    username: DataTypes.STRING,
-    password: DataTypes.STRING,
-    email: DataTypes.STRING,
+    username: {
+      type: DataTypes.STRING
+    },
+    password: {
+      type: DataTypes.STRING
+    },
+    email: {
+      type: DataTypes.STRING
+    },
     firstName: {
       type: DataTypes.STRING,
       field: 'first_name'
@@ -25,16 +31,22 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       field: 'last_name'
     },
-    phone: DataTypes.STRING,
-    role: DataTypes.STRING,
+    phone: {
+      type: DataTypes.STRING
+    },
+    role: {
+      type: DataTypes.STRING
+    },
     status: {
       type: DataTypes.STRING
     },
     createdAt: {
+      allowNull: false,
       type: DataTypes.DATE,
       field: 'created_at'
     },
     updatedAt: {
+      allowNull: false,
       type: DataTypes.DATE,
       field: 'updated_at'
     }
