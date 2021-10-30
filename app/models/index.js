@@ -34,11 +34,21 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.Customers= require("./customer.js")(sequelize, Sequelize);
-db.Rentals= require("./rental.js")(sequelize, Sequelize);
-db.CustomerContacts= require("./customercontact.js")(sequelize, Sequelize);
 db.Admins= require("./admin.js")(sequelize, Sequelize);
 db.AdminContacts= require("./admincontact.js")(sequelize, Sequelize);
+db.AdminNotifications= require("./adminnotification.js")(sequelize, Sequelize);
+db.Blogs= require("./blog.js")(sequelize, Sequelize);
+db.BlogCategories= require("./blogcategory.js")(sequelize, Sequelize);
+db.Customers= require("./customer.js")(sequelize, Sequelize);
+db.CustomerContacts= require("./customercontact.js")(sequelize, Sequelize);
+db.CustomerNotifications= require("./customernotification.js")(sequelize, Sequelize);
+db.CustomerPremiums= require("./customerpremium.js")(sequelize, Sequelize);
+db.Premiums= require("./premium.js")(sequelize, Sequelize);
+db.PremiumBills= require("./premiumbill.js")(sequelize, Sequelize);
+db.Promotions= require("./promotion.js")(sequelize, Sequelize);
+db.Rentals= require("./rental.js")(sequelize, Sequelize);
+db.RentalBills= require("./rentalbill.js")(sequelize, Sequelize);
+db.RentalNews= require("./rentalnews.js")(sequelize, Sequelize);
 
 
 module.exports = db;
