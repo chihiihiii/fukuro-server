@@ -1,5 +1,5 @@
 const db = require("../models");
-const Rental = db.Rentals;
+const RentalNews = db.RentalNews;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Admin
@@ -13,22 +13,26 @@ exports.create = (req, res) => {
     // }
 
     // Create a Admin
-    const rental = {
+    const rentalNews = {
         name: req.body.name,
+        image: req.body.image,
         price: req.body.price,
-        renter: req.body.renter,
-        note: req.body.note,
+        quantity: req.body.quantity,
+        type: req.body.type,
+        address: req.body.address,
+        description: req.body.description,
         status: req.body.status,
+        
     };
 
     // Save Admin in the database
-    Rental.create(rental)
+    RentalNews.create(rentalNews)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Rental."
+                message: err.message || "Some error occurred while creating the Rental News."
             });
         });
 };
@@ -43,15 +47,15 @@ exports.findAll = (req, res) => {
     // } : null;
     var condition=null;
 
-    Rental.findAll({
-        where: condition
-    })
+    RentalNews.findAll({
+            where: condition
+        })
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving rentals."
+                message: err.message || "Some error occurred while retrieving rental news."
             });
         });
 };
@@ -60,13 +64,13 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-    Rental.findByPk(id)
+    RentalNews.findByPk(id)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Rental with id=" + id
+                message: "Error retrieving Rental News with id=" + id
             });
         });
 };
@@ -75,25 +79,25 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
-    Rental.update(req.body, {
-        where: {
-            id: id
-        }
-    })
+    RentalNews.update(req.body, {
+            where: {
+                id: id
+            }
+        })
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Rental was updated successfully."
+                    message: "Rental News was updated successfully."
                 });
             } else {
                 res.send({
-                    message: `Cannot update Rental with id=${id}. Maybe Rental was not found or req.body is empty!`
+                    message: `Cannot update Rental News with id=${id}. Maybe Rental News was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Rental with id=" + id
+                message: "Error updating Rental News with id=" + id
             });
         });
 };
@@ -102,50 +106,50 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
 
-    Rental.destroy({
-        where: {
-            id: id
-        }
-    })
+    RentalNews.destroy({
+            where: {
+                id: id
+            }
+        })
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Rental was deleted successfully!"
+                    message: "Rental News was deleted successfully!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Rental with id=${id}. Maybe Rental was not found!`
+                    message: `Cannot delete Rental News with id=${id}. Maybe Rental News was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Rental with id=" + id
+                message: "Could not delete Rental News with id=" + id
             });
         });
 };
 
 // Delete all Admins from the database.
 exports.deleteAll = (req, res) => {
-    Rental.destroy({
-        where: {},
-        truncate: false
-    })
+    RentalNews.destroy({
+            where: {},
+            truncate: false
+        })
         .then(nums => {
             res.send({
-                message: `${nums} Rentals were deleted successfully!`
+                message: `${nums} Rental News were deleted successfully!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all rentals."
+                message: err.message || "Some error occurred while removing all rental news."
             });
         });
 };
 
 // find all published Admin
 // exports.findAllPublished = (req, res) => {
-//     Rental.findAll({
+//     RentalNews.findAll({
 //             where: {
 //                 published: true
 //             }
@@ -155,7 +159,7 @@ exports.deleteAll = (req, res) => {
 //         })
 //         .catch(err => {
 //             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving rentals."
+//                 message: err.message || "Some error occurred while retrieving rental news."
 //             });
 //         });
 // };

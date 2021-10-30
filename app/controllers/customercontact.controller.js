@@ -1,5 +1,5 @@
 const db = require("../models");
-const Rental = db.Rentals;
+const CustomerContact = db.CustomerContacts;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Admin
@@ -13,22 +13,24 @@ exports.create = (req, res) => {
     // }
 
     // Create a Admin
-    const rental = {
-        name: req.body.name,
-        price: req.body.price,
-        renter: req.body.renter,
-        note: req.body.note,
+    const customerContact = {
+        firstName: req.body.first_name,
+        lastName: req.body.last_name,
+        email: req.body.email,
+        phone: req.body.phone,
+        message: req.body.message,
         status: req.body.status,
+        
     };
 
     // Save Admin in the database
-    Rental.create(rental)
+    CustomerContact.create(customerContact)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Rental."
+                message: err.message || "Some error occurred while creating the Customer Contact."
             });
         });
 };
@@ -43,15 +45,15 @@ exports.findAll = (req, res) => {
     // } : null;
     var condition=null;
 
-    Rental.findAll({
-        where: condition
-    })
+    CustomerContact.findAll({
+            where: condition
+        })
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving rentals."
+                message: err.message || "Some error occurred while retrieving customer contacts."
             });
         });
 };
@@ -60,13 +62,13 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-    Rental.findByPk(id)
+    CustomerContact.findByPk(id)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Rental with id=" + id
+                message: "Error retrieving Customer Contact with id=" + id
             });
         });
 };
@@ -75,25 +77,25 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
-    Rental.update(req.body, {
-        where: {
-            id: id
-        }
-    })
+    CustomerContact.update(req.body, {
+            where: {
+                id: id
+            }
+        })
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Rental was updated successfully."
+                    message: "Customer Contact was updated successfully."
                 });
             } else {
                 res.send({
-                    message: `Cannot update Rental with id=${id}. Maybe Rental was not found or req.body is empty!`
+                    message: `Cannot update Customer Contact with id=${id}. Maybe Customer Contact was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Rental with id=" + id
+                message: "Error updating Customer Contact with id=" + id
             });
         });
 };
@@ -102,50 +104,50 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
 
-    Rental.destroy({
-        where: {
-            id: id
-        }
-    })
+    CustomerContact.destroy({
+            where: {
+                id: id
+            }
+        })
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Rental was deleted successfully!"
+                    message: "Customer Contact was deleted successfully!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Rental with id=${id}. Maybe Rental was not found!`
+                    message: `Cannot delete Customer Contact with id=${id}. Maybe Admin was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Rental with id=" + id
+                message: "Could not delete Customer Contact with id=" + id
             });
         });
 };
 
 // Delete all Admins from the database.
 exports.deleteAll = (req, res) => {
-    Rental.destroy({
-        where: {},
-        truncate: false
-    })
+    CustomerContact.destroy({
+            where: {},
+            truncate: false
+        })
         .then(nums => {
             res.send({
-                message: `${nums} Rentals were deleted successfully!`
+                message: `${nums} Customer Contacts were deleted successfully!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all rentals."
+                message: err.message || "Some error occurred while removing all customer contacts."
             });
         });
 };
 
 // find all published Admin
 // exports.findAllPublished = (req, res) => {
-//     Rental.findAll({
+//     CustomerContact.findAll({
 //             where: {
 //                 published: true
 //             }
@@ -155,7 +157,7 @@ exports.deleteAll = (req, res) => {
 //         })
 //         .catch(err => {
 //             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving rentals."
+//                 message: err.message || "Some error occurred while retrieving customer contacts."
 //             });
 //         });
 // };

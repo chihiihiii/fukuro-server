@@ -1,5 +1,5 @@
 const db = require("../models");
-const Rental = db.Rentals;
+const AdminNotification = db.AdminNotifications;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Admin
@@ -13,22 +13,20 @@ exports.create = (req, res) => {
     // }
 
     // Create a Admin
-    const rental = {
-        name: req.body.name,
-        price: req.body.price,
-        renter: req.body.renter,
-        note: req.body.note,
-        status: req.body.status,
+    const adminNotification = {
+        message: req.body.message,
+        detailUrl: req.body.detailUrl,
+        status: req.body.status
     };
 
     // Save Admin in the database
-    Rental.create(rental)
+    AdminNotification.create(adminNotification)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Rental."
+                message: err.message || "Some error occurred while creating the Admin Notification."
             });
         });
 };
@@ -43,15 +41,15 @@ exports.findAll = (req, res) => {
     // } : null;
     var condition=null;
 
-    Rental.findAll({
-        where: condition
-    })
+    AdminNotification.findAll({
+            where: condition
+        })
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving rentals."
+                message: err.message || "Some error occurred while retrieving admin notifications."
             });
         });
 };
@@ -60,13 +58,13 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-    Rental.findByPk(id)
+    AdminNotification.findByPk(id)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Rental with id=" + id
+                message: "Error retrieving Admin Notification with id=" + id
             });
         });
 };
@@ -75,25 +73,25 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
-    Rental.update(req.body, {
-        where: {
-            id: id
-        }
-    })
+    AdminNotification.update(req.body, {
+            where: {
+                id: id
+            }
+        })
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Rental was updated successfully."
+                    message: "Admin Notification was updated successfully."
                 });
             } else {
                 res.send({
-                    message: `Cannot update Rental with id=${id}. Maybe Rental was not found or req.body is empty!`
+                    message: `Cannot update Admin Notification with id=${id}. Maybe Admin Notification was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Rental with id=" + id
+                message: "Error updating Admin Notification with id=" + id
             });
         });
 };
@@ -102,50 +100,50 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
 
-    Rental.destroy({
-        where: {
-            id: id
-        }
-    })
+    AdminNotification.destroy({
+            where: {
+                id: id
+            }
+        })
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Rental was deleted successfully!"
+                    message: "Admin Notification was deleted successfully!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Rental with id=${id}. Maybe Rental was not found!`
+                    message: `Cannot delete Admin Notification with id=${id}. Maybe Admin Notification was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Rental with id=" + id
+                message: "Could not delete Admin Notification with id=" + id
             });
         });
 };
 
 // Delete all Admins from the database.
 exports.deleteAll = (req, res) => {
-    Rental.destroy({
-        where: {},
-        truncate: false
-    })
+    AdminNotification.destroy({
+            where: {},
+            truncate: false
+        })
         .then(nums => {
             res.send({
-                message: `${nums} Rentals were deleted successfully!`
+                message: `${nums} Admin Notification were deleted successfully!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all rentals."
+                message: err.message || "Some error occurred while removing all admin notifications."
             });
         });
 };
 
 // find all published Admin
 // exports.findAllPublished = (req, res) => {
-//     Rental.findAll({
+//     AdminNotification.findAll({
 //             where: {
 //                 published: true
 //             }
@@ -155,7 +153,7 @@ exports.deleteAll = (req, res) => {
 //         })
 //         .catch(err => {
 //             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving rentals."
+//                 message: err.message || "Some error occurred while retrieving notifications."
 //             });
 //         });
 // };
