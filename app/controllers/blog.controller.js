@@ -17,6 +17,7 @@ exports.create = (req, res) => {
         title: req.body.title,
         image: req.body.image,
         content: req.body.content,
+        tag: req.body.tag,
         status: req.body.status
     };
 
