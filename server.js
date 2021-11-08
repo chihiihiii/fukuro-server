@@ -1,6 +1,7 @@
 const express = require("express");
-// const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 const cors = require("cors");
+const multer = require('multer');
 
 const app = express();
 
@@ -8,7 +9,7 @@ const app = express();
 app.use(cors());
 
 // parse requests of content-type - application/json
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
@@ -20,7 +21,16 @@ app.use(express.urlencoded({ extended: true }));
 const db = require('./app/models');
 db.sequelize.sync();
 
+const storage = multer.diskStorage({
+    destination: (req, file, callBack) => {
+        callBack(null, 'uploads')
+    },
+    filename: (req, file, callBack) => {
+        callBack(null, `FunOfHeuristic_${file.originalname}`)
+    }
+})
 
+const upload = multer({ storage: storage })
 
 require('./app/routes/admin.route')(app);
 require('./app/routes/admincontact.route')(app);
@@ -44,6 +54,20 @@ app.get("/", (req, res) => {
         message: "Welcome to Fukuro server" + process.env.PORT
     });
 });
+
+app.post('/file', upload.single('file'), (req, res, next) => {
+    // const file = req.file;
+    // console.log(file.filename);
+    // if (!file) {
+    //     const error = new Error('No File')
+    //     error.httpStatusCode = 400
+    //     return next(error)
+    // }
+    // res.send(file);
+    res.json({
+        message: req
+    });
+})
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8000;

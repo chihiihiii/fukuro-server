@@ -14,6 +14,7 @@ exports.create = (req, res) => {
 
     // Create a Admin
     const admin = {
+        avatar: req.body.avatar,
         username: req.body.username,
         password: req.body.password,
         email: req.body.email,

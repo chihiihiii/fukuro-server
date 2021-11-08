@@ -14,6 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Admin.init({
+    avatar: {
+      type: DataTypes.STRING
+    },
     username: {
       type: DataTypes.STRING
     },

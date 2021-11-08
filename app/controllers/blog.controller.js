@@ -12,7 +12,7 @@ exports.create = (req, res) => {
     //     return;
     // }
 
-    // Create a Admin
+    // Create a Blog
     const blog = {
         title: req.body.title,
         image: req.body.image,
@@ -20,8 +20,9 @@ exports.create = (req, res) => {
         tag: req.body.tag,
         status: req.body.status
     };
+    // console.log(req);
 
-    // Save Admin in the database
+    // Save Blog in the database
     Blog.create(blog)
         .then(data => {
             res.send(data);
