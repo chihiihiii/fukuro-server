@@ -15,12 +15,16 @@ exports.create = (req, res) => {
     // Create a Blog
     const blog = {
         title: req.body.title,
-        image: req.body.image,
-        content: req.body.content,
+        slug: req.body.slug,
+        thumbnail: req.body.thumbnail,
+        summary: req.body.summary,
+        description: req.body.description,
         tag: req.body.tag,
-        status: req.body.status
+        status: req.body.status,
+        blogCategoryId: req.body.blogCategoryId,
+        adminId: req.body.adminId
     };
-    // console.log(req);
+    // console.log(blog);
 
     // Save Blog in the database
     Blog.create(blog)

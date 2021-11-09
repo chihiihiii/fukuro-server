@@ -17,10 +17,16 @@ module.exports = (sequelize, DataTypes) => {
     title: {
       type: DataTypes.TEXT
     },
-    image: {
+    slug: {
       type: DataTypes.TEXT
     },
-    content: {
+    thumbnail: {
+      type: DataTypes.TEXT
+    },
+    summary: {
+      type: DataTypes.TEXT
+    },
+    description: {
       type: DataTypes.TEXT
     },
     tag: {
@@ -35,6 +41,16 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: {
           tableName: 'BlogCategories',
+        },
+        key: 'id'
+      },
+    },
+    adminId: {
+      type: DataTypes.INTEGER,
+      field: 'admin_id',
+      references: {
+        model: {
+          tableName: 'Admins',
         },
         key: 'id'
       },
