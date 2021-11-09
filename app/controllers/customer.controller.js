@@ -14,6 +14,7 @@ exports.create = (req, res) => {
 
     // Create a Customer
     const customer = {
+        avatar: req.body.avatar,
         username: req.body.username,
         password: req.body.password,
         email: req.body.email,

@@ -11,14 +11,20 @@ module.exports = {
       title: {
         type: Sequelize.TEXT
       },
-      image: {
+      slug: {
         type: Sequelize.TEXT
       },
-      content: {
+      thumbnail: {
+        type: Sequelize.TEXT
+      },
+      summary: {
+        type: Sequelize.TEXT
+      },
+      description: {
         type: Sequelize.TEXT
       },
       tag: {
-        type: DataTypes.TEXT
+        type: Sequelize.TEXT
       },
       status: {
         type: Sequelize.STRING
@@ -29,6 +35,16 @@ module.exports = {
         references: {
           model: {
             tableName: 'BlogCategories',
+          },
+          key: 'id'
+        },
+      },
+      adminId: {
+        type: Sequelize.INTEGER,
+        field: 'admin_id',
+        references: {
+          model: {
+            tableName: 'Admins',
           },
           key: 'id'
         },
