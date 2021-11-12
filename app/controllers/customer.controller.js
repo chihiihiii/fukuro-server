@@ -1,6 +1,41 @@
 const db = require("../models");
 const Customer = db.Customers;
 const Op = db.Sequelize.Op;
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
+exports.login =  (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    Customer.findOne({ where: { username } })
+    .then(data=>{
+        if (!bcrypt.compareSync(password, data.dataValues.password)){
+            const result = {
+                status: "Fail",
+                message: "Mật khẩu không đúng!"
+            }
+            res.status(500).send(result);
+        }
+        else{
+            const token = jwt.sign({
+                username: data.dataValues.username, password: data.dataValues.password
+            }, 'secret', {noTimestamp:true, expiresIn: '7d'});
+            const result = {
+                status: "Success",
+                message: "Đăng nhập thành công!",
+                data: data,
+                token: token
+            }
+            res.status(200).send(result);
+        }
+    })
+    .catch(err => {
+        res.status(500).send({
+            status: "Fail",
+            message: "Tên người dùng không đúng!"
+        });
+    });
+}
 
 // Create and Save a new Customer
 exports.create = (req, res) => {
@@ -11,18 +46,16 @@ exports.create = (req, res) => {
     //     });
     //     return;
     // }
-
     // Create a Customer
     const customer = {
         avatar: req.body.avatar,
         username: req.body.username,
-        password: req.body.password,
+        password: bcrypt.hashSync(req.body.password, 10),
         email: req.body.email,
         firstName: req.body.first_name,
         lastName: req.body.last_name,
         phone: req.body.phone,
         status: req.body.status,
-        
     };
 
     // Save Customer in the database
