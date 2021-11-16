@@ -11,28 +11,26 @@ exports.login =  (req, res) => {
     .then(data=>{
         if (!bcrypt.compareSync(password, data.dataValues.password)){
             const result = {
-                status: "Fail",
-                message: "Mật khẩu không đúng!"
+                message: "Tên người dùng hoặc mật khẩu không đúng!"
             }
             res.status(500).send(result);
         }
         else{
             const token = jwt.sign({
                 username: data.dataValues.username, password: data.dataValues.password
-            }, 'secret', {noTimestamp:true, expiresIn: '7d'});
+            }, 'secret', {noTimestamp:true, expiresIn: '60s'});
             const result = {
-                status: "Success",
                 message: "Đăng nhập thành công!",
                 data: data,
-                token: token
+                token: token,
+                expires_in: 60
             }
             res.status(200).send(result);
         }
     })
     .catch(err => {
         res.status(500).send({
-            status: "Fail",
-            message: "Tên người dùng không đúng!"
+            message: "Tên người dùng hoặc mật khẩu không đúng!"
         });
     });
 }
