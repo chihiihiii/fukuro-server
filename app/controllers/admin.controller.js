@@ -1,6 +1,39 @@
 const db = require("../models");
 const Admin = db.Admins;
 const Op = db.Sequelize.Op;
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
+// Admin login
+exports.login =  (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    Admin.findOne({ where: { username } })
+        .then(data=>{
+            if (!bcrypt.compareSync(password, data.dataValues.password)){
+                const result = {
+                    message: "Tên người dùng hoặc mật khẩu không đúng!"
+                }
+                res.status(500).send(result);
+            }
+            else{
+                const token = jwt.sign({
+                    username: data.dataValues.username, password: data.dataValues.password
+                }, 'secret', {noTimestamp:true, expiresIn: 60 * 60 * 24 * 7});
+                const result = {
+                    message: "Đăng nhập thành công!",
+                    data: data,
+                    token: token
+                }
+                res.status(200).send(result);
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Tên người dùng hoặc mật khẩu không đúng!"
+            });
+        });
+}
 
 // Create and Save a new Admin
 exports.create = (req, res) => {

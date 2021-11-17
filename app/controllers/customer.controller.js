@@ -3,7 +3,9 @@ const Customer = db.Customers;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const Sequelize = require('sequelize');
 
+//Customer login
 exports.login =  (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -18,12 +20,11 @@ exports.login =  (req, res) => {
         else{
             const token = jwt.sign({
                 username: data.dataValues.username, password: data.dataValues.password
-            }, 'secret', {noTimestamp:true, expiresIn: '60s'});
+            }, 'secret', {noTimestamp:true, expiresIn: 60 * 60 * 24 * 7});
             const result = {
                 message: "Đăng nhập thành công!",
                 data: data,
-                token: token,
-                expires_in: 60
+                token: token
             }
             res.status(200).send(result);
         }
@@ -37,13 +38,6 @@ exports.login =  (req, res) => {
 
 // Create and Save a new Customer
 exports.create = (req, res) => {
-    // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
     // Create a Customer
     const customer = {
         avatar: req.body.avatar,
