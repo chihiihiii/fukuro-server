@@ -18,7 +18,8 @@ exports.login =  (req, res) => {
             }
             else{
                 const token = jwt.sign({
-                    username: data.dataValues.username, password: data.dataValues.password
+                    username: data.dataValues.username, 
+                    password: data.dataValues.password
                 }, 'secret', {noTimestamp:true, expiresIn: 60 * 60 * 24 * 7});
                 const result = {
                     message: "Đăng nhập thành công!",
