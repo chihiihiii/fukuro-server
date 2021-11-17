@@ -6,34 +6,41 @@ const bcrypt = require('bcryptjs');
 const Sequelize = require('sequelize');
 
 //Customer login
-exports.login =  (req, res) => {
+exports.login = (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    Customer.findOne({ where: { username } })
-    .then(data=>{
-        if (!bcrypt.compareSync(password, data.dataValues.password)){
-            const result = {
+    Customer.findOne({
+            where: {
+                username
+            }
+        })
+        .then(data => {
+            if (!bcrypt.compareSync(password, data.dataValues.password)) {
+                const result = {
+                    message: "Tên người dùng hoặc mật khẩu không đúng!"
+                }
+                res.status(500).send(result);
+            } else {
+                const token = jwt.sign({
+                    username: data.dataValues.username,
+                    password: data.dataValues.password
+                }, 'secret', {
+                    noTimestamp: true,
+                    expiresIn: 60 * 60 * 24 * 7
+                });
+                const result = {
+                    message: "Đăng nhập thành công!",
+                    data: data,
+                    token: token
+                }
+                res.status(200).send(result);
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
                 message: "Tên người dùng hoặc mật khẩu không đúng!"
-            }
-            res.status(500).send(result);
-        }
-        else{
-            const token = jwt.sign({
-                username: data.dataValues.username, password: data.dataValues.password
-            }, 'secret', {noTimestamp:true, expiresIn: 60 * 60 * 24 * 7});
-            const result = {
-                message: "Đăng nhập thành công!",
-                data: data,
-                token: token
-            }
-            res.status(200).send(result);
-        }
-    })
-    .catch(err => {
-        res.status(500).send({
-            message: "Tên người dùng hoặc mật khẩu không đúng!"
+            });
         });
-    });
 }
 
 // Create and Save a new Customer
@@ -70,13 +77,34 @@ exports.findAll = (req, res) => {
     //         [Op.like]: `%${username}%`
     //     }
     // } : null;
-    var condition=null;
+    var condition = null;
 
-    Customer.findAll({
-            where: condition
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit=limit?limit:6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    // Customer.findAll({
+    //         where: condition
+    //     })
+    //     .then(data => {
+    //         res.send(data);
+    //     })
+    //     .catch(err => {
+    //         res.status(500).send({
+    //             message: err.message || "Some error occurred while retrieving customers."
+    //         });
+    //     });
+
+    Customer.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
         })
         .then(data => {
             res.send(data);
+            // res.send(limit);
+
         })
         .catch(err => {
             res.status(500).send({

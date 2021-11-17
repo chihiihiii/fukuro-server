@@ -15,7 +15,7 @@ exports.create = (req, res) => {
     // Create a Admin
     const adminNotification = {
         message: req.body.message,
-        detailUrl: req.body.detailUrl,
+        detailUrl: req.body.detail_url,
         status: req.body.status
     };
 

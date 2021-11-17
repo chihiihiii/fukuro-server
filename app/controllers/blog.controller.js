@@ -21,8 +21,8 @@ exports.create = (req, res) => {
         description: req.body.description,
         tag: req.body.tag,
         status: req.body.status,
-        blogCategoryId: req.body.blogCategoryId,
-        adminId: req.body.adminId
+        blogCategoryId: req.body.blog_category_id,
+        adminId: req.body.admin_id
     };
     // console.log(blog);
 

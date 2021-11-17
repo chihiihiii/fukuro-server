@@ -6,9 +6,7 @@
   "scripts": {
     "start": "server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-
     "dev": "cd app && npx sequelize db:migrate && cd../ && nodemon server.js"
-
   },
   "author": "Night Owls",
   "license": "ISC",
