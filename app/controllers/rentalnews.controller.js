@@ -2,7 +2,7 @@ const db = require("../models");
 const RentalNews = db.RentalNews;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Admin
+// Create and Save a new RentalNews
 exports.create = (req, res) => {
     // Validate request
     // if (!req.body.username) {
@@ -12,7 +12,7 @@ exports.create = (req, res) => {
     //     return;
     // }
 
-    // Create a Admin
+    // Create a RentalNews
     const rentalNews = {
         name: req.body.name,
         image: req.body.image,
@@ -22,10 +22,10 @@ exports.create = (req, res) => {
         address: req.body.address,
         description: req.body.description,
         status: req.body.status,
-        
+
     };
 
-    // Save Admin in the database
+    // Save RentalNews in the database
     RentalNews.create(rentalNews)
         .then(data => {
             res.send(data);
@@ -37,7 +37,7 @@ exports.create = (req, res) => {
         });
 };
 
-// Retrieve all Admins from the database.
+// Retrieve all RentalNewss from the database.
 exports.findAll = (req, res) => {
     // const username = req.query.username;
     // var condition = username ? {
@@ -45,22 +45,30 @@ exports.findAll = (req, res) => {
     //         [Op.like]: `%${username}%`
     //     }
     // } : null;
-    var condition=null;
+    var condition = null;
 
-    RentalNews.findAll({
-            where: condition
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    RentalNews.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
         })
         .then(data => {
             res.send(data);
+
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving rental news."
+                message: err.message || "Some error occurred while retrieving Rental News."
             });
         });
 };
 
-// Find a single Admin with an id
+// Find a single RentalNews with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
@@ -75,7 +83,7 @@ exports.findOne = (req, res) => {
         });
 };
 
-// Update a Admin by the id in the request
+// Update a RentalNews by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
 
@@ -102,7 +110,7 @@ exports.update = (req, res) => {
         });
 };
 
-// Delete a Admin with the specified id in the request
+// Delete a RentalNews with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
 
@@ -129,7 +137,7 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all Admins from the database.
+// Delete all RentalNewss from the database.
 exports.deleteAll = (req, res) => {
     RentalNews.destroy({
             where: {},
@@ -147,7 +155,7 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published Admin
+// find all published RentalNews
 // exports.findAllPublished = (req, res) => {
 //     RentalNews.findAll({
 //             where: {

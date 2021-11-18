@@ -2,7 +2,7 @@ const db = require("../models");
 const PasswordReset = db.PasswordResets;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Admin
+// Create and Save a new PasswordReset
 exports.create = (req, res) => {
     // Validate request
     // if (!req.body.username) {
@@ -12,25 +12,25 @@ exports.create = (req, res) => {
     //     return;
     // }
 
-    // Create a Admin
+    // Create a PasswordReset
     const passwordReset = {
         email: req.body.email,
         token: req.body.token,
     };
 
-    // Save Admin in the database
+    // Save PasswordReset in the database
     PasswordReset.create(passwordReset)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Admin Notification."
+                message: err.message || "Some error occurred while creating the Password Reset."
             });
         });
 };
 
-// Retrieve all Admins from the database.
+// Retrieve all PasswordResets from the database.
 exports.findAll = (req, res) => {
     // const username = req.query.username;
     // var condition = username ? {
@@ -38,22 +38,30 @@ exports.findAll = (req, res) => {
     //         [Op.like]: `%${username}%`
     //     }
     // } : null;
-    var condition=null;
+    var condition = null;
 
-    PasswordReset.findAll({
-            where: condition
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    PasswordReset.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
         })
         .then(data => {
             res.send(data);
+
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving admin notifications."
+                message: err.message || "Some error occurred while retrieving password resets."
             });
         });
 };
 
-// Find a single Admin with an id
+// Find a single PasswordReset with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
@@ -63,12 +71,12 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Admin Notification with id=" + id
+                message: "Error retrieving Password Reset with id=" + id
             });
         });
 };
 
-// Update a Admin by the id in the request
+// Update a PasswordReset by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
 
@@ -80,22 +88,22 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Admin Notification was updated successfully."
+                    message: "Password Reset was updated successfully."
                 });
             } else {
                 res.send({
-                    message: `Cannot update Admin Notification with id=${id}. Maybe Admin Notification was not found or req.body is empty!`
+                    message: `Cannot update Password Reset with id=${id}. Maybe Password Reset was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Admin Notification with id=" + id
+                message: "Error updating PasswordReset with id=" + id
             });
         });
 };
 
-// Delete a Admin with the specified id in the request
+// Delete a PasswordReset with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
 
@@ -107,22 +115,22 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Admin Notification was deleted successfully!"
+                    message: "Password Reset was deleted successfully!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Admin Notification with id=${id}. Maybe Admin Notification was not found!`
+                    message: `Cannot delete Password Reset with id=${id}. Maybe Password Reset was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Admin Notification with id=" + id
+                message: "Could not delete Password Reset with id=" + id
             });
         });
 };
 
-// Delete all Admins from the database.
+// Delete all PasswordResets from the database.
 exports.deleteAll = (req, res) => {
     PasswordReset.destroy({
             where: {},
@@ -130,17 +138,17 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Admin Notification were deleted successfully!`
+                message: `${nums} Password Reset were deleted successfully!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all admin notifications."
+                message: err.message || "Some error occurred while removing all password resets."
             });
         });
 };
 
-// find all published Admin
+// find all published PasswordReset
 // exports.findAllPublished = (req, res) => {
 //     PasswordReset.findAll({
 //             where: {

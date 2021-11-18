@@ -79,10 +79,7 @@ exports.findAll = (req, res) => {
     // } : null;
     var condition = null;
 
-    var page = +req.query.page;
-    var limit = +req.query.limit;
-    limit=limit?limit:6;
-    var offset = (page > 0) ? (page - 1) * limit : null;
+
 
     // Customer.findAll({
     //         where: condition
@@ -96,6 +93,11 @@ exports.findAll = (req, res) => {
     //         });
     //     });
 
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
     Customer.findAndCountAll({
             where: condition,
             offset: offset,
@@ -103,7 +105,6 @@ exports.findAll = (req, res) => {
         })
         .then(data => {
             res.send(data);
-            // res.send(limit);
 
         })
         .catch(err => {

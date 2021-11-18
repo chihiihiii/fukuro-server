@@ -2,7 +2,7 @@ const db = require("../models");
 const Rental = db.Rentals;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Admin
+// Create and Save a new Rental
 exports.create = (req, res) => {
     // Validate request
     // if (!req.body.username) {
@@ -12,7 +12,7 @@ exports.create = (req, res) => {
     //     return;
     // }
 
-    // Create a Admin
+    // Create a Rental
     const rental = {
         name: req.body.name,
         price: req.body.price,
@@ -21,7 +21,7 @@ exports.create = (req, res) => {
         status: req.body.status,
     };
 
-    // Save Admin in the database
+    // Save Rental in the database
     Rental.create(rental)
         .then(data => {
             res.send(data);
@@ -33,7 +33,7 @@ exports.create = (req, res) => {
         });
 };
 
-// Retrieve all Admins from the database.
+// Retrieve all Rentals from the database.
 exports.findAll = (req, res) => {
     // const username = req.query.username;
     // var condition = username ? {
@@ -41,13 +41,21 @@ exports.findAll = (req, res) => {
     //         [Op.like]: `%${username}%`
     //     }
     // } : null;
-    var condition=null;
+    var condition = null;
 
-    Rental.findAll({
-        where: condition
-    })
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    Rental.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
+        })
         .then(data => {
             res.send(data);
+
         })
         .catch(err => {
             res.status(500).send({
@@ -56,7 +64,7 @@ exports.findAll = (req, res) => {
         });
 };
 
-// Find a single Admin with an id
+// Find a single Rental with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
@@ -71,15 +79,15 @@ exports.findOne = (req, res) => {
         });
 };
 
-// Update a Admin by the id in the request
+// Update a Rental by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
 
     Rental.update(req.body, {
-        where: {
-            id: id
-        }
-    })
+            where: {
+                id: id
+            }
+        })
         .then(num => {
             if (num == 1) {
                 res.send({
@@ -98,15 +106,15 @@ exports.update = (req, res) => {
         });
 };
 
-// Delete a Admin with the specified id in the request
+// Delete a Rental with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
 
     Rental.destroy({
-        where: {
-            id: id
-        }
-    })
+            where: {
+                id: id
+            }
+        })
         .then(num => {
             if (num == 1) {
                 res.send({
@@ -125,12 +133,12 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all Admins from the database.
+// Delete all Rentals from the database.
 exports.deleteAll = (req, res) => {
     Rental.destroy({
-        where: {},
-        truncate: false
-    })
+            where: {},
+            truncate: false
+        })
         .then(nums => {
             res.send({
                 message: `${nums} Rentals were deleted successfully!`
@@ -143,7 +151,7 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published Admin
+// find all published Rental
 // exports.findAllPublished = (req, res) => {
 //     Rental.findAll({
 //             where: {

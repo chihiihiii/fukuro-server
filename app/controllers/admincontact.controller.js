@@ -46,15 +46,23 @@ exports.findAll = (req, res) => {
     // } : null;
     var condition = null;
 
-    AdminContact.findAll({
-            where: condition
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit=limit?limit:6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    AdminContact.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
         })
         .then(data => {
             res.send(data);
+
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving admincontacts."
+                message: err.message || "Some error occurred while retrieving AdminContact."
             });
         });
 };

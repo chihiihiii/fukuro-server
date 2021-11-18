@@ -5,22 +5,28 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 // Admin login
-exports.login =  (req, res) => {
+exports.login = (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    Admin.findOne({ where: { username } })
-        .then(data=>{
-            if (!bcrypt.compareSync(password, data.dataValues.password)){
+    Admin.findOne({
+            where: {
+                username
+            }
+        })
+        .then(data => {
+            if (!bcrypt.compareSync(password, data.dataValues.password)) {
                 const result = {
                     message: "Tên người dùng hoặc mật khẩu không đúng!"
                 }
                 res.status(500).send(result);
-            }
-            else{
+            } else {
                 const token = jwt.sign({
-                    username: data.dataValues.username, 
+                    username: data.dataValues.username,
                     password: data.dataValues.password
-                }, 'secret', {noTimestamp:true, expiresIn: 60 * 60 * 24 * 7});
+                }, 'secret', {
+                    noTimestamp: true,
+                    expiresIn: 60 * 60 * 24 * 7
+                });
                 const result = {
                     message: "Đăng nhập thành công!",
                     data: data,
@@ -57,7 +63,7 @@ exports.create = (req, res) => {
         phone: req.body.phone,
         role: req.body.role,
         status: req.body.status,
-        
+
     };
 
     // Save Admin in the database
@@ -80,13 +86,21 @@ exports.findAll = (req, res) => {
     //         [Op.like]: `%${username}%`
     //     }
     // } : null;
-    var condition=null;
+    var condition = null;
 
-    Admin.findAll({
-            where: condition
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    Admin.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
         })
         .then(data => {
             res.send(data);
+
         })
         .catch(err => {
             res.status(500).send({

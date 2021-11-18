@@ -2,7 +2,7 @@ const db = require("../models");
 const Promotion = db.Promotions;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Admin
+// Create and Save a new Promotion
 exports.create = (req, res) => {
     // Validate request
     // if (!req.body.username) {
@@ -12,7 +12,7 @@ exports.create = (req, res) => {
     //     return;
     // }
 
-    // Create a Admin
+    // Create a Promotion
     const promotion = {
         name: req.body.name,
         price: req.body.price,
@@ -20,10 +20,10 @@ exports.create = (req, res) => {
         startDate: req.body.start_date,
         endDate: req.body.end_date,
         status: req.body.status,
-        
+
     };
 
-    // Save Admin in the database
+    // Save Promotion in the database
     Promotion.create(promotion)
         .then(data => {
             res.send(data);
@@ -35,7 +35,7 @@ exports.create = (req, res) => {
         });
 };
 
-// Retrieve all Admins from the database.
+// Retrieve all Promotions from the database.
 exports.findAll = (req, res) => {
     // const username = req.query.username;
     // var condition = username ? {
@@ -43,13 +43,21 @@ exports.findAll = (req, res) => {
     //         [Op.like]: `%${username}%`
     //     }
     // } : null;
-    var condition=null;
+    var condition = null;
 
-    Promotion.findAll({
-            where: condition
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    Promotion.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
         })
         .then(data => {
             res.send(data);
+
         })
         .catch(err => {
             res.status(500).send({
@@ -58,7 +66,7 @@ exports.findAll = (req, res) => {
         });
 };
 
-// Find a single Admin with an id
+// Find a single Promotion with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
@@ -73,7 +81,7 @@ exports.findOne = (req, res) => {
         });
 };
 
-// Update a Admin by the id in the request
+// Update a Promotion by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
 
@@ -100,7 +108,7 @@ exports.update = (req, res) => {
         });
 };
 
-// Delete a Admin with the specified id in the request
+// Delete a Promotion with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
 
@@ -127,7 +135,7 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all Admins from the database.
+// Delete all Promotions from the database.
 exports.deleteAll = (req, res) => {
     Promotion.destroy({
             where: {},
@@ -145,7 +153,7 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published Admin
+// find all published Promotion
 // exports.findAllPublished = (req, res) => {
 //     Promotion.findAll({
 //             where: {

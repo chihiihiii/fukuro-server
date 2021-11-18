@@ -2,7 +2,7 @@ const db = require("../models");
 const CustomerPremium = db.CustomerPremiums;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Admin
+// Create and Save a new CustomerPremium
 exports.create = (req, res) => {
     // Validate request
     // if (!req.body.username) {
@@ -12,15 +12,15 @@ exports.create = (req, res) => {
     //     return;
     // }
 
-    // Create a Admin
+    // Create a CustomerPremium
     const customerPremium = {
         startDate: req.body.start_date,
         endDate: req.body.end_date,
         status: req.body.status,
-        
+
     };
 
-    // Save Admin in the database
+    // Save CustomerPremium in the database
     CustomerPremium.create(customerPremium)
         .then(data => {
             res.send(data);
@@ -32,7 +32,7 @@ exports.create = (req, res) => {
         });
 };
 
-// Retrieve all Admins from the database.
+// Retrieve all CustomerPremiums from the database.
 exports.findAll = (req, res) => {
     // const username = req.query.username;
     // var condition = username ? {
@@ -40,13 +40,21 @@ exports.findAll = (req, res) => {
     //         [Op.like]: `%${username}%`
     //     }
     // } : null;
-    var condition=null;
+    var condition = null;
 
-    CustomerPremium.findAll({
-            where: condition
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    CustomerPremium.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
         })
         .then(data => {
             res.send(data);
+
         })
         .catch(err => {
             res.status(500).send({
@@ -55,7 +63,7 @@ exports.findAll = (req, res) => {
         });
 };
 
-// Find a single Admin with an id
+// Find a single CustomerPremium with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
@@ -70,7 +78,7 @@ exports.findOne = (req, res) => {
         });
 };
 
-// Update a Admin by the id in the request
+// Update a CustomerPremium by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
 
@@ -97,7 +105,7 @@ exports.update = (req, res) => {
         });
 };
 
-// Delete a Admin with the specified id in the request
+// Delete a CustomerPremium with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
 
@@ -124,7 +132,7 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all Admins from the database.
+// Delete all CustomerPremiums from the database.
 exports.deleteAll = (req, res) => {
     CustomerPremium.destroy({
             where: {},
@@ -142,7 +150,7 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published Admin
+// find all published CustomerPremium
 // exports.findAllPublished = (req, res) => {
 //     CustomerPremium.findAll({
 //             where: {

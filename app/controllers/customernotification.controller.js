@@ -2,7 +2,7 @@ const db = require("../models");
 const CustomerNotification = db.CustomerNotifications;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Admin
+// Create and Save a new CustomerNotification
 exports.create = (req, res) => {
     // Validate request
     // if (!req.body.username) {
@@ -12,15 +12,15 @@ exports.create = (req, res) => {
     //     return;
     // }
 
-    // Create a Admin
+    // Create a CustomerNotification
     const customerNotification = {
         message: req.body.message,
         detailUrl: req.body.detail_url,
         status: req.body.status,
-        
+
     };
 
-    // Save Admin in the database
+    // Save CustomerNotification in the database
     CustomerNotification.create(customerNotification)
         .then(data => {
             res.send(data);
@@ -32,7 +32,7 @@ exports.create = (req, res) => {
         });
 };
 
-// Retrieve all Admins from the database.
+// Retrieve all CustomerNotifications from the database.
 exports.findAll = (req, res) => {
     // const username = req.query.username;
     // var condition = username ? {
@@ -40,22 +40,30 @@ exports.findAll = (req, res) => {
     //         [Op.like]: `%${username}%`
     //     }
     // } : null;
-    var condition=null;
+    var condition = null;
 
-    CustomerNotification.findAll({
-            where: condition
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    CustomerNotification.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
         })
         .then(data => {
             res.send(data);
+
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving customer notifications."
+                message: err.message || "Some error occurred while retrieving Customer Notifications."
             });
         });
 };
 
-// Find a single Admin with an id
+// Find a single CustomerNotification with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
@@ -70,7 +78,7 @@ exports.findOne = (req, res) => {
         });
 };
 
-// Update a Admin by the id in the request
+// Update a CustomerNotification by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
 
@@ -97,7 +105,7 @@ exports.update = (req, res) => {
         });
 };
 
-// Delete a Admin with the specified id in the request
+// Delete a CustomerNotification with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
 
@@ -124,7 +132,7 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all Admins from the database.
+// Delete all CustomerNotifications from the database.
 exports.deleteAll = (req, res) => {
     CustomerNotification.destroy({
             where: {},
@@ -142,7 +150,7 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published Admin
+// find all published CustomerNotification
 // exports.findAllPublished = (req, res) => {
 //     CustomerNotification.findAll({
 //             where: {
