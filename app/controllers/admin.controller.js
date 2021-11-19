@@ -56,7 +56,7 @@ exports.create = (req, res) => {
     const admin = {
         avatar: req.body.avatar,
         username: req.body.username,
-        password: req.body.password,
+        password: bcrypt.hashSync(req.body.password, 10),
         email: req.body.email,
         firstName: req.body.first_name,
         lastName: req.body.last_name,
