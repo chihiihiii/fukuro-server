@@ -22,7 +22,7 @@ exports.create = (req, res) => {
         address: req.body.address,
         description: req.body.description,
         status: req.body.status,
-
+        customerId: req.body.customer_id,
     };
 
     // Save RentalNews in the database

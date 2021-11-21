@@ -2,7 +2,7 @@ const db = require("../models");
 const Admin = db.Admins;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 // Admin login
 exports.login = (req, res) => {
@@ -14,7 +14,11 @@ exports.login = (req, res) => {
             }
         })
         .then(data => {
-            if (!bcrypt.compareSync(password, data.dataValues.password)) {
+            var mykey = crypto.createCipher('aes-128-cbc', 'mypassword');
+            mykey.update(password, 'utf8', 'hex')
+            const mystr = mykey.final('hex');
+
+            if (mystr != data.dataValues.password) {
                 const result = {
                     message: "Tên người dùng hoặc mật khẩu không đúng!"
                 }
@@ -45,18 +49,16 @@ exports.login = (req, res) => {
 // Create and Save a new Admin
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+
+    var mykey = crypto.createCipher('aes-128-cbc', 'mypassword');
+    var mystr = mykey.update(req.body.password, 'utf8', 'hex')
+    mystr += mykey.final('hex');
 
     // Create a Admin
     const admin = {
         avatar: req.body.avatar,
         username: req.body.username,
-        password: req.body.password,
+        password: mystr,
         email: req.body.email,
         firstName: req.body.first_name,
         lastName: req.body.last_name,
@@ -115,6 +117,9 @@ exports.findOne = (req, res) => {
 
     Admin.findByPk(id)
         .then(data => {
+            var mykey = crypto.createDecipher('aes-128-cbc', 'mypassword');
+            mykey.update(data.password, 'hex', 'utf8')
+            data.password = mykey.final('utf8');
             res.send(data);
         })
         .catch(err => {
@@ -127,8 +132,22 @@ exports.findOne = (req, res) => {
 // Update a Admin by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
+    var mykey = crypto.createCipher('aes-128-cbc', 'mypassword');
+    var mystr = mykey.update(req.body.password, 'utf8', 'hex')
+    mystr += mykey.final('hex');
+    // Create a Customer
+    const admin = {
+        avatar: req.body.avatar,
+        username: req.body.username,
+        password: mystr,
+        email: req.body.email,
+        firstName: req.body.first_name,
+        lastName: req.body.last_name,
+        phone: req.body.phone,
+        status: req.body.status,
+    };
 
-    Admin.update(req.body, {
+    Admin.update(admin, {
             where: {
                 id: id
             }
