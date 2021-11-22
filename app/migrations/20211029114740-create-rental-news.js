@@ -26,6 +26,12 @@ module.exports = {
       address: {
         type: Sequelize.TEXT
       },
+      area: {
+        type: Sequelize.STRING
+      },
+      slug: {
+        type: Sequelize.TEXT
+      },
       description: {
         type: Sequelize.TEXT
       },

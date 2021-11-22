@@ -20,6 +20,8 @@ exports.create = (req, res) => {
         quantity: req.body.quantity,
         type: req.body.type,
         address: req.body.address,
+        area: req.body.area,
+        slug: req.body.slug,
         description: req.body.description,
         status: req.body.status,
         customerId: req.body.customer_id,

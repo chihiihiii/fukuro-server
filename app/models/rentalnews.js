@@ -32,6 +32,12 @@ module.exports = (sequelize, DataTypes) => {
     address: {
       type: DataTypes.TEXT
     },
+    area: {
+      type: DataTypes.STRING
+    },
+    slug: {
+      type: DataTypes.TEXT
+    },
     description: {
       type: DataTypes.TEXT
     },

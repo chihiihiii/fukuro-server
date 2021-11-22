@@ -15,6 +15,7 @@ exports.create = (req, res) => {
     // Create a BlogCategory
     const blogCategory = {
         name: req.body.name,
+        slug: req.body.slug,
         status: req.body.status,
 
     };
