@@ -38,6 +38,7 @@ require('./app/routes/adminnotification.route')(app);
 require('./app/routes/blog.route')(app);
 require('./app/routes/blogcategory.route')(app);
 require('./app/routes/customer.route')(app);
+require('./app/routes/customercontact.route')(app);
 require('./app/routes/customernotification.route')(app);
 require('./app/routes/customerpremium.route')(app);
 require('./app/routes/premium.route')(app);
