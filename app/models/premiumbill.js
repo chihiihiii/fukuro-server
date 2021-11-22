@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
       field: 'premium_id',
       references: {
         model: {
-          tableName: 'Premiums',
+          tableName: 'PremiumServices',
         },
         key: 'id'
       },

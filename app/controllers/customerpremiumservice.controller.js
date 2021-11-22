@@ -1,8 +1,8 @@
 const db = require("../models");
-const CustomerPremium = db.CustomerPremiums;
+const CustomerPremiumService = db.CustomerPremiumServices;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new CustomerPremium
+// Create and Save a new CustomerPremiumService
 exports.create = (req, res) => {
     // Validate request
     // if (!req.body.username) {
@@ -12,16 +12,16 @@ exports.create = (req, res) => {
     //     return;
     // }
 
-    // Create a CustomerPremium
-    const customerPremium = {
+    // Create a CustomerPremiumService
+    const customerPremiumService = {
         startDate: req.body.start_date,
         endDate: req.body.end_date,
         status: req.body.status,
 
     };
 
-    // Save CustomerPremium in the database
-    CustomerPremium.create(customerPremium)
+    // Save CustomerPremiumService in the database
+    CustomerPremiumService.create(customerPremiumService)
         .then(data => {
             res.send(data);
         })
@@ -32,7 +32,7 @@ exports.create = (req, res) => {
         });
 };
 
-// Retrieve all CustomerPremiums from the database.
+// Retrieve all CustomerPremiumServices from the database.
 exports.findAll = (req, res) => {
     // const username = req.query.username;
     // var condition = username ? {
@@ -47,7 +47,7 @@ exports.findAll = (req, res) => {
     limit = limit ? limit : 6;
     var offset = (page > 0) ? (page - 1) * limit : null;
 
-    CustomerPremium.findAndCountAll({
+    CustomerPremiumService.findAndCountAll({
             where: condition,
             offset: offset,
             limit: limit
@@ -63,11 +63,11 @@ exports.findAll = (req, res) => {
         });
 };
 
-// Find a single CustomerPremium with an id
+// Find a single CustomerPremiumService with an id
 exports.findOne = (req, res) => {
     let id = req.params.id;
 
-    CustomerPremium.findByPk(id)
+    CustomerPremiumService.findByPk(id)
         .then(data => {
             res.send(data);
         })
@@ -78,11 +78,11 @@ exports.findOne = (req, res) => {
         });
 };
 
-// Update a CustomerPremium by the id in the request
+// Update a CustomerPremiumService by the id in the request
 exports.update = (req, res) => {
     let id = req.params.id;
 
-    CustomerPremium.update(req.body, {
+    CustomerPremiumService.update(req.body, {
             where: {
                 id: id
             }
@@ -105,11 +105,11 @@ exports.update = (req, res) => {
         });
 };
 
-// Delete a CustomerPremium with the specified id in the request
+// Delete a CustomerPremiumService with the specified id in the request
 exports.delete = (req, res) => {
     let id = req.params.id;
 
-    CustomerPremium.destroy({
+    CustomerPremiumService.destroy({
             where: {
                 id: id
             }
@@ -132,9 +132,9 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all CustomerPremiums from the database.
+// Delete all CustomerPremiumServices from the database.
 exports.deleteAll = (req, res) => {
-    CustomerPremium.destroy({
+    CustomerPremiumService.destroy({
             where: {},
             truncate: false
         })
@@ -150,9 +150,9 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published CustomerPremium
+// find all published CustomerPremiumService
 // exports.findAllPublished = (req, res) => {
-//     CustomerPremium.findAll({
+//     CustomerPremiumService.findAll({
 //             where: {
 //                 published: true
 //             }

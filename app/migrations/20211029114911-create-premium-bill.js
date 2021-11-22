@@ -45,7 +45,7 @@ module.exports = {
         field: 'premium_id',
         references: {
           model: {
-            tableName: 'Premiums',
+            tableName: 'PremiumServices',
           },
           key: 'id'
         },

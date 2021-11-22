@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Premium extends Model {
+  class CustomerPremiumService extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,26 +13,35 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   };
-  Premium.init({
-    name: {
-      type: DataTypes.STRING
+  CustomerPremiumService.init({
+    startDate: {
+      type: DataTypes.DATE,
+      field: 'start_date'
     },
-    price: {
-      type: DataTypes.DOUBLE
-    },
-    description: {
-      type: DataTypes.TEXT
+    endDate: {
+      type: DataTypes.DATE,
+      field: 'end_date'
     },
     status: {
       type: DataTypes.STRING,
       defaultValue: 1
     },
-    promotionId: {
+    customerId: {
       type: DataTypes.INTEGER,
-      field: 'promotion_id',
+      field: 'customer_id',
       references: {
         model: {
-          tableName: 'Promotions',
+          tableName: 'Customers',
+        },
+        key: 'id'
+      },
+    },
+    premiumId: {
+      type: DataTypes.INTEGER,
+      field: 'premium_id',
+      references: {
+        model: {
+          tableName: 'PremiumServices',
         },
         key: 'id'
       },
@@ -49,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 }, {
     sequelize,
-    modelName: 'Premium',
+    modelName: 'CustomerPremiumService',
   });
-  return Premium;
+  return CustomerPremiumService;
 };

@@ -1,32 +1,41 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Premiums', {
+    await queryInterface.createTable('CustomerPremiumServices', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING
+      startDate: {
+        type: Sequelize.DATE,
+        field: 'start_date'
       },
-      price: {
-        type: Sequelize.DOUBLE
-      },
-      description: {
-        type: Sequelize.TEXT
+      endDate: {
+        type: Sequelize.DATE,
+        field: 'end_date'
       },
       status: {
         type: Sequelize.STRING,
         defaultValue: 1
       },
-      promotionId: {
+      customerId: {
         type: Sequelize.INTEGER,
-        field: 'promotion_id',
+        field: 'customer_id',
         references: {
           model: {
-            tableName: 'Promotions',
+            tableName: 'Customers',
+          },
+          key: 'id'
+        },
+      },
+      premiumId: {
+        type: Sequelize.INTEGER,
+        field: 'premium_id',
+        references: {
+          model: {
+            tableName: 'PremiumServices',
           },
           key: 'id'
         },
@@ -44,6 +53,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Premiums');
+    await queryInterface.dropTable('CustomerPremiumServices');
   }
 };

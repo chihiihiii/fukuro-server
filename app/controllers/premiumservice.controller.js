@@ -1,8 +1,8 @@
 const db = require("../models");
-const Premium = db.Premiums;
+const PremiumService = db.PremiumServices;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Premium
+// Create and Save a new PremiumService
 exports.create = (req, res) => {
     // Validate request
     // if (!req.body.username) {
@@ -12,8 +12,8 @@ exports.create = (req, res) => {
     //     return;
     // }
 
-    // Create a Premium
-    const premium = {
+    // Create a PremiumService
+    const premiumService = {
         name: req.body.name,
         price: req.body.price,
         description: req.body.description,
@@ -21,19 +21,19 @@ exports.create = (req, res) => {
 
     };
 
-    // Save Premium in the database
-    Premium.create(premium)
+    // Save PremiumService in the database
+    PremiumService.create(premiumService)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Premium."
+                message: err.message || "Some error occurred while creating the PremiumService."
             });
         });
 };
 
-// Retrieve all Premiums from the database.
+// Retrieve all PremiumServices from the database.
 exports.findAll = (req, res) => {
     // const username = req.query.username;
     // var condition = username ? {
@@ -48,7 +48,7 @@ exports.findAll = (req, res) => {
     limit = limit ? limit : 6;
     var offset = (page > 0) ? (page - 1) * limit : null;
 
-    Premium.findAndCountAll({
+    PremiumService.findAndCountAll({
             where: condition,
             offset: offset,
             limit: limit
@@ -59,31 +59,31 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving premiums."
+                message: err.message || "Some error occurred while retrieving premium services."
             });
         });
 };
 
-// Find a single Premium with an id
+// Find a single PremiumService with an id
 exports.findOne = (req, res) => {
     let id = req.params.id;
 
-    Premium.findByPk(id)
+    PremiumService.findByPk(id)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Premium with id=" + id
+                message: "Error retrieving PremiumService with id=" + id
             });
         });
 };
 
-// Update a Premium by the id in the request
+// Update a PremiumService by the id in the request
 exports.update = (req, res) => {
     let id = req.params.id;
 
-    Premium.update(req.body, {
+    PremiumService.update(req.body, {
             where: {
                 id: id
             }
@@ -91,26 +91,26 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Premium was updated successfully."
+                    message: "PremiumService was updated successfully."
                 });
             } else {
                 res.send({
-                    message: `Cannot update Premium with id=${id}. Maybe Premium was not found or req.body is empty!`
+                    message: `Cannot update PremiumService with id=${id}. Maybe PremiumService was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Premium with id=" + id
+                message: "Error updating PremiumService with id=" + id
             });
         });
 };
 
-// Delete a Premium with the specified id in the request
+// Delete a PremiumService with the specified id in the request
 exports.delete = (req, res) => {
     let id = req.params.id;
 
-    Premium.destroy({
+    PremiumService.destroy({
             where: {
                 id: id
             }
@@ -118,42 +118,42 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Premium was deleted successfully!"
+                    message: "PremiumService was deleted successfully!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Premium with id=${id}. Maybe Premium was not found!`
+                    message: `Cannot delete PremiumService with id=${id}. Maybe PremiumService was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Premium with id=" + id
+                message: "Could not delete PremiumService with id=" + id
             });
         });
 };
 
-// Delete all Premiums from the database.
+// Delete all PremiumServices from the database.
 exports.deleteAll = (req, res) => {
-    Premium.destroy({
+    PremiumService.destroy({
             where: {},
             truncate: false
         })
         .then(nums => {
             res.send({
-                message: `${nums} Premiums were deleted successfully!`
+                message: `${nums} PremiumServices were deleted successfully!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all premiums."
+                message: err.message || "Some error occurred while removing all premiumservices."
             });
         });
 };
 
-// find all published Premium
+// find all published PremiumService
 // exports.findAllPublished = (req, res) => {
-//     Premium.findAll({
+//     PremiumService.findAll({
 //             where: {
 //                 published: true
 //             }
@@ -163,7 +163,7 @@ exports.deleteAll = (req, res) => {
 //         })
 //         .catch(err => {
 //             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving premiums."
+//                 message: err.message || "Some error occurred while retrieving premiumservices."
 //             });
 //         });
 // };
