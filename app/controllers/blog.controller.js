@@ -71,7 +71,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Blog with an id
 exports.findOne = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Blog.findByPk(id)
         .then(data => {
@@ -86,7 +86,7 @@ exports.findOne = (req, res) => {
 
 // Update a Blog by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Blog.update(req.body, {
             where: {
@@ -113,7 +113,7 @@ exports.update = (req, res) => {
 
 // Delete a Blog with the specified id in the request
 exports.delete = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Blog.destroy({
             where: {

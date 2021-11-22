@@ -63,7 +63,7 @@ exports.findAll = (req, res) => {
 
 // Find a single PasswordReset with an id
 exports.findOne = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     PasswordReset.findByPk(id)
         .then(data => {
@@ -78,7 +78,7 @@ exports.findOne = (req, res) => {
 
 // Update a PasswordReset by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     PasswordReset.update(req.body, {
             where: {
@@ -105,7 +105,7 @@ exports.update = (req, res) => {
 
 // Delete a PasswordReset with the specified id in the request
 exports.delete = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     PasswordReset.destroy({
             where: {

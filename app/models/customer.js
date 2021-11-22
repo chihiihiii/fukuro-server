@@ -18,13 +18,17 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     username: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      unique: true
+
     },
     password: {
       type: DataTypes.STRING
     },
     email: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      unique: true
+
     },
     firstName: {
       type: DataTypes.STRING,
@@ -38,7 +42,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     status: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      defaultValue: 1
     },
     google: {
       type: DataTypes.STRING
@@ -61,6 +66,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Customer',
+
+
   });
+
+  console.log("The table for the User model was just (re)created!");
   return Customer;
 };

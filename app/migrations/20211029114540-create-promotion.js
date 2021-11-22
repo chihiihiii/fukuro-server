@@ -26,7 +26,8 @@ module.exports = {
         field: 'end_date'
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 1
       },
       createdAt: {
         allowNull: false,

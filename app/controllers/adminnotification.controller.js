@@ -64,7 +64,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Admin with an id
 exports.findOne = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     AdminNotification.findByPk(id)
         .then(data => {
@@ -79,7 +79,7 @@ exports.findOne = (req, res) => {
 
 // Update a Admin by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     AdminNotification.update(req.body, {
             where: {
@@ -106,7 +106,7 @@ exports.update = (req, res) => {
 
 // Delete a Admin with the specified id in the request
 exports.delete = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     AdminNotification.destroy({
             where: {

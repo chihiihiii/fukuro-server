@@ -68,7 +68,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Promotion with an id
 exports.findOne = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Promotion.findByPk(id)
         .then(data => {
@@ -83,7 +83,7 @@ exports.findOne = (req, res) => {
 
 // Update a Promotion by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Promotion.update(req.body, {
             where: {
@@ -110,7 +110,7 @@ exports.update = (req, res) => {
 
 // Delete a Promotion with the specified id in the request
 exports.delete = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Promotion.destroy({
             where: {

@@ -66,7 +66,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Comment with an id
 exports.findOne = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Comment.findByPk(id)
         .then(data => {
@@ -81,7 +81,7 @@ exports.findOne = (req, res) => {
 
 // Update a Comment by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Comment.update(req.body, {
             where: {
@@ -108,7 +108,7 @@ exports.update = (req, res) => {
 
 // Delete a Comment with the specified id in the request
 exports.delete = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Comment.destroy({
             where: {

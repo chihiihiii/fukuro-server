@@ -29,10 +29,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     paymentStatus: {
       type: DataTypes.INTEGER,
-      field: 'payment_status'
+      field: 'payment_status',
+      defaultValue: 0
     },
     status: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      defaultValue: 0
     },
     customerId: {
       type: DataTypes.INTEGER,

@@ -66,7 +66,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Rental with an id
 exports.findOne = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Rental.findByPk(id)
         .then(data => {
@@ -81,7 +81,7 @@ exports.findOne = (req, res) => {
 
 // Update a Rental by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Rental.update(req.body, {
             where: {
@@ -108,7 +108,7 @@ exports.update = (req, res) => {
 
 // Delete a Rental with the specified id in the request
 exports.delete = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
 
     Rental.destroy({
             where: {

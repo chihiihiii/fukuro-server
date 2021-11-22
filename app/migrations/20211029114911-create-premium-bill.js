@@ -23,10 +23,12 @@ module.exports = {
       },
       paymentStatus: {
         type: Sequelize.INTEGER,
-        field: 'payment_status'
+        field: 'payment_status',
+        defaultValue: 0
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 0
       },
       customerId: {
         type: Sequelize.INTEGER,

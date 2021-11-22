@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('CustomerPremia', {
+    await queryInterface.createTable('CustomerPremiums', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,7 +17,8 @@ module.exports = {
         field: 'end_date'
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 1
       },
       customerId: {
         type: Sequelize.INTEGER,
@@ -52,6 +53,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('CustomerPremia');
+    await queryInterface.dropTable('CustomerPremiums');
   }
 };

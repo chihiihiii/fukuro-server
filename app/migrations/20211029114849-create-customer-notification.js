@@ -16,7 +16,8 @@ module.exports = {
         field: 'detail_url'
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 0
       },
       customerId: {
         type: Sequelize.INTEGER,

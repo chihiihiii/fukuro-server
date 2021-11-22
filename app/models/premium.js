@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT
     },
     status: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      defaultValue: 1
     },
     promotionId: {
       type: DataTypes.INTEGER,

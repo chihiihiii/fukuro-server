@@ -15,7 +15,8 @@ module.exports = {
         type: Sequelize.TEXT
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 1
       },
       createdAt: {
         allowNull: false,
