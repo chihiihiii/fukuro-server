@@ -9,6 +9,9 @@ module.exports = app => {
     // Retrieve all Comments
     router.get("/", comments.findAll);
 
+    // Retrieve all Comments by Blog
+    router.get("/blog/:id", comments.findByBlog);
+
 
     // Retrieve a single Comment with id
     router.get("/:id", comments.findOne);

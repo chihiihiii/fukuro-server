@@ -156,19 +156,66 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published Blog
-// exports.findAllPublished = (req, res) => {
-//     Blog.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving blogs."
-//             });
-//         });
-// };
+// Retrieve Blogs latest from the database.
+exports.findLatest = (req, res) => {
+    var condition = {
+        status: 1,
+    };
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    Blog.findAndCountAll({
+            where: condition,
+            order: [
+                ['created_at', 'DESC']
+            ],
+            offset: offset,
+            limit: limit
+        })
+        .then(data => {
+            res.send(data);
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving Blogs."
+            });
+        });
+
+
+};
+
+// Retrieve Blogs by category from the database.
+exports.findByCategory = (req, res) => {
+    let id = req.params.id;
+
+    var condition = {
+        blog_category_id: id,
+        status: 1,
+    };
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    Blog.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
+        })
+        .then(data => {
+            res.send(data);
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving Blogs."
+            });
+        });
+
+
+};

@@ -9,6 +9,14 @@ module.exports = app => {
     // Retrieve all RentalNews
     router.get("/", rentalNews.findAll);
 
+    // Retrieve RentalNews latest 
+    router.get("/latest", rentalNews.findLatest);
+    
+    // Retrieve RentalNews priority 
+    router.get("/priority", rentalNews.findPriority);
+   
+    // Retrieve RentalNews by customer 
+    router.get("/customer/:id", rentalNews.findByCustomer);
 
     // Retrieve a single RentalNews with id
     router.get("/:id", rentalNews.findOne);
@@ -21,6 +29,11 @@ module.exports = app => {
 
     // Delete all RentalNews
     router.delete("/", rentalNews.deleteAll);
+
+
+
+
+
 
     app.use('/api/rental-news', router);
 };

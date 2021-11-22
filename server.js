@@ -19,7 +19,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const db = require('./app/models');
-db.sequelize.sync({ alter: true });
+db.sequelize.sync();
+// db.sequelize.sync({ alter: true, force: false });
 
 const storage = multer.diskStorage({
     destination: (req, file, callBack) => {
@@ -47,6 +48,8 @@ require('./app/routes/promotion.route')(app);
 require('./app/routes/rental.route')(app);
 require('./app/routes/rentalbill.route')(app);
 require('./app/routes/rentalnews.route')(app);
+require('./app/routes/comment.route')(app);
+require('./app/routes/passwordreset.route')(app);
 
 
 // simple route

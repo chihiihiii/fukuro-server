@@ -69,7 +69,5 @@ module.exports = (sequelize, DataTypes) => {
 
 
   });
-
-  console.log("The table for the User model was just (re)created!");
   return Customer;
 };

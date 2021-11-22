@@ -157,19 +157,95 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published RentalNews
-// exports.findAllPublished = (req, res) => {
-//     RentalNews.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving rental news."
-//             });
-//         });
-// };
+// Retrieve RentalNews latest from the database.
+exports.findLatest = (req, res) => {
+    var condition = {
+        status: 1,
+    };
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    RentalNews.findAndCountAll({
+            where: condition,
+            order: [
+                ['created_at', 'DESC']
+            ],
+            offset: offset,
+            limit: limit
+        })
+        .then(data => {
+            res.send(data);
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving Rental News."
+            });
+        });
+
+
+};
+
+
+// Retrieve RentalNews priority from the database.
+exports.findPriority = (req, res) => {
+    let id = req.params.id;
+    var condition = {
+        customer_id: id,
+    };
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    RentalNews.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
+        })
+        .then(data => {
+            res.send(data);
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving Rental News."
+            });
+        });
+
+
+};
+
+
+// Retrieve RentalNews by customer from the database.
+exports.findByCustomer = (req, res) => {
+    var condition = {
+        priority: 1,
+    };
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    RentalNews.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
+        })
+        .then(data => {
+            res.send(data);
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving Rental News."
+            });
+        });
+
+
+};

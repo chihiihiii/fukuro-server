@@ -32,6 +32,10 @@ module.exports = {
       slug: {
         type: Sequelize.TEXT
       },
+      priority: {
+        type: Sequelize.STRING,
+        defaultValue: 0
+      },
       description: {
         type: Sequelize.TEXT
       },
