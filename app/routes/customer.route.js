@@ -9,6 +9,9 @@ module.exports = app => {
     // Retrieve all Customers
     router.get("/", customers.findAll);
 
+    
+    // Customer Login
+    router.post("/login", customers.login);
 
     // Retrieve a single Customer with id
     router.get("/:id", customers.findOne);
@@ -22,8 +25,6 @@ module.exports = app => {
     // Delete all Customers
     router.delete("/", customers.deleteAll);
 
-    // Customer Login
-    router.post("/login", customers.login);
 
     app.use('/api/customers', router);
 };

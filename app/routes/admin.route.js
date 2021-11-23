@@ -10,6 +10,10 @@ module.exports = app => {
     router.get("/", admins.findAll);
 
 
+    // Admin Login
+    router.post("/login", admins.login);
+
+    
     // Retrieve a single Admin with id
     router.get("/:id", admins.findOne);
 
@@ -22,8 +26,6 @@ module.exports = app => {
     // Delete all Admins
     router.delete("/", admins.deleteAll);
 
-    // Admin Login
-    router.post("/login", admins.login);
 
     app.use('/api/admins', router);
 };
