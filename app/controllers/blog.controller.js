@@ -219,3 +219,21 @@ exports.findByCategory = (req, res) => {
 
 
 };
+
+// find one Blog by Slug
+exports.findOneBySlug = (req, res) => {
+    let slug = req.params.slug;
+
+    Blog.findOne({
+            where: {
+                slug: slug
+            }
+        }).then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error retrieving Blog with slug=" + slug
+            });
+        });
+};

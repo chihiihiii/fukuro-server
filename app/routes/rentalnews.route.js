@@ -11,10 +11,10 @@ module.exports = app => {
 
     // Retrieve RentalNews latest 
     router.get("/latest", rentalNews.findLatest);
-    
+
     // Retrieve RentalNews priority 
     router.get("/priority", rentalNews.findPriority);
-   
+
     // Retrieve RentalNews by customer 
     router.get("/customer/:id", rentalNews.findByCustomer);
 

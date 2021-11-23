@@ -10,6 +10,10 @@ module.exports = app => {
     router.get("/", blogCategories.findAll);
 
 
+    // Retrieve a single BlogCategory by slug
+    router.get("/slug/:slug", blogCategories.findOneBySlug);
+    
+
     // Retrieve a single BlogCategory with id
     router.get("/:id", blogCategories.findOne);
 

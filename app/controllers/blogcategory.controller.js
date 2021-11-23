@@ -150,19 +150,20 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published BlogCategory
-// exports.findAllPublished = (req, res) => {
-//     BlogCategory.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving blog categories."
-//             });
-//         });
-// };
+// find one BlogCategory by Slug
+exports.findOneBySlug = (req, res) => {
+    let slug = req.params.slug;
+    // res.send('hehehe')
+    BlogCategory.findOne({
+            where: {
+                slug: slug
+            }
+        }).then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error retrieving Blog Category with slug=" + slug
+            });
+        });
+};

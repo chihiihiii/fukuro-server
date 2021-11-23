@@ -16,6 +16,9 @@ module.exports = app => {
     router.get("/category/:id", blogs.findByCategory);
 
 
+    // Retrieve a single Blog by slug
+    router.get("/slug/:slug", blogs.findOneBySlug);
+
     // Retrieve a single Blog with id
     router.get("/:id", blogs.findOne);
 
