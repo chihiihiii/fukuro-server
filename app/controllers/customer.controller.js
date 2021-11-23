@@ -6,35 +6,38 @@ const Sequelize = require('sequelize');
 const crypto = require('crypto');
 
 
-const myKey = crypto.createHmac('sha256', 'mypassword');
+
 //Customer login
 exports.login = (req, res) => {
-    let username = req.body.username;
+    const myKey = crypto.createHmac('sha256', 'mypassword');
+    const username = req.body.username;
     // let password = req.body.password;
+    const password = myKey
+        .update(req.body.password)
+        .digest('hex');
     Customer.findOne({
             where: {
-                username
+                username: username
             }
         })
         .then(data => {
-            let password = myKey
-                .update(req.body.password)
-                .digest('hex');
 
-            if (password != data.dataValues.password) {
-                const result = {
+
+            // res.send(data);
+            if (password != data.password) {
+                let result = {
                     message: "Tên người dùng hoặc mật khẩu không đúng!"
                 }
                 res.status(500).send(result);
             } else {
-                const token = jwt.sign({
-                    username: data.dataValues.username,
-                    password: data.dataValues.password
+                let token = jwt.sign({
+                    username: data.username,
+                    password: data.password
                 }, 'secret', {
                     noTimestamp: true,
                     expiresIn: 60 * 60 * 24 * 7
                 });
-                const result = {
+                let result = {
                     message: "Đăng nhập thành công!",
                     data: data,
                     token: token
@@ -43,15 +46,19 @@ exports.login = (req, res) => {
             }
         })
         .catch(err => {
+            // res.status(500).send({
+            //     message: "Tên người dùng hoặc mật khẩu không đúng!"
+            // });
+            // res.send(username);
             res.status(500).send({
-                message: "Tên người dùng hoặc mật khẩu không đúng!"
+                message: err.message || "Some error occurred while retrieving Customer."
             });
         });
 }
 
 // Create and Save a new Customer
 exports.create = (req, res) => {
-
+    const myKey = crypto.createHmac('sha256', 'mypassword');
     let password = myKey
         .update(req.body.password)
         .digest('hex');
@@ -144,6 +151,7 @@ exports.findOne = (req, res) => {
 
 // Update a Customer by the id in the request
 exports.update = (req, res) => {
+    const myKey = crypto.createHmac('sha256', 'mypassword');
     let id = req.params.id;
     let password = myKey
         .update(req.body.password)

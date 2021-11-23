@@ -4,11 +4,12 @@ const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
-const myKey = crypto.createHmac('sha256', 'mypassword');
+
 
 
 // Admin login
 exports.login = (req, res) => {
+    const myKey = crypto.createHmac('sha256', 'mypassword');
     let username = req.body.username;
     // const password = req.body.password;
 
@@ -53,7 +54,7 @@ exports.login = (req, res) => {
 // Create and Save a new Admin
 exports.create = (req, res) => {
     // Validate request
-
+    const myKey = crypto.createHmac('sha256', 'mypassword');
     let password = myKey
         .update(req.body.password)
         .digest('hex');
@@ -136,6 +137,7 @@ exports.findOne = (req, res) => {
 
 // Update a Admin by the id in the request
 exports.update = (req, res) => {
+    const myKey = crypto.createHmac('sha256', 'mypassword');
     let id = req.params.id;
     let password = myKey
         .update(req.body.password)
@@ -144,7 +146,7 @@ exports.update = (req, res) => {
     const admin = {
         avatar: req.body.avatar,
         username: req.body.username,
-        password: mystr,
+        password: password,
         email: req.body.email,
         firstName: req.body.first_name,
         lastName: req.body.last_name,
