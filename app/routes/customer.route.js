@@ -13,6 +13,10 @@ module.exports = app => {
     // Customer Login
     router.post("/login", customers.login);
 
+    // Customer change password 
+    router.post("/change-password", customers.changePassword);
+
+
     // Retrieve a single Customer with id
     router.get("/:id", customers.findOne);
 

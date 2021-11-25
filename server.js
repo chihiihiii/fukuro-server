@@ -50,6 +50,7 @@ require('./app/routes/rentalbill.route')(app);
 require('./app/routes/rentalnews.route')(app);
 require('./app/routes/comment.route')(app);
 require('./app/routes/passwordreset.route')(app);
+require('./app/routes/bookmark.route')(app);
 
 
 // simple route

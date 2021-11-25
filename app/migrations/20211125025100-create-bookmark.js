@@ -1,18 +1,26 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('PasswordResets', {
+    await queryInterface.createTable('Bookmarks', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      email: {
-        type: Sequelize.STRING,
+      customerId: {
+        type: Sequelize.INTEGER,
+        field: 'customer_id',
+        references: {
+          model: {
+            tableName: 'Customers',
+          },
+          key: 'id'
+        },
       },
-      token: {
-        type: Sequelize.STRING
+      rentalNews: {
+        type: Sequelize.TEXT,
+        field: 'rental_news'
       },
       createdAt: {
         allowNull: false,
@@ -27,6 +35,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('PasswordResets');
+    await queryInterface.dropTable('Bookmarks');
   }
 };

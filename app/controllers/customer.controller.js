@@ -153,14 +153,14 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const myKey = crypto.createHmac('sha256', 'mypassword');
     let id = req.params.id;
-    let password = myKey
-        .update(req.body.password)
-        .digest('hex');
+    // let password = myKey
+    //     .update(req.body.password)
+    //     .digest('hex');
     // Create a Customer
     const customer = {
         avatar: req.body.avatar,
         username: req.body.username,
-        password: password,
+        // password: password,
         email: req.body.email,
         firstName: req.body.first_name,
         lastName: req.body.last_name,
@@ -233,4 +233,69 @@ exports.deleteAll = (req, res) => {
                 message: err.message || "Some error occurred while removing all customers."
             });
         });
+};
+
+// Update password Customer by the id in the request
+exports.changePassword = (req, res) => {
+    let id = req.body.id;
+    let old_password = crypto.createHmac('sha256', 'mypassword')
+        .update(req.body.old_password)
+        .digest('hex');
+    let new_password = crypto.createHmac('sha256', 'mypassword')
+        .update(req.body.new_password)
+        .digest('hex');
+
+    Customer.findOne({
+            where: {
+                id: id,
+                password: old_password
+            }
+        }).then(data => {
+
+            if (data) {
+                const customer = {
+                    password: new_password
+                };
+
+                Customer.update(customer, {
+                        where: {
+                            id: id
+                        }
+                    })
+                    .then(num => {
+                        if (num == 1) {
+                            res.send({
+                                message: "Customer was updated password successfully."
+                            });
+                        } else {
+                            res.send({
+                                message: `Cannot update Customer password with id=${id}. Maybe Customer was not found or req.body is empty!`
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: "Error updating Customer with id=" + id
+                        });
+                    });
+
+            } else {
+                res.send('Old pass incorrect');
+
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error retrieving Customer with id=" + id
+            });
+        });
+
+};
+
+// Update password Customer by the id in the request
+exports.forgotPassword = (req, res) => {
+    let username = req.body.username;
+    let email = req.body.email;
+    
+
 };
