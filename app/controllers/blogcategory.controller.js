@@ -5,12 +5,12 @@ const Op = db.Sequelize.Op;
 // Create and Save a new BlogCategory
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.name) {
+        res.status(400).send({
+            message: "Không để trống tên loại bài viết!"
+        });
+        return;
+    }
 
     // Create a BlogCategory
     const blogCategory = {
@@ -32,15 +32,13 @@ exports.create = (req, res) => {
         });
 };
 
-// Retrieve all BlogCategorys from the database.
+// Retrieve all BlogCategory from the database.
 exports.findAll = (req, res) => {
-    // const username = req.query.username;
-    // var condition = username ? {
-    //     username: {
-    //         [Op.like]: `%${username}%`
-    //     }
-    // } : null;
-    var condition = null;
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
+    var condition = {
+        status: status
+    };
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -65,7 +63,7 @@ exports.findAll = (req, res) => {
 
 // Find a single BlogCategory with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     BlogCategory.findByPk(id)
         .then(data => {
@@ -80,7 +78,7 @@ exports.findOne = (req, res) => {
 
 // Update a BlogCategory by the id in the request
 exports.update = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     BlogCategory.update(req.body, {
             where: {
@@ -107,7 +105,7 @@ exports.update = (req, res) => {
 
 // Delete a BlogCategory with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     BlogCategory.destroy({
             where: {
@@ -132,7 +130,7 @@ exports.delete = (req, res) => {
         });
 };
 
-// Delete all BlogCategorys from the database.
+// Delete all BlogCategory from the database.
 exports.deleteAll = (req, res) => {
     BlogCategory.destroy({
             where: {},
@@ -152,14 +150,21 @@ exports.deleteAll = (req, res) => {
 
 // find one BlogCategory by Slug
 exports.findOneBySlug = (req, res) => {
-    let slug = req.params.slug;
-    // res.send('hehehe')
+    var slug = req.params.slug;
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
+    var condition = {
+        status: status,
+        slug: slug
+    };
     BlogCategory.findOne({
-            where: {
-                slug: slug
-            }
+            where: condition
         }).then(data => {
-            res.send(data);
+            if (data) {
+                res.send(data);
+            } else {
+                res.send(`Không tồn tại bài viết với slug = ${slug} hoặc bài viết đã bị vô hiệu hóa!`)
+            }
         })
         .catch(err => {
             res.status(500).send({

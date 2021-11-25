@@ -9,9 +9,17 @@ const crypto = require('crypto');
 
 //Customer login
 exports.login = (req, res) => {
-    const myKey = crypto.createHmac('sha256', 'mypassword');
+    // Validate request
+    if (!req.body.username || !req.body.password) {
+        res.status(400).send({
+            message: "Không để trống tên đăng nhập hoặc mật khẩu!"
+        });
+        return;
+    }
+
+    const myKey = crypto.createHmac('sha256', process.env.SECRETKEY);
     const username = req.body.username;
-    // let password = req.body.password;
+    // var password = req.body.password;
     const password = myKey
         .update(req.body.password)
         .digest('hex');
@@ -21,23 +29,21 @@ exports.login = (req, res) => {
             }
         })
         .then(data => {
-
-
             // res.send(data);
             if (password != data.password) {
-                let result = {
+                var result = {
                     message: "Tên người dùng hoặc mật khẩu không đúng!"
                 }
                 res.status(500).send(result);
             } else {
-                let token = jwt.sign({
+                var token = jwt.sign({
                     username: data.username,
                     password: data.password
                 }, 'secret', {
                     noTimestamp: true,
                     expiresIn: 60 * 60 * 24 * 7
                 });
-                let result = {
+                var result = {
                     message: "Đăng nhập thành công!",
                     data: data,
                     token: token
@@ -46,10 +52,6 @@ exports.login = (req, res) => {
             }
         })
         .catch(err => {
-            // res.status(500).send({
-            //     message: "Tên người dùng hoặc mật khẩu không đúng!"
-            // });
-            // res.send(username);
             res.status(500).send({
                 message: err.message || "Some error occurred while retrieving Customer."
             });
@@ -58,8 +60,16 @@ exports.login = (req, res) => {
 
 // Create and Save a new Customer
 exports.create = (req, res) => {
-    const myKey = crypto.createHmac('sha256', 'mypassword');
-    let password = myKey
+    // Validate request
+    if (!req.body.username || !req.body.password) {
+        res.status(400).send({
+            message: "Không để trống tên đăng nhập hoặc mật khẩu!"
+        });
+        return;
+    }
+
+    const myKey = crypto.createHmac('sha256', process.env.SECRETKEY);
+    var password = myKey
         .update(req.body.password)
         .digest('hex');
     // Create a Customer
@@ -89,27 +99,11 @@ exports.create = (req, res) => {
 
 // Retrieve all Customers from the database.
 exports.findAll = (req, res) => {
-    // let username = req.query.username;
-    // var condition = username ? {
-    //     username: {
-    //         [Op.like]: `%${username}%`
-    //     }
-    // } : null;
-    var condition = null;
-
-
-
-    // Customer.findAll({
-    //         where: condition
-    //     })
-    //     .then(data => {
-    //         res.send(data);
-    //     })
-    //     .catch(err => {
-    //         res.status(500).send({
-    //             message: err.message || "Some error occurred while retrieving customers."
-    //         });
-    //     });
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
+    var condition = {
+        status: status
+    };
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -134,10 +128,10 @@ exports.findAll = (req, res) => {
 
 // Find a single Customer with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
     Customer.findByPk(id)
         .then(data => {
-            // var mykey = crypto.createDecipher('aes-128-cbc', 'mypassword');
+            // var mykey = crypto.createDecipher('aes-128-cbc', process.env.SECRETKEY);
             // mykey.update(data.password, 'hex', 'utf8')
             // data.password = mykey.final('utf8');
             res.send(data);
@@ -151,9 +145,9 @@ exports.findOne = (req, res) => {
 
 // Update a Customer by the id in the request
 exports.update = (req, res) => {
-    const myKey = crypto.createHmac('sha256', 'mypassword');
-    let id = req.params.id;
-    // let password = myKey
+    const myKey = crypto.createHmac('sha256', process.env.SECRETKEY);
+    var id = req.params.id;
+    // var password = myKey
     //     .update(req.body.password)
     //     .digest('hex');
     // Create a Customer
@@ -192,7 +186,7 @@ exports.update = (req, res) => {
 
 // Delete a Customer with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     Customer.destroy({
             where: {
@@ -237,11 +231,11 @@ exports.deleteAll = (req, res) => {
 
 // Update password Customer by the id in the request
 exports.changePassword = (req, res) => {
-    let id = req.body.id;
-    let old_password = crypto.createHmac('sha256', 'mypassword')
+    var id = req.body.id;
+    var old_password = crypto.createHmac('sha256', process.env.SECRETKEY)
         .update(req.body.old_password)
         .digest('hex');
-    let new_password = crypto.createHmac('sha256', 'mypassword')
+    var new_password = crypto.createHmac('sha256', process.env.SECRETKEY)
         .update(req.body.new_password)
         .digest('hex');
 
@@ -294,8 +288,8 @@ exports.changePassword = (req, res) => {
 
 // Update password Customer by the id in the request
 exports.forgotPassword = (req, res) => {
-    let username = req.body.username;
-    let email = req.body.email;
-    
+    var username = req.body.username;
+    var email = req.body.email;
+
 
 };

@@ -5,12 +5,12 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Blog
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.title) {
+        res.status(400).send({
+            message: "Không để trống tựa bài viết!"
+        });
+        return;
+    }
 
     // Create a Blog
     const blog = {
@@ -40,14 +40,13 @@ exports.create = (req, res) => {
 
 // Retrieve all Blogs from the database.
 exports.findAll = (req, res) => {
-    // const username = req.query.username;
-    // var condition = username ? {
-    //     username: {
-    //         [Op.like]: `%${username}%`
-    //     }
-    // } : null;
-    
-    var condition = null;
+
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
+    var condition = {
+        status: status
+    };
+
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
@@ -71,7 +70,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Blog with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     Blog.findByPk(id)
         .then(data => {
@@ -86,7 +85,7 @@ exports.findOne = (req, res) => {
 
 // Update a Blog by the id in the request
 exports.update = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     Blog.update(req.body, {
             where: {
@@ -113,7 +112,7 @@ exports.update = (req, res) => {
 
 // Delete a Blog with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     Blog.destroy({
             where: {
@@ -158,8 +157,11 @@ exports.deleteAll = (req, res) => {
 
 // Retrieve Blogs latest from the database.
 exports.findLatest = (req, res) => {
+
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
     var condition = {
-        status: 1,
+        status: status
     };
 
     var page = +req.query.page;
@@ -190,11 +192,13 @@ exports.findLatest = (req, res) => {
 
 // Retrieve Blogs by category from the database.
 exports.findByCategory = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
     var condition = {
+        status: status,
         blog_category_id: id,
-        status: 1,
     };
 
     var page = +req.query.page;
@@ -222,7 +226,7 @@ exports.findByCategory = (req, res) => {
 
 // find one Blog by Slug
 exports.findOneBySlug = (req, res) => {
-    let slug = req.params.slug;
+    var slug = req.params.slug;
 
     Blog.findOne({
             where: {

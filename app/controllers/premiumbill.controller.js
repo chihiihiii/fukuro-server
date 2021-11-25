@@ -68,7 +68,7 @@ exports.findAll = (req, res) => {
 
 // Find a single PremiumBill with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     PremiumBill.findByPk(id)
         .then(data => {
@@ -83,7 +83,7 @@ exports.findOne = (req, res) => {
 
 // Update a PremiumBill by the id in the request
 exports.update = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     PremiumBill.update(req.body, {
             where: {
@@ -110,7 +110,7 @@ exports.update = (req, res) => {
 
 // Delete a PremiumBill with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     PremiumBill.destroy({
             where: {

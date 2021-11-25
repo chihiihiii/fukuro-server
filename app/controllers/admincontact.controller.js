@@ -69,7 +69,7 @@ exports.findAll = (req, res) => {
 
 // Find a single AdminContact with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     AdminContact.findByPk(id)
         .then(data => {
@@ -84,7 +84,7 @@ exports.findOne = (req, res) => {
 
 // Update a AdminContact by the id in the request
 exports.update = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     AdminContact.update(req.body, {
             where: {
@@ -111,7 +111,7 @@ exports.update = (req, res) => {
 
 // Delete a AdminContact with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     AdminContact.destroy({
             where: {

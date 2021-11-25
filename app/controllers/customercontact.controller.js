@@ -5,12 +5,12 @@ const Op = db.Sequelize.Op;
 // Create and Save a new CustomerContact
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.first_name || !req.body.first_name) {
+        res.status(400).send({
+            message: "Không để trống tên!"
+        });
+        return;
+    }
 
     // Create a CustomerContact
     const customerContact = {
@@ -37,13 +37,12 @@ exports.create = (req, res) => {
 
 // Retrieve all CustomerContacts from the database.
 exports.findAll = (req, res) => {
-    // const username = req.query.username;
-    // var condition = username ? {
-    //     username: {
-    //         [Op.like]: `%${username}%`
-    //     }
-    // } : null;
-    var condition = null;
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
+    var condition = {
+        status: status
+    };
+
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -68,7 +67,7 @@ exports.findAll = (req, res) => {
 
 // Find a single CustomerContact with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     CustomerContact.findByPk(id)
         .then(data => {
@@ -83,7 +82,7 @@ exports.findOne = (req, res) => {
 
 // Update a CustomerContact by the id in the request
 exports.update = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     CustomerContact.update(req.body, {
             where: {
@@ -110,7 +109,7 @@ exports.update = (req, res) => {
 
 // Delete a CustomerContact with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     CustomerContact.destroy({
             where: {
@@ -152,20 +151,3 @@ exports.deleteAll = (req, res) => {
             });
         });
 };
-
-// find all published CustomerContact
-// exports.findAllPublished = (req, res) => {
-//     CustomerContact.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving customer contacts."
-//             });
-//         });
-// };

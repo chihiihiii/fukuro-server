@@ -35,13 +35,12 @@ exports.create = (req, res) => {
 
 // Retrieve all PremiumServices from the database.
 exports.findAll = (req, res) => {
-    // const username = req.query.username;
-    // var condition = username ? {
-    //     username: {
-    //         [Op.like]: `%${username}%`
-    //     }
-    // } : null;
-    var condition = null;
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
+    var condition = {
+        status: status
+    };
+
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -66,7 +65,7 @@ exports.findAll = (req, res) => {
 
 // Find a single PremiumService with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     PremiumService.findByPk(id)
         .then(data => {
@@ -81,7 +80,7 @@ exports.findOne = (req, res) => {
 
 // Update a PremiumService by the id in the request
 exports.update = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     PremiumService.update(req.body, {
             where: {
@@ -108,7 +107,7 @@ exports.update = (req, res) => {
 
 // Delete a PremiumService with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     PremiumService.destroy({
             where: {

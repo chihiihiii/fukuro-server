@@ -6,14 +6,14 @@ const Op = db.Sequelize.Op;
 // update Bookmark by Customer id 
 exports.updateByCustomerId = (req, res) => {
     // Validate request
-    if (!req.body.customer_id) {
-        res.status(400).send({
-            message: "customer_id can not be empty!"
-        });
-        return;
-    }
+    // if (!req.query.customer_id) {
+    //     res.status(400).send({
+    //         message: "Không để trống id tài khoản người dùng!"
+    //     });
+    //     return;
+    // }
 
-    var customerId = req.body.customer_id;
+    var customerId = req.params.id;
     var rentalNews = req.body.rental_news;
 
 
@@ -66,9 +66,12 @@ exports.updateByCustomerId = (req, res) => {
             } else {
                 // Create and Save a new Bookmark (if not exist)
                 // Create a Bookmark
+                // res.send(customerId);
                 const bookmark = {
-                    rental_news: rentalNews,
+                    customerId: customerId,
+                    rentalNews: rentalNews,
                 };
+                // res.send(bookmark);
                 // Save Bookmark in the database
                 Bookmark.create(bookmark)
                     .then(data => {
@@ -93,13 +96,11 @@ exports.updateByCustomerId = (req, res) => {
 
 // Retrieve all Bookmarks from the database.
 exports.findAll = (req, res) => {
-    // const username = req.query.username;
-    // var condition = username ? {
-    //     username: {
-    //         [Op.like]: `%${username}%`
-    //     }
-    // } : null;
-    var condition = null;
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
+    var condition = {
+        status: status
+    };
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -125,7 +126,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Bookmark with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     Bookmark.findByPk(id)
         .then(data => {
@@ -140,7 +141,7 @@ exports.findOne = (req, res) => {
 
 // Update a Bookmark by the id in the request
 exports.update = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     Bookmark.update(req.body, {
             where: {
@@ -167,7 +168,7 @@ exports.update = (req, res) => {
 
 // Delete a Bookmark with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     Bookmark.destroy({
             where: {
@@ -212,7 +213,7 @@ exports.deleteAll = (req, res) => {
 
 // Delete a Bookmark with customer id
 exports.deleteAllByCustomerId = (req, res) => {
-    let customerId = req.params.id;
+    var customerId = req.params.id;
 
     Bookmark.destroy({
             where: {
@@ -240,7 +241,7 @@ exports.deleteAllByCustomerId = (req, res) => {
 // find Bookmark By customer is
 exports.findAllByCustomerId = (req, res) => {
     // var rentalNewsArray = data.rentalNews.split(',');
-    let customerId = req.params.id;
+    var customerId = req.params.id;
 
     Bookmark.findOne({
             where: {
@@ -253,7 +254,12 @@ exports.findAllByCustomerId = (req, res) => {
 
                 var results = [];
                 rentalNewsArray.forEach((value, index, array) => {
-                    RentalNews.findByPk(parseInt(value)).then(data => {
+                    RentalNews.findOne({
+                            where: {
+                                id: parseInt(value),
+                                status: 1
+                            }
+                        }).then(data => {
 
                             if (data) {
                                 results.push(data);

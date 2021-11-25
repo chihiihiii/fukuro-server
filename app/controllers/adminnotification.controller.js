@@ -5,12 +5,12 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Admin
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.message || !req.body.detail_url) {
+        res.status(400).send({
+            message: "Không được để trống nội dung thông báo hoặc chi tiết url!"
+        });
+        return;
+    }
 
     // Create a Admin
     const adminNotification = {
@@ -64,7 +64,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Admin with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     AdminNotification.findByPk(id)
         .then(data => {
@@ -79,7 +79,7 @@ exports.findOne = (req, res) => {
 
 // Update a Admin by the id in the request
 exports.update = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     AdminNotification.update(req.body, {
             where: {
@@ -106,7 +106,7 @@ exports.update = (req, res) => {
 
 // Delete a Admin with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     AdminNotification.destroy({
             where: {

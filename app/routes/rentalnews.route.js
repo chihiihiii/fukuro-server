@@ -16,7 +16,7 @@ module.exports = app => {
     router.get("/priority", rentalNews.findPriority);
 
     // Retrieve RentalNews by customer 
-    router.get("/customer/:id", rentalNews.findByCustomer);
+    router.get("/customer/:id", rentalNews.findByCustomerId);
 
     // Retrieve a single RentalNews with id
     router.get("/:id", rentalNews.findOne);

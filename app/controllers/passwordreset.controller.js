@@ -5,12 +5,12 @@ const Op = db.Sequelize.Op;
 // Create and Save a new PasswordReset
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.email || !req.body.token) {
+        res.status(400).send({
+            message: "Content can not be empty!"
+        });
+        return;
+    }
 
     // Create a PasswordReset
     const passwordReset = {
@@ -63,7 +63,7 @@ exports.findAll = (req, res) => {
 
 // Find a single PasswordReset with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     PasswordReset.findByPk(id)
         .then(data => {
@@ -78,7 +78,7 @@ exports.findOne = (req, res) => {
 
 // Update a PasswordReset by the id in the request
 exports.update = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     PasswordReset.update(req.body, {
             where: {
@@ -105,7 +105,7 @@ exports.update = (req, res) => {
 
 // Delete a PasswordReset with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     PasswordReset.destroy({
             where: {

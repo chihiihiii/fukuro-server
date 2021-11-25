@@ -65,7 +65,7 @@ exports.findAll = (req, res) => {
 
 // Find a single CustomerNotification with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     CustomerNotification.findByPk(id)
         .then(data => {
@@ -80,7 +80,7 @@ exports.findOne = (req, res) => {
 
 // Update a CustomerNotification by the id in the request
 exports.update = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     CustomerNotification.update(req.body, {
             where: {
@@ -107,7 +107,7 @@ exports.update = (req, res) => {
 
 // Delete a CustomerNotification with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     CustomerNotification.destroy({
             where: {

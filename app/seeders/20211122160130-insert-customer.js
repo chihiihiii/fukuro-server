@@ -5,7 +5,7 @@ const crypto = require('crypto');
 module.exports = {
   up: async (queryInterface, Sequelize) => {
 
-    const password = crypto.createHmac('sha256', 'mypassword')
+    const password = crypto.createHmac('sha256', process.env.SECRETKEY)
       .update('123456')
       .digest('hex');
 

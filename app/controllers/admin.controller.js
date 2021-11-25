@@ -9,34 +9,41 @@ const crypto = require('crypto');
 
 // Admin login
 exports.login = (req, res) => {
-    const myKey = crypto.createHmac('sha256', 'mypassword');
-    let username = req.body.username;
-    // const password = req.body.password;
+    // Validate request
+    if (!req.body.username || !req.body.password) {
+        res.status(400).send({
+            message: "Không để trống tên đăng nhập hoặc mật khẩu!"
+        });
+        return;
+    }
 
+    const myKey = crypto.createHmac('sha256', process.env.SECRETKEY);
+    const username = req.body.username;
+    // var password = req.body.password;
+    const password = myKey
+        .update(req.body.password)
+        .digest('hex');
     Admin.findOne({
             where: {
-                username
+                username: username
             }
         })
         .then(data => {
-            let password = myKey
-                .update(req.body.password)
-                .digest('hex');
-
-            if (password != data.dataValues.password) {
-                const result = {
+            // res.send(data);
+            if (password != data.password) {
+                var result = {
                     message: "Tên người dùng hoặc mật khẩu không đúng!"
                 }
                 res.status(500).send(result);
             } else {
-                const token = jwt.sign({
-                    username: data.dataValues.username,
-                    password: data.dataValues.password
+                var token = jwt.sign({
+                    username: data.username,
+                    password: data.password
                 }, 'secret', {
                     noTimestamp: true,
                     expiresIn: 60 * 60 * 24 * 7
                 });
-                const result = {
+                var result = {
                     message: "Đăng nhập thành công!",
                     data: data,
                     token: token
@@ -46,16 +53,24 @@ exports.login = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Tên người dùng hoặc mật khẩu không đúng!"
+                message: err.message || "Some error occurred while retrieving Admin."
             });
         });
 }
 
 // Create and Save a new Admin
 exports.create = (req, res) => {
+
     // Validate request
-    const myKey = crypto.createHmac('sha256', 'mypassword');
-    let password = myKey
+    if (!req.body.username || !req.body.password) {
+        res.status(400).send({
+            message: "Không để trống tên đăng nhập hoặc mật khẩu!"
+        });
+        return;
+    }
+
+    const myKey = crypto.createHmac('sha256', process.env.SECRETKEY);
+    var password = myKey
         .update(req.body.password)
         .digest('hex');
 
@@ -87,13 +102,11 @@ exports.create = (req, res) => {
 
 // Retrieve all Admins from the database.
 exports.findAll = (req, res) => {
-    // let username = req.query.username;
-    // var condition = username ? {
-    //     username: {
-    //         [Op.like]: `%${username}%`
-    //     }
-    // } : null;
-    var condition = null;
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
+    var condition = {
+        status: status
+    };
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -118,12 +131,12 @@ exports.findAll = (req, res) => {
 
 // Find a single Admin with an id
 exports.findOne = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     Admin.findByPk(id)
         .then(data => {
 
-            // var mykey = crypto.createDecipher('aes-128-cbc', 'mypassword');
+            // var mykey = crypto.createDecipher('aes-128-cbc', process.env.SECRETKEY);
             // mykey.update(data.password, 'hex', 'utf8')
             // data.password = mykey.final('utf8');
             res.send(data);
@@ -137,12 +150,12 @@ exports.findOne = (req, res) => {
 
 // Update a Admin by the id in the request
 exports.update = (req, res) => {
-    const myKey = crypto.createHmac('sha256', 'mypassword');
-    let id = req.params.id;
-    let password = myKey
+    const myKey = crypto.createHmac('sha256', process.env.SECRETKEY);
+    var id = req.params.id;
+    var password = myKey
         .update(req.body.password)
         .digest('hex');
-    // Create a Customer
+    // Create a Admin
     const admin = {
         avatar: req.body.avatar,
         username: req.body.username,
@@ -179,7 +192,7 @@ exports.update = (req, res) => {
 
 // Delete a Admin with the specified id in the request
 exports.delete = (req, res) => {
-    let id = req.params.id;
+    var id = req.params.id;
 
     Admin.destroy({
             where: {
