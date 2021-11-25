@@ -193,7 +193,8 @@ exports.findLatest = (req, res) => {
 exports.findPriority = (req, res) => {
     var id = req.params.id;
     var condition = {
-        customer_id: id,
+        priority: 1,
+        status: 1
     };
 
     var page = +req.query.page;
@@ -223,7 +224,7 @@ exports.findPriority = (req, res) => {
 // Retrieve RentalNews by customer from the database.
 exports.findByCustomerId = (req, res) => {
     var condition = {
-        priority: 1,
+        status: 1,
     };
 
     var page = +req.query.page;

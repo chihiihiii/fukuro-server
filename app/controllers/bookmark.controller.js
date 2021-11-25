@@ -96,12 +96,13 @@ exports.updateByCustomerId = (req, res) => {
 
 // Retrieve all Bookmarks from the database.
 exports.findAll = (req, res) => {
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
-    var condition = {
-        status: status
-    };
+    // var status = +req.query.status;
+    // status = (status == 'both') ? null : 1;
+    // var condition = {
+    //     status: status
+    // };
 
+    var condition=null;
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
