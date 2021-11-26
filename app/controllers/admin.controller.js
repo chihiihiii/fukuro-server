@@ -1,5 +1,6 @@
 const db = require("../models");
 const Admin = db.Admins;
+const PasswordReset = db.PasswordResets;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');

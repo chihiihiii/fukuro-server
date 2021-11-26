@@ -3,7 +3,7 @@ const PasswordReset = db.PasswordResets;
 const Customer = db.Customers;
 const Admin = db.Admins;
 const Op = db.Sequelize.Op;
-
+const crypto = require('crypto');
 
 
 
