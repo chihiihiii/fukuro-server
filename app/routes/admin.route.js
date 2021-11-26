@@ -20,6 +20,10 @@ module.exports = app => {
     router.post("/forgot-password", admins.forgotPassword);
 
 
+    // Admin request contact form to customer 
+    router.post("/request-contact", admins.requestContact);
+
+
     // Retrieve a single Admin with id
     router.get("/:id", admins.findOne);
 

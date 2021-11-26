@@ -4,6 +4,7 @@ const PasswordReset = db.PasswordResets;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 
 
@@ -305,14 +306,11 @@ exports.forgotPassword = (req, res) => {
     }
     // res.send(condition);
 
-
-
     Admin.findOne({
             where: condition
         })
         .then(data => {
             // res.send(data);
-
 
             if (data) {
 
@@ -341,7 +339,6 @@ exports.forgotPassword = (req, res) => {
                 }).then(data => {
 
                     if (data) {
-
 
                         var passwordReset = {
                             token: token
@@ -415,10 +412,6 @@ exports.forgotPassword = (req, res) => {
                 });
 
 
-
-
-
-
             } else {
                 res.send('Tên đăng nhập hoặc email không chính xác!');
 
@@ -437,11 +430,47 @@ exports.forgotPassword = (req, res) => {
 };
 
 
+// Request contact form
+exports.requestContact = (req, res) => {
 
-// Update password Admin by the id in the request
-exports.forgotPassword = (req, res) => {
-    var username = req.body.username;
+    // Validate request
+    if (!req.body.subject || !req.body.message || !req.body.email) {
+        res.status(400).send({
+            message: "Không để trống chủ đề, nội dung hoặc email!"
+        });
+        return;
+    }
+
+
+    var subject = req.body.subject;
+    var message = req.body.message;
     var email = req.body.email;
+
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.SEND_MAIL_USER,
+            pass: process.env.SEND_MAIL_PASS
+        }
+    });
+
+    var mailOptions = {
+        from: process.env.SEND_MAIL_USER,
+        to: email,
+        subject: subject,
+        text: message,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            // console.log(error);
+            res.send(error);
+        } else {
+            // console.log('Email sent: ' + info.response);
+            res.send('Email sent ' + info.response);
+
+        }
+    });
 
 
 };
