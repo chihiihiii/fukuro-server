@@ -16,6 +16,9 @@ module.exports = app => {
     // Customer change password 
     router.post("/change-password", customers.changePassword);
 
+    // Customer forgot password 
+    router.post("/forgot-password", customers.forgotPassword);
+
 
     // Retrieve a single Customer with id
     router.get("/:id", customers.findOne);

@@ -4,7 +4,8 @@ const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
 const Sequelize = require('sequelize');
 const crypto = require('crypto');
-
+const nodemailer = require('nodemailer');
+const PasswordReset = db.PasswordResets;
 
 
 //Customer login
@@ -17,7 +18,7 @@ exports.login = (req, res) => {
         return;
     }
 
-    const myKey = crypto.createHmac('sha256', process.env.SECRETKEY);
+    const myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
     const username = req.body.username;
     // var password = req.body.password;
     const password = myKey
@@ -68,7 +69,7 @@ exports.create = (req, res) => {
         return;
     }
 
-    const myKey = crypto.createHmac('sha256', process.env.SECRETKEY);
+    const myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
     var password = myKey
         .update(req.body.password)
         .digest('hex');
@@ -130,7 +131,7 @@ exports.findOne = (req, res) => {
     var id = req.params.id;
     Customer.findByPk(id)
         .then(data => {
-            // var mykey = crypto.createDecipher('aes-128-cbc', process.env.SECRETKEY);
+            // var mykey = crypto.createDecipher('aes-128-cbc', process.env.SECRET_KEY);
             // mykey.update(data.password, 'hex', 'utf8')
             // data.password = mykey.final('utf8');
             res.send(data);
@@ -144,7 +145,7 @@ exports.findOne = (req, res) => {
 
 // Update a Customer by the id in the request
 exports.update = (req, res) => {
-    const myKey = crypto.createHmac('sha256', process.env.SECRETKEY);
+    const myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
     var id = req.params.id;
     // var password = myKey
     //     .update(req.body.password)
@@ -231,10 +232,10 @@ exports.deleteAll = (req, res) => {
 // Update password Customer by the id in the request
 exports.changePassword = (req, res) => {
     var id = req.body.id;
-    var old_password = crypto.createHmac('sha256', process.env.SECRETKEY)
+    var old_password = crypto.createHmac('sha256', process.env.SECRET_KEY)
         .update(req.body.old_password)
         .digest('hex');
-    var new_password = crypto.createHmac('sha256', process.env.SECRETKEY)
+    var new_password = crypto.createHmac('sha256', process.env.SECRET_KEY)
         .update(req.body.new_password)
         .digest('hex');
 
@@ -289,6 +290,140 @@ exports.changePassword = (req, res) => {
 exports.forgotPassword = (req, res) => {
     var username = req.body.username;
     var email = req.body.email;
+
+    var condition = {
+        username: username,
+        email: email
+    }
+    // res.send(condition);
+
+
+
+    Customer.findOne({
+            where: condition
+        })
+        .then(data => {
+            // res.send(data);
+
+
+            if (data) {
+
+                var token = crypto.randomBytes(32).toString('hex');
+
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.SEND_MAIL_USER,
+                        pass: process.env.SEND_MAIL_PASS
+                    }
+                });
+
+                var mailOptions = {
+                    from: process.env.SEND_MAIL_USER,
+                    to: email,
+                    subject: 'Reset Password for ' + username,
+                    // text: 'hahahaha',
+                    html: `<a href="${process.env.PORT_CLIENT}/password-resets?email=${email}&token=${token}">Đặt lại mật khẩu</a>`
+                };
+
+                PasswordReset.findOne({
+                    where: {
+                        email: email
+                    }
+                }).then(data => {
+
+                    if (data) {
+
+
+                        var passwordReset = {
+                            token: token
+                        }
+                        // res.send(passwordReset);
+                        // Save token in the database
+                        PasswordReset.update(passwordReset, {
+                                where: {
+                                    email: email
+                                }
+                            })
+                            .then(num => {
+                                if (num == 1) {
+                                    transporter.sendMail(mailOptions, function (error, info) {
+                                        if (error) {
+                                            // console.log(error);
+                                            res.send(error);
+                                        } else {
+                                            // console.log('Email sent: ' + info.response);
+                                            res.send('Email sent: ' + info.response);
+
+                                        }
+                                    });
+                                } else {
+                                    res.send({
+                                        message: 'Lỗi update token in Password Reset'
+                                    });
+                                }
+                            })
+                            .catch(err => {
+                                res.status(500).send({
+                                    message: err.message || "Some error occurred while creating the Password Reset."
+                                });
+                            });
+
+
+                    } else {
+
+                        var passwordReset = {
+                            email: email,
+                            token: token
+                        }
+                        // res.send(passwordReset);
+                        // Save token in the database
+                        PasswordReset.create(passwordReset)
+                            .then(data => {
+                                // res.send(data);
+
+                                transporter.sendMail(mailOptions, function (error, info) {
+                                    if (error) {
+                                        // console.log(error);
+                                        res.send(error);
+                                    } else {
+                                        // console.log('Email sent: ' + info.response);
+                                        res.send('Email sent: ' + info.response);
+
+                                    }
+                                });
+
+                            })
+                            .catch(err => {
+                                res.status(500).send({
+                                    message: err.message || "Some error occurred while creating the Password Reset."
+                                });
+                            });
+
+
+                    }
+
+
+                });
+
+
+
+
+
+
+            } else {
+                res.send('Tên đăng nhập hoặc email không chính xác!');
+
+            }
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving Customer."
+            });
+        });
+
+
 
 
 };

@@ -13,7 +13,13 @@ module.exports = app => {
     // Admin Login
     router.post("/login", admins.login);
 
-    
+    // Admin change password 
+    router.post("/change-password", admins.changePassword);
+
+    // Admin forgot password 
+    router.post("/forgot-password", admins.forgotPassword);
+
+
     // Retrieve a single Admin with id
     router.get("/:id", admins.findOne);
 

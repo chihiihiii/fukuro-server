@@ -14,6 +14,7 @@ module.exports = {
     await queryInterface.bulkInsert('Admins', [{
         username: 'admin_chi',
         password: password,
+        email: 'Chithlpc00459@fpt.edu.vn',
         role: 'admin',
         status: 1,
         created_at: new Date(),
@@ -22,6 +23,7 @@ module.exports = {
       {
         username: 'admin_mai',
         password: password,
+        email: 'Maidtppc00654@fpt.edu.vn',
         role: 'admin',
         status: 1,
         created_at: new Date(),
@@ -30,6 +32,7 @@ module.exports = {
       {
         username: 'admin_binh',
         password: password,
+        email: 'Binhnppc00541@fpt.edu.vn',
         role: 'admin',
         status: 1,
         created_at: new Date(),
@@ -38,6 +41,7 @@ module.exports = {
       {
         username: 'admin_toan',
         password: password,
+        email: 'Toantqpc00613@fpt.edu.vn',
         role: 'admin',
         status: 1,
         created_at: new Date(),

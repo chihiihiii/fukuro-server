@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 0
     },
-    rentalNewId: {
+    rentalNewsId: {
       type: DataTypes.INTEGER,
       field: 'rental_news_id',
       references: {

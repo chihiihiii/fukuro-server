@@ -29,7 +29,7 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: 0
       },
-      rentalNewId: {
+      rentalNewsId: {
         type: Sequelize.INTEGER,
         field: 'rental_news_id',
         references: {
