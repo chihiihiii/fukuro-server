@@ -2,12 +2,13 @@
 
 const crypto = require('crypto');
 
+var password = crypto.createHmac('sha256', 'mypassword')
+  .update('123456')
+  .digest('hex');
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
 
-    const password = crypto.createHmac('sha256', process.env.SECRETKEY)
-      .update('123456')
-      .digest('hex');
 
 
     await queryInterface.bulkInsert('Customers', [{

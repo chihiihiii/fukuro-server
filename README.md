@@ -38,14 +38,17 @@ Thuc hien voi sequelize-cli
 - Clone code
 - Tạo database tên fukuro_server
 - npm install
+- Tạo file .env với các biến môi trường như trong .env.example 
 - npm run dev
 - cd app
 - npx sequelize-cli db:seed:all (Thêm data cho database)
+
 
 *** Hướng dẫn (production):
 - Clone code
 - Tạo database tên fukuro_server
 - npm install
+- Tạo file .env với các biến môi trường như trong .env.example 
 - cd app
 - npx sequelize db:migrate
 - npx sequelize-cli db:seed:all
