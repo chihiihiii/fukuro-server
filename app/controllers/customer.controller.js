@@ -323,7 +323,7 @@ exports.forgotPassword = (req, res) => {
                     to: email,
                     subject: 'Reset Password for ' + username,
                     // text: 'hahahaha',
-                    html: `<a href="${process.env.PORT_CLIENT}/password-resets?email=${email}&token=${token}">Đặt lại mật khẩu</a>`
+                    html: `<a href="${process.env.PORT_CLIENT}/customer/password-resets?email=${email}&token=${token}">Đặt lại mật khẩu</a>`
                 };
 
                 PasswordReset.findOne({

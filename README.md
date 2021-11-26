@@ -43,6 +43,9 @@ Thuc hien voi sequelize-cli
 - cd app
 - npx sequelize-cli db:seed:all (Thêm data cho database)
 
+*** Đối với send mail:
+- Bật cho phép ứng dụng kém an toàn của tài khoản gmail
+
 
 *** Hướng dẫn (production):
 - Clone code
