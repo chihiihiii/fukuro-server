@@ -76,7 +76,6 @@ exports.create = (req, res) => {
     const customer = {
         avatar: req.body.avatar,
         username: req.body.username,
-        // password: mystr,
         password: password,
         email: req.body.email,
         firstName: req.body.first_name,

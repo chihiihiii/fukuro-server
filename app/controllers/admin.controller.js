@@ -152,14 +152,14 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const myKey = crypto.createHmac('sha256', process.env.SECRETKEY);
     var id = req.params.id;
-    var password = myKey
-        .update(req.body.password)
-        .digest('hex');
+    // var password = myKey
+    //     .update(req.body.password)
+    //     .digest('hex');
     // Create a Admin
     const admin = {
         avatar: req.body.avatar,
         username: req.body.username,
-        password: password,
+        // password: password,
         email: req.body.email,
         firstName: req.body.first_name,
         lastName: req.body.last_name,
@@ -235,19 +235,67 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published Admin
-// exports.findAllPublished = (req, res) => {
-//     Admin.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving admins."
-//             });
-//         });
-// };
+// Update password Admin by the id in the request
+exports.changePassword = (req, res) => {
+    var id = req.body.id;
+    var old_password = crypto.createHmac('sha256', process.env.SECRETKEY)
+        .update(req.body.old_password)
+        .digest('hex');
+    var new_password = crypto.createHmac('sha256', process.env.SECRETKEY)
+        .update(req.body.new_password)
+        .digest('hex');
+
+    Admin.findOne({
+            where: {
+                id: id,
+                password: old_password
+            }
+        }).then(data => {
+
+            if (data) {
+                const admin = {
+                    password: new_password
+                };
+
+                Admin.update(admin, {
+                        where: {
+                            id: id
+                        }
+                    })
+                    .then(num => {
+                        if (num == 1) {
+                            res.send({
+                                message: "Admin was updated password successfully."
+                            });
+                        } else {
+                            res.send({
+                                message: `Cannot update Admin password with id=${id}. Maybe Admin was not found or req.body is empty!`
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: "Error updating Admin with id=" + id
+                        });
+                    });
+
+            } else {
+                res.send('Old pass incorrect');
+
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error retrieving Admin with id=" + id
+            });
+        });
+
+};
+
+// Update password Admin by the id in the request
+exports.forgotPassword = (req, res) => {
+    var username = req.body.username;
+    var email = req.body.email;
+
+
+};
