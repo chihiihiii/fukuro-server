@@ -13,7 +13,7 @@ module.exports = app => {
     router.get("/latest", blogs.findLatest);
 
     // Retrieve all Blogs by category
-    router.get("/category/:id", blogs.findByCategory);
+    router.get("/category/:id", blogs.findByCategoryId);
 
 
     // Retrieve a single Blog by slug

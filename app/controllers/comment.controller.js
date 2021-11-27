@@ -1,5 +1,6 @@
 const db = require("../models");
 const Comment = db.Comments;
+const Customer = db.Customers;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Comment
@@ -68,11 +69,42 @@ exports.findOne = (req, res) => {
 
     Comment.findByPk(id)
         .then(data => {
-            res.send(data);
+            if (data) {
+                var customerId = data.dataValues.customerId;
+                var comment_data = data.dataValues;
+
+                Customer.findOne({
+                        where: {
+                            id: customerId,
+                            // status: 1
+                        },
+                        attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+                    }).then(data => {
+
+                        if (data) {
+
+                            comment_data.customer_info = data.dataValues;
+
+                            res.send(comment_data);
+
+                        } else {
+                            res.send('Not exist Bookmark for customer id=' + customerId);
+
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: "Error retrieving Bookmark with customer id=" + customerId + err
+                        });
+                    });
+
+
+            }
+
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Comment with id=" + id
+                message: "Error retrieving Comment with err=" + err
             });
         });
 };
@@ -170,7 +202,44 @@ exports.findByBlogId = (req, res) => {
             limit: limit
         })
         .then(data => {
-            res.send(data);
+
+
+            var commentData = data.rows;
+            // var results = [];
+            commentData.forEach((value, index, array) => {
+                var customerId = commentData[index].customerId;
+
+                console.log(customerId);
+
+
+                Customer.findOne({
+                        where: {
+                            id: customerId,
+                            status: 1
+                        },
+                        attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+                    }).then(data => {
+
+                        // res.send(data);
+                        // console.log(data.dataValues);
+                        // console.log(commentData[index]);
+
+                        if (data) {
+                            commentData[index].dataValues.customer_info = data.dataValues;
+                            console.log(commentData[index].dataValues);
+                        }
+
+                        if (index == array.length - 1) {
+                            res.send(commentData);
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: "Error retrieving Customer with id=" + customerId + err
+                        });
+                    });
+
+            });
 
         })
         .catch(err => {

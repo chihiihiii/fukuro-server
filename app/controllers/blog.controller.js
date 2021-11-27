@@ -191,7 +191,7 @@ exports.findLatest = (req, res) => {
 };
 
 // Retrieve Blogs by category from the database.
-exports.findByCategory = (req, res) => {
+exports.findByCategoryId = (req, res) => {
     var id = req.params.id;
 
     var status = +req.query.status;
