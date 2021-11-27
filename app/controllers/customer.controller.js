@@ -323,7 +323,7 @@ exports.forgotPassword = (req, res) => {
                     to: email,
                     subject: 'Reset Password for ' + username,
                     // text: 'hahahaha',
-                    html: `<a href="${process.env.PORT_CLIENT}/password-resets?email=${email}&token=${token}">Đặt lại mật khẩu</a>`
+                    html: `<a href="${process.env.PORT_CLIENT}/reset-password?email=${email}&token=${token}">Đặt lại mật khẩu</a>`
                 };
 
                 PasswordReset.findOne({
@@ -353,7 +353,7 @@ exports.forgotPassword = (req, res) => {
                                             res.send(error);
                                         } else {
                                             // console.log('Email sent: ' + info.response);
-                                            res.send('Email sent: ' + info.response);
+                                            res.send('Success');
 
                                         }
                                     });
@@ -388,7 +388,7 @@ exports.forgotPassword = (req, res) => {
                                         res.send(error);
                                     } else {
                                         // console.log('Email sent: ' + info.response);
-                                        res.send('Email sent: ' + info.response);
+                                        res.send('Success');
 
                                     }
                                 });
