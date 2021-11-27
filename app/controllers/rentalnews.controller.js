@@ -251,3 +251,22 @@ exports.findByCustomerId = (req, res) => {
 
 
 };
+
+
+// find one RentalNews by Slug
+exports.findOneBySlug = (req, res) => {
+    var slug = req.params.slug;
+
+    RentalNews.findOne({
+            where: {
+                slug: slug
+            }
+        }).then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error retrieving RentalNews with slug=" + slug
+            });
+        });
+};

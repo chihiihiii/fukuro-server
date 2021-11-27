@@ -18,6 +18,11 @@ module.exports = app => {
     // Retrieve RentalNews by customer 
     router.get("/customer/:id", rentalNews.findByCustomerId);
 
+
+    // Retrieve a single RentalNews by slug
+    router.get("/slug/:slug", rentalNews.findOneBySlug);
+
+
     // Retrieve a single RentalNews with id
     router.get("/:id", rentalNews.findOne);
 
