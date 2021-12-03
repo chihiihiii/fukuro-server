@@ -69,6 +69,50 @@ exports.create = (req, res) => {
         return;
     }
 
+    Customer.findOne({
+            where: {
+                username: req.body.username,
+            }
+        })
+        .then(data => {
+            // res.send(data);
+            if (data) {
+                var result = {
+                    message: "Tên người dùng đã tồn tại!"
+                }
+                res.send(result);
+                return;
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving Customer."
+            });
+        });
+
+
+    Customer.findOne({
+            where: {
+                email: req.body.email,
+            }
+        })
+        .then(data => {
+            // res.send(data);
+            if (data) {
+                var result = {
+                    message: "Email đã tồn tại!"
+                }
+                res.send(result);
+                return;
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving Customer."
+            });
+        });
+
+
     const myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
     var password = myKey
         .update(req.body.password)
