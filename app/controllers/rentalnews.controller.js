@@ -5,12 +5,12 @@ const Op = db.Sequelize.Op;
 // Create and Save a new RentalNews
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.lat || !req.body.lng) {
+        res.status(400).send({
+            message: "Không để trống vĩ độ và kinh độ!"
+        });
+        return;
+    }
 
     // Create a RentalNews
     const rentalNews = {
@@ -20,6 +20,12 @@ exports.create = (req, res) => {
         quantity: req.body.quantity,
         type: req.body.type,
         address: req.body.address,
+        streetNumber: req.body.street_number,
+        street: req.body.street,
+        district: req.body.district,
+        city: req.body.city,
+        lat: req.body.lat,
+        lng: req.body.lng,
         area: req.body.area,
         slug: req.body.slug,
         description: req.body.description,

@@ -26,6 +26,25 @@ module.exports = {
       address: {
         type: Sequelize.TEXT
       },
+      streetNumber: {
+        type: Sequelize.STRING,
+        field: 'street_number',
+      },
+      street: {
+        type: Sequelize.STRING,
+      },
+      district: {
+        type: Sequelize.STRING,
+      },
+      city: {
+        type: Sequelize.STRING,
+      },
+      lat: {
+        type: Sequelize.STRING,
+      },
+      lng: {
+        type: Sequelize.STRING,
+      },
       area: {
         type: Sequelize.STRING
       },
