@@ -38,8 +38,9 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: 1
       },
-      google: {
-        type: Sequelize.STRING
+      googleId: {
+        type: Sequelize.STRING,
+        field: 'google_id'
       },
       facebook: {
         type: Sequelize.STRING

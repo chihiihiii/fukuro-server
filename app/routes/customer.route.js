@@ -12,6 +12,9 @@ module.exports = app => {
     
     // Customer Login
     router.post("/login", customers.login);
+    
+    // Customer Login with Google
+    router.post("/login-with-google", customers.loginWithGoogle);
 
     // Customer change password 
     router.post("/change-password", customers.changePassword);

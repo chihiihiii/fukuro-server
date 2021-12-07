@@ -45,8 +45,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 1
     },
-    google: {
-      type: DataTypes.STRING
+    googleId: {
+      type: DataTypes.STRING,
+      field: 'google_id'
+
     },
     facebook: {
       type: DataTypes.STRING

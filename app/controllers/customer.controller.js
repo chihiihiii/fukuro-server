@@ -7,6 +7,13 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const PasswordReset = db.PasswordResets;
 
+// Google Auth
+const {
+    OAuth2Client
+} = require('google-auth-library');
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID
+const client = new OAuth2Client(CLIENT_ID);
+
 
 //Customer login
 exports.login = (req, res) => {
@@ -31,26 +38,32 @@ exports.login = (req, res) => {
         })
         .then(data => {
             // res.send(data);
-            if (password != data.password) {
-                var result = {
-                    message: "Tên người dùng hoặc mật khẩu không đúng!"
+            if (data) {
+                if (password != data.password) {
+                    var result = {
+                        message: "Tên đăng nhập hoặc mật khẩu không đúng!"
+                    }
+                    res.status(500).send(result);
+                } else {
+                    var token = jwt.sign({
+                        username: data.username,
+                        password: data.password
+                    }, 'secret', {
+                        noTimestamp: true,
+                        expiresIn: 60 * 60 * 24 * 7
+                    });
+                    var result = {
+                        message: "Đăng nhập thành công!",
+                        data: data,
+                        token: token
+                    }
+                    res.status(200).send(result);
                 }
-                res.status(500).send(result);
             } else {
-                var token = jwt.sign({
-                    username: data.username,
-                    password: data.password
-                }, 'secret', {
-                    noTimestamp: true,
-                    expiresIn: 60 * 60 * 24 * 7
-                });
-                var result = {
-                    message: "Đăng nhập thành công!",
-                    data: data,
-                    token: token
-                }
-                res.status(200).send(result);
+                res.status(500).send('Tên đăng nhập không tồn tại. Vui lòng đăng ký tài khoản!');
+
             }
+
         })
         .catch(err => {
             res.status(500).send({
@@ -58,6 +71,118 @@ exports.login = (req, res) => {
             });
         });
 }
+
+//Customer login with Google
+exports.loginWithGoogle = (req, res) => {
+    // Validate request
+    if (!req.body.token) {
+        res.status(400).send({
+            message: "Không để trống token!"
+        });
+        return;
+    }
+
+    // var email = req.body.email;
+    var token = req.body.token;
+
+    // console.log(token);
+    console.log(req.body);
+
+    async function verify() {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+        });
+        const payload = ticket.getPayload();
+        // const userid = payload['sub'];
+
+        var avatar = payload['picture'] == undefined ? '' : payload['picture'];
+        var firstName = payload['given_name'] == undefined ? '' : payload['given_name'];
+        var lastName = payload['given_name'] == undefined ? '' : payload['family_name'];
+        var email = payload['email'];
+        var googleId = payload['sub'];
+        // console.log(firstName);
+
+
+        Customer.findOne({
+                where: {
+                    email: email
+                }
+            })
+            .then(data => {
+                // res.send(data);
+                if (data) {
+                    if (data.email == email && data.googleId == googleId) {
+                        var token = jwt.sign({
+                            email: data.email,
+                            googleId: data.googleId
+                        }, 'secret', {
+                            noTimestamp: true,
+                            expiresIn: 60 * 60 * 24 * 7
+                        });
+                        var result = {
+                            message: "Đăng nhập thành công!",
+                            data: data,
+                            token: token
+                        }
+                        res.status(200).send(result);
+                    } else {
+                        res.status(500).send("Lỗi xác thực tài khoản Google!");
+
+                    }
+
+                } else {
+                    const customer = {
+                        avatar: avatar,
+                        username: email,
+                        email: email,
+                        firstName: firstName,
+                        lastName: lastName,
+                        status: 1,
+                        googleId: googleId
+                    };
+
+                    // Save Customer in the database
+                    Customer.create(customer)
+                        .then(data => {
+                            // res.send(data);
+
+                            var token = jwt.sign({
+                                email: data.email,
+                                googleId: data.googleId
+                            }, 'secret', {
+                                noTimestamp: true,
+                                expiresIn: 60 * 60 * 24 * 7
+                            });
+                            var result = {
+                                message: "Đăng nhập thành công!",
+                                data: data,
+                                token: token
+                            }
+                            res.status(200).send(result);
+
+                        })
+                        .catch(err => {
+                            res.status(500).send({
+                                message: err.message || "Some error occurred while creating the Customer."
+                            });
+                        });
+
+                }
+
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while retrieving Customer."
+                });
+            });
+
+    }
+    verify()
+        .catch(console.error);
+}
+
+
 
 // Create and Save a new Customer
 exports.create = (req, res) => {
@@ -78,7 +203,7 @@ exports.create = (req, res) => {
             // res.send(data);
             if (data) {
                 var result = {
-                    message: "Tên người dùng đã tồn tại!"
+                    message: "Tên đăng nhập đã tồn tại!"
                 }
                 res.send(result);
                 return;
