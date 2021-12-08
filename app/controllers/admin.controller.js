@@ -4,7 +4,7 @@ const PasswordReset = db.PasswordResets;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+
 
 
 
@@ -19,10 +19,10 @@ exports.login = (req, res) => {
         return;
     }
 
-    const myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
-    const username = req.body.username;
+    var myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
+    var username = req.body.username;
     // var password = req.body.password;
-    const password = myKey
+    var password = myKey
         .update(req.body.password)
         .digest('hex');
     Admin.findOne({
@@ -114,13 +114,13 @@ exports.create = (req, res) => {
         });
 
 
-    const myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
+    var myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
     var password = myKey
         .update(req.body.password)
         .digest('hex');
 
     // Create a Admin
-    const admin = {
+    var admin = {
         avatar: req.body.avatar,
         username: req.body.username,
         password: password,
@@ -199,13 +199,13 @@ exports.findOne = (req, res) => {
 
 // Update a Admin by the id in the request
 exports.update = (req, res) => {
-    const myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
+    var myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
     var id = req.params.id;
     // var password = myKey
     //     .update(req.body.password)
     //     .digest('hex');
-    // Create a Admin
-    const admin = {
+    // Update a Admin
+    var admin = {
         avatar: req.body.avatar,
         username: req.body.username,
         // password: password,
@@ -213,6 +213,7 @@ exports.update = (req, res) => {
         firstName: req.body.first_name,
         lastName: req.body.last_name,
         phone: req.body.phone,
+        role: req.body.role,
         status: req.body.status,
     };
 
@@ -302,7 +303,7 @@ exports.changePassword = (req, res) => {
         }).then(data => {
 
             if (data) {
-                const admin = {
+                var admin = {
                     password: new_password
                 };
 
@@ -477,47 +478,3 @@ exports.forgotPassword = (req, res) => {
 };
 
 
-// Request contact form
-exports.requestContact = (req, res) => {
-
-    // Validate request
-    if (!req.body.subject || !req.body.message || !req.body.email) {
-        res.status(400).send({
-            message: "Không để trống chủ đề, nội dung hoặc email!"
-        });
-        return;
-    }
-
-
-    var subject = req.body.subject;
-    var message = req.body.message;
-    var email = req.body.email;
-
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.SEND_MAIL_USER,
-            pass: process.env.SEND_MAIL_PASS
-        }
-    });
-
-    var mailOptions = {
-        from: process.env.SEND_MAIL_USER,
-        to: email,
-        subject: subject,
-        text: message,
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            // console.log(error);
-            res.send(error);
-        } else {
-            // console.log('Email sent: ' + info.response);
-            res.send('Success');
-
-        }
-    });
-
-
-};

@@ -1,7 +1,9 @@
 const db = require("../models");
 const AdminContact = db.AdminContacts;
+const Admin = db.Admins;
 const Op = db.Sequelize.Op;
 
+const nodemailer = require('nodemailer');
 // Create and Save a new AdminContact
 exports.create = (req, res) => {
     // Validate request
@@ -48,7 +50,7 @@ exports.findAll = (req, res) => {
 
     var page = +req.query.page;
     var limit = +req.query.limit;
-    limit=limit?limit:6;
+    limit = limit ? limit : 6;
     var offset = (page > 0) ? (page - 1) * limit : null;
 
     AdminContact.findAndCountAll({
@@ -154,19 +156,75 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// find all published AdminContact
-// exports.findAllPublished = (req, res) => {
-//     AdminContact.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving admincontacts."
-//             });
-//         });
-// };
+// Request contact form
+exports.requestContact = (req, res) => {
+    var id = req.params.id;
+
+    // Validate request
+    if (!req.body.subject || !req.body.message || !req.body.email) {
+        res.status(400).send({
+            message: "Không để trống chủ đề, nội dung hoặc email!"
+        });
+        return;
+    }
+
+
+    var subject = req.body.subject;
+    var message = req.body.message;
+    var email = req.body.email;
+
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.SEND_MAIL_USER,
+            pass: process.env.SEND_MAIL_PASS
+        }
+    });
+
+    var mailOptions = {
+        from: process.env.SEND_MAIL_USER,
+        to: email,
+        subject: subject,
+        text: message,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            // console.log(error);
+            res.send(error);
+        } else {
+            // console.log('Email sent: ' + info.response);
+            // res.send('Success');
+            var adminContact = {
+                status: 1,
+            }
+
+            AdminContact.update(adminContact, {
+                    where: {
+                        id: id
+                    }
+                })
+                .then(num => {
+                    if (num == 1) {
+                        res.send({
+                            message: "AdminContact was updated status successfully.",
+                            status: 'Success'
+                        });
+                    } else {
+                        res.send({
+                            message: `Cannot update status AdminContact with id=${id}. Maybe AdminContact was not found or req.body is empty!`
+                        });
+                    }
+                })
+                .catch(err => {
+                    res.status(500).send({
+                        message: "Error updating status AdminContact with id=" + id
+                    });
+                });
+
+
+        }
+    });
+
+
+};

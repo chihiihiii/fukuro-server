@@ -9,6 +9,8 @@ module.exports = app => {
     // Retrieve all AdminContacts
     router.get("/", adminContacts.findAll);
 
+    // Admin request contact form to customer by admin contact id
+    router.post("/request-contact/:id", adminContacts.requestContact);
 
     // Retrieve a single AdminContact with id
     router.get("/:id", adminContacts.findOne);
