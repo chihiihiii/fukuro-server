@@ -13,7 +13,7 @@ exports.create = (req, res) => {
     }
 
     // Create a CustomerContact
-    const customerContact = {
+    var customerContact = {
         firstName: req.body.first_name,
         lastName: req.body.last_name,
         email: req.body.email,
@@ -86,7 +86,21 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    CustomerContact.update(req.body, {
+
+    // Update a CustomerContact
+    var customerContact = {
+        firstName: req.body.first_name,
+        lastName: req.body.last_name,
+        email: req.body.email,
+        phone: req.body.phone,
+        message: req.body.message,
+        status: req.body.status,
+        customerId: req.body.customer_id,
+        rentalNewsId: req.body.rental_news_id,
+
+    };
+
+    CustomerContact.update(customerContact, {
             where: {
                 id: id
             }

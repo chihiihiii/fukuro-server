@@ -13,12 +13,14 @@ exports.create = (req, res) => {
     // }
 
     // Create a CustomerNotification
-    const customerNotification = {
+    var customerNotification = {
         message: req.body.message,
         detailUrl: req.body.detail_url,
         status: req.body.status,
+        customerId: req.body.customer_id,
 
     };
+
 
     // Save CustomerNotification in the database
     CustomerNotification.create(customerNotification)
@@ -34,7 +36,7 @@ exports.create = (req, res) => {
 
 // Retrieve all CustomerNotifications from the database.
 exports.findAll = (req, res) => {
-    // const username = req.query.username;
+    // var username = req.query.username;
     // var condition = username ? {
     //     username: {
     //         [Op.like]: `%${username}%`
@@ -82,7 +84,16 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    CustomerNotification.update(req.body, {
+    // Update a CustomerNotification
+    var customerNotification = {
+        message: req.body.message,
+        detailUrl: req.body.detail_url,
+        status: req.body.status,
+        customerId: req.body.customer_id,
+
+    };
+
+    CustomerNotification.update(customerNotification, {
             where: {
                 id: id
             }

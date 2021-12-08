@@ -25,7 +25,7 @@ module.exports = app => {
     router.get("/:id", bookmarks.findOne);
 
     // Update a Bookmark with id
-    router.put("/:id", bookmarks.update);
+    // router.put("/:id", bookmarks.update);
 
     // Delete a Bookmark with id
     router.delete("/:id", bookmarks.delete);

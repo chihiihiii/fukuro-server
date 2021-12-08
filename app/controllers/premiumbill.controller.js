@@ -13,7 +13,7 @@ exports.create = (req, res) => {
     // }
 
     // Create a PremiumBill
-    const premiumBill = {
+    var premiumBill = {
         name: req.body.name,
         price: req.body.price,
         expire: req.body.expire,
@@ -38,7 +38,7 @@ exports.create = (req, res) => {
 
 // Retrieve all PremiumBills from the database.
 exports.findAll = (req, res) => {
-    // const username = req.query.username;
+    // var username = req.query.username;
     // var condition = username ? {
     //     username: {
     //         [Op.like]: `%${username}%`
@@ -86,7 +86,19 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    PremiumBill.update(req.body, {
+    // Update a PremiumBill
+    var premiumBill = {
+        name: req.body.name,
+        price: req.body.price,
+        expire: req.body.expire,
+        totalPrice: req.body.total_price,
+        paymentStatus: req.body.payment_status,
+        status: req.body.status,
+        customerId: req.body.customer_id,
+        premiumId: req.body.premium_id,
+    };
+
+    PremiumBill.update(premiumBill, {
             where: {
                 id: id
             }

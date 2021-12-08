@@ -13,7 +13,7 @@ exports.create = (req, res) => {
     // }
 
     // Create a Promotion
-    const promotion = {
+    var promotion = {
         name: req.body.name,
         price: req.body.price,
         discount: req.body.discount,
@@ -83,8 +83,17 @@ exports.findOne = (req, res) => {
 // Update a Promotion by the id in the request
 exports.update = (req, res) => {
     var id = req.params.id;
+    // Update a Promotion
+    var promotion = {
+        name: req.body.name,
+        price: req.body.price,
+        discount: req.body.discount,
+        startDate: req.body.start_date,
+        endDate: req.body.end_date,
+        status: req.body.status,
 
-    Promotion.update(req.body, {
+    };
+    Promotion.update(promotion, {
             where: {
                 id: id
             }

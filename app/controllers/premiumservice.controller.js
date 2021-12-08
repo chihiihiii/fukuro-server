@@ -13,11 +13,12 @@ exports.create = (req, res) => {
     // }
 
     // Create a PremiumService
-    const premiumService = {
+    var premiumService = {
         name: req.body.name,
         price: req.body.price,
         description: req.body.description,
         status: req.body.status,
+        promotionId: req.body.promotion_id,
 
     };
 
@@ -82,7 +83,17 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    PremiumService.update(req.body, {
+    // Update a PremiumService
+    var premiumService = {
+        name: req.body.name,
+        price: req.body.price,
+        description: req.body.description,
+        status: req.body.status,
+        promotionId: req.body.promotion_id,
+
+    };
+
+    PremiumService.update(premiumService, {
             where: {
                 id: id
             }

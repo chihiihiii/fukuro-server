@@ -25,10 +25,10 @@ exports.login = (req, res) => {
         return;
     }
 
-    const myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
-    const username = req.body.username;
+    var myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
+    var username = req.body.username;
     // var password = req.body.password;
-    const password = myKey
+    var password = myKey
         .update(req.body.password)
         .digest('hex');
     Customer.findOne({
@@ -89,12 +89,12 @@ exports.loginWithGoogle = (req, res) => {
     console.log(req.body);
 
     async function verify() {
-        const ticket = await client.verifyIdToken({
+        var ticket = await client.verifyIdToken({
             idToken: token,
             audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
         });
-        const payload = ticket.getPayload();
-        // const userid = payload['sub'];
+        var payload = ticket.getPayload();
+        // var userid = payload['sub'];
 
         var avatar = payload['picture'] == undefined ? '' : payload['picture'];
         var firstName = payload['given_name'] == undefined ? '' : payload['given_name'];
@@ -132,7 +132,7 @@ exports.loginWithGoogle = (req, res) => {
                     }
 
                 } else {
-                    const customer = {
+                    var customer = {
                         avatar: avatar,
                         username: email,
                         email: email,
@@ -238,12 +238,12 @@ exports.create = (req, res) => {
         });
 
 
-    const myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
+    var myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
     var password = myKey
         .update(req.body.password)
         .digest('hex');
     // Create a Customer
-    const customer = {
+    var customer = {
         avatar: req.body.avatar,
         username: req.body.username,
         password: password,
@@ -314,13 +314,13 @@ exports.findOne = (req, res) => {
 
 // Update a Customer by the id in the request
 exports.update = (req, res) => {
-    const myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
+    var myKey = crypto.createHmac('sha256', process.env.SECRET_KEY);
     var id = req.params.id;
     // var password = myKey
     //     .update(req.body.password)
     //     .digest('hex');
     // Create a Customer
-    const customer = {
+    var customer = {
         avatar: req.body.avatar,
         username: req.body.username,
         // password: password,
@@ -416,7 +416,7 @@ exports.changePassword = (req, res) => {
         }).then(data => {
 
             if (data) {
-                const customer = {
+                var customer = {
                     password: new_password
                 };
 

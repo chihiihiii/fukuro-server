@@ -13,10 +13,12 @@ exports.create = (req, res) => {
     // }
 
     // Create a CustomerPremiumService
-    const customerPremiumService = {
+    var customerPremiumService = {
         startDate: req.body.start_date,
         endDate: req.body.end_date,
         status: req.body.status,
+        customerId: req.body.customer_id,
+        premiumId: req.body.premium_id,
 
     };
 
@@ -81,7 +83,17 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    CustomerPremiumService.update(req.body, {
+        // Create a CustomerPremiumService
+        var customerPremiumService = {
+            startDate: req.body.start_date,
+            endDate: req.body.end_date,
+            status: req.body.status,
+            customerId: req.body.customer_id,
+            premiumId: req.body.premium_id,
+    
+        };
+
+    CustomerPremiumService.update(customerPremiumService, {
             where: {
                 id: id
             }

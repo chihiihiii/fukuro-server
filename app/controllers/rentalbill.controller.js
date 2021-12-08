@@ -13,7 +13,7 @@ exports.create = (req, res) => {
     // }
 
     // Create a RentalBill
-    const rentalBill = {
+    var rentalBill = {
         name: req.body.name,
         price: req.body.price,
         electricityFee: req.body.electricity_fee,

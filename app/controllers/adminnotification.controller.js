@@ -13,7 +13,7 @@ exports.create = (req, res) => {
     }
 
     // Create a Admin
-    const adminNotification = {
+    var adminNotification = {
         message: req.body.message,
         detailUrl: req.body.detail_url,
         status: req.body.status
@@ -33,7 +33,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Admins from the database.
 exports.findAll = (req, res) => {
-    // const username = req.query.username;
+    // var username = req.query.username;
     // var condition = username ? {
     //     username: {
     //         [Op.like]: `%${username}%`

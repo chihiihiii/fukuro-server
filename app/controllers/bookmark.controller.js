@@ -6,12 +6,12 @@ const Op = db.Sequelize.Op;
 // update Bookmark by Customer id 
 exports.updateByCustomerId = (req, res) => {
     // Validate request
-    // if (!req.query.customer_id) {
-    //     res.status(400).send({
-    //         message: "Không để trống id tài khoản người dùng!"
-    //     });
-    //     return;
-    // }
+    if (!req.query.customer_id) {
+        res.status(400).send({
+            message: "Không để trống id tài khoản người dùng!"
+        });
+        return;
+    }
 
     var customerId = req.params.id;
     var rentalNews = req.body.rental_news;
@@ -36,7 +36,7 @@ exports.updateByCustomerId = (req, res) => {
 
                     // res.send(bookmark);
                 }
-                const bookmark = {
+                var bookmark = {
                     rentalNews: rentalNewsArray.toString(),
                 };
                 Bookmark.update(bookmark, {
@@ -67,7 +67,7 @@ exports.updateByCustomerId = (req, res) => {
                 // Create and Save a new Bookmark (if not exist)
                 // Create a Bookmark
                 // res.send(customerId);
-                const bookmark = {
+                var bookmark = {
                     customerId: customerId,
                     rentalNews: rentalNews,
                 };
@@ -102,7 +102,7 @@ exports.findAll = (req, res) => {
     //     status: status
     // };
 
-    var condition=null;
+    var condition = null;
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
@@ -141,31 +141,31 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Bookmark by the id in the request
-exports.update = (req, res) => {
-    var id = req.params.id;
+// exports.update = (req, res) => {
+//     var id = req.params.id;
 
-    Bookmark.update(req.body, {
-            where: {
-                id: id
-            }
-        })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "Bookmark was updated successfully."
-                });
-            } else {
-                res.send({
-                    message: `Cannot update Bookmark with id=${id}. Maybe Bookmark was not found or req.body is empty!`
-                });
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating Bookmark with id=" + id
-            });
-        });
-};
+//     Bookmark.update(req.body, {
+//             where: {
+//                 id: id
+//             }
+//         })
+//         .then(num => {
+//             if (num == 1) {
+//                 res.send({
+//                     message: "Bookmark was updated successfully."
+//                 });
+//             } else {
+//                 res.send({
+//                     message: `Cannot update Bookmark with id=${id}. Maybe Bookmark was not found or req.body is empty!`
+//                 });
+//             }
+//         })
+//         .catch(err => {
+//             res.status(500).send({
+//                 message: "Error updating Bookmark with id=" + id
+//             });
+//         });
+// };
 
 // Delete a Bookmark with the specified id in the request
 exports.delete = (req, res) => {
@@ -251,32 +251,39 @@ exports.findAllByCustomerId = (req, res) => {
         }).then(data => {
 
             if (data) {
-                var rentalNewsArray = data.rentalNews.split(',');
+                if (data.rentalNews) {
+                    var rentalNewsArray = data.rentalNews.split(',');
 
-                var results = [];
-                rentalNewsArray.forEach((value, index, array) => {
-                    RentalNews.findOne({
-                            where: {
-                                id: parseInt(value),
-                                status: 1
-                            }
-                        }).then(data => {
+                    var results = [];
+                    rentalNewsArray.forEach((value, index, array) => {
+                        RentalNews.findOne({
+                                where: {
+                                    id: parseInt(value),
+                                    status: 1
+                                }
+                            }).then(data => {
 
-                            if (data) {
-                                results.push(data);
-                            }
+                                if (data) {
+                                    results.push(data);
+                                }
 
-                            if (index == array.length - 1) {
-                                res.send(results);
-                            }
-                        })
-                        .catch(err => {
-                            res.status(500).send({
-                                message: "Error retrieving Rental News with id=" + i + err
+                                if (index == array.length - 1) {
+                                    res.send(results);
+                                }
+                            })
+                            .catch(err => {
+                                res.status(500).send({
+                                    message: "Error retrieving Rental News with id=" + i + err
+                                });
                             });
-                        });
 
-                });
+                    });
+                }else{
+                    res.status(500).send({
+                        message: "Rental News null with customer id=" + customerId 
+                    });
+                }
+
 
 
 

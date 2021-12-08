@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     }
 
     // Create a Answer
-    const answer = {
+    var answer = {
         content: req.body.content,
         like: req.body.like,
         dislike: req.body.dislike,
@@ -139,7 +139,19 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    Answer.update(req.body, {
+    // Update a Answer
+    var answer = {
+        content: req.body.content,
+        like: req.body.like,
+        dislike: req.body.dislike,
+        status: req.body.status,
+        customerId: req.body.customer_id,
+        adminId: req.body.admin_id,
+        questionId: req.body.question_id,
+
+    };
+
+    Answer.update(answer, {
             where: {
                 id: id
             }

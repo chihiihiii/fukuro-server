@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     // }
 
     // Create a Comment
-    const comment = {
+    var comment = {
         content: req.body.content,
         status: req.body.status,
         customerId: req.body.customer_id,
@@ -88,13 +88,13 @@ exports.findOne = (req, res) => {
                             res.send(comment_data);
 
                         } else {
-                            res.send('Not exist Bookmark for customer id=' + customerId);
+                            res.send('Not exist Comment for customer id=' + customerId);
 
                         }
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Error retrieving Bookmark with customer id=" + customerId + err
+                            message: "Error retrieving Comment with customer id=" + customerId + err
                         });
                     });
 
@@ -113,7 +113,16 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    Comment.update(req.body, {
+      // Update a Comment
+      var comment = {
+        content: req.body.content,
+        status: req.body.status,
+        customerId: req.body.customer_id,
+        blogId: req.body.blog_id,
+
+    };
+
+    Comment.update(comment, {
             where: {
                 id: id
             }
