@@ -11,6 +11,14 @@ exports.create = (req, res) => {
         });
         return;
     }
+    var questionCategory = {
+        name: req.body.name,
+        slug: req.body.slug,
+        status: req.body.status,
+
+    };
+
+
 
     QuestionCategory.findOne({
             where: {
@@ -23,7 +31,7 @@ exports.create = (req, res) => {
                 });
             } else {
                 // Create a QuestionCategory
-                const questionCategory = {
+                var questionCategory = {
                     name: req.body.name,
                     slug: req.body.slug,
                     status: req.body.status,
@@ -101,27 +109,72 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    QuestionCategory.update(req.body, {
-            where: {
-                id: id
-            }
-        })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "Question Category was updated successfully."
+    if (req.body.slug) {
+        QuestionCategory.findOne({
+                where: {
+                    slug: req.body.slug
+                }
+            }).then(data => {
+                if (data) {
+                    if (data.id == parseInt(id)) {
+                        update();
+                    } else {
+                        res.status(400).send({
+                            message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
+                        });
+                    }
+                } else {
+                    update();
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error retrieving Question with slug=" + slug
                 });
-            } else {
-                res.send({
-                    message: `Cannot update Question Category with id=${id}. Maybe Question Category was not found or req.body is empty!`
-                });
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating Question Category with id=" + id
             });
-        });
+
+    } else {
+        update();
+    }
+
+
+    function update() {
+
+
+        var questionCategory = {
+            name: req.body.name,
+            slug: req.body.slug,
+            status: req.body.status,
+
+        };
+        QuestionCategory.update(questionCategory, {
+                where: {
+                    id: id
+                }
+            })
+            .then(num => {
+                if (num == 1) {
+                    res.send({
+                        message: "Question Category was updated successfully."
+                    });
+                } else {
+                    res.send({
+                        message: `Cannot update Question Category with id=${id}. Maybe Question Category was not found or req.body is empty!`
+                    });
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error updating Question Category with id=" + id
+                });
+            });
+
+    }
+
+
+
+
+
 };
 
 // Delete a QuestionCategory with the specified id in the request

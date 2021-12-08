@@ -5,31 +5,52 @@ const Op = db.Sequelize.Op;
 // Create and Save a new BlogCategory
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body.name) {
+    if (!req.body.name || !req.body.slug) {
         res.status(400).send({
             message: "Không để trống tên loại bài viết!"
         });
         return;
     }
 
-    // Create a BlogCategory
-    const blogCategory = {
-        name: req.body.name,
-        slug: req.body.slug,
-        status: req.body.status,
+    BlogCategory.findOne({
+            where: {
+                slug: req.body.slug
+            }
+        }).then(data => {
+            if (data) {
+                res.status(400).send({
+                    message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
+                });
+            } else {
+                // Create a BlogCategory
+                var blogCategory = {
+                    name: req.body.name,
+                    slug: req.body.slug,
+                    status: req.body.status,
 
-    };
+                };
 
-    // Save BlogCategory in the database
-    BlogCategory.create(blogCategory)
-        .then(data => {
-            res.send(data);
+                // Save BlogCategory in the database
+                BlogCategory.create(blogCategory)
+                    .then(data => {
+                        res.send(data);
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: err.message || "Some error occurred while creating the Blog Category."
+                        });
+                    });
+
+            }
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Blog Category."
+                message: "Error retrieving Question with slug=" + slug
             });
         });
+
+
+
 };
 
 // Retrieve all BlogCategory from the database.
@@ -80,27 +101,73 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    BlogCategory.update(req.body, {
-            where: {
-                id: id
-            }
-        })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "Blog Category was updated successfully."
+    if (req.body.slug) {
+        BlogCategory.findOne({
+                where: {
+                    slug: req.body.slug
+                }
+            }).then(data => {
+                if (data) {
+                    if (data.id == parseInt(id)) {
+                        update();
+                    } else {
+                        res.status(400).send({
+                            message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
+                        });
+                    }
+                } else {
+                    update();
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error retrieving Question with slug=" + slug
                 });
-            } else {
-                res.send({
-                    message: `Cannot update Blog Category with id=${id}. Maybe Blog Category was not found or req.body is empty!`
-                });
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating Blog Category with id=" + id
             });
-        });
+
+    } else {
+        update();
+    }
+
+
+    function update() {
+
+        // Update a BlogCategory
+        var blogCategory = {
+            name: req.body.name,
+            slug: req.body.slug,
+            status: req.body.status,
+
+        };
+
+        BlogCategory.update(blogCategory, {
+                where: {
+                    id: id
+                }
+            })
+            .then(num => {
+                if (num == 1) {
+                    res.send({
+                        message: "Blog Category was updated successfully."
+                    });
+                } else {
+                    res.send({
+                        message: `Cannot update Blog Category with id=${id}. Maybe Blog Category was not found or req.body is empty!`
+                    });
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error updating Blog Category with id=" + id
+                });
+            });
+
+
+    }
+
+
+
+
 };
 
 // Delete a BlogCategory with the specified id in the request

@@ -23,7 +23,7 @@ exports.create = (req, res) => {
                 });
             } else {
                 // Create a Question
-                const question = {
+                var question = {
                     title: req.body.title,
                     slug: req.body.slug,
                     content: req.body.content,
@@ -103,27 +103,75 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    Question.update(req.body, {
-            where: {
-                id: id
-            }
-        })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "Question was updated successfully."
+    if (req.body.slug) {
+        Question.findOne({
+                where: {
+                    slug: req.body.slug
+                }
+            }).then(data => {
+                if (data) {
+                    if (data.id == parseInt(id)) {
+                        update();
+                    } else {
+                        res.status(400).send({
+                            message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
+                        });
+                    }
+                } else {
+                    update();
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error retrieving Question with slug=" + slug
                 });
-            } else {
-                res.send({
-                    message: `Cannot update Question with id=${id}. Maybe Question was not found or req.body is empty!`
-                });
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating Question with id=" + id
             });
-        });
+
+    } else {
+        update();
+    }
+
+
+    function update() {
+
+        // Update a Question
+        var question = {
+            title: req.body.title,
+            slug: req.body.slug,
+            content: req.body.content,
+            status: req.body.status,
+            questionCategoryId: req.body.question_category_id,
+            customerId: req.body.customer_id
+        };
+
+        Question.update(question, {
+                where: {
+                    id: id
+                }
+            })
+            .then(num => {
+                if (num == 1) {
+                    res.send({
+                        message: "Question was updated successfully."
+                    });
+                } else {
+                    res.send({
+                        message: `Cannot update Question with id=${id}. Maybe Question was not found or req.body is empty!`
+                    });
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error updating Question with id=" + id
+                });
+            });
+
+
+    }
+
+
+
+
 };
 
 // Delete a Question with the specified id in the request
@@ -250,17 +298,17 @@ exports.findOneBySlug = (req, res) => {
         slug: slug
     };
     Question.findOne({
-        where: condition
-    }).then(data => {
-        if (data) {
-            res.send(data);
-        } else {
-            res.send(`Không tồn tại câu hỏi với slug = ${slug} hoặc câu hỏi đã bị vô hiệu hóa!`)
-        }
-    })
-    .catch(err => {
-        res.status(500).send({
-            message: "Error retrieving Question Category with slug=" + slug
+            where: condition
+        }).then(data => {
+            if (data) {
+                res.send(data);
+            } else {
+                res.send(`Không tồn tại câu hỏi với slug = ${slug} hoặc câu hỏi đã bị vô hiệu hóa!`)
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error retrieving Question Category with slug=" + slug
+            });
         });
-    });
 };

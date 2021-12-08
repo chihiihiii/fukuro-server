@@ -5,37 +5,58 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Blog
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body.title) {
+    if (!req.body.title || !req.body.slug) {
         res.status(400).send({
             message: "Không để trống tựa bài viết!"
         });
         return;
     }
 
-    // Create a Blog
-    const blog = {
-        title: req.body.title,
-        slug: req.body.slug,
-        thumbnail: req.body.thumbnail,
-        summary: req.body.summary,
-        description: req.body.description,
-        tag: req.body.tag,
-        status: req.body.status,
-        blogCategoryId: req.body.blog_category_id,
-        adminId: req.body.admin_id
-    };
-    // console.log(blog);
+    Blog.findOne({
+            where: {
+                slug: req.body.slug
+            }
+        }).then(data => {
+            if (data) {
+                res.status(400).send({
+                    message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
+                });
+            } else {
+                // Create a Blog
+                var blog = {
+                    title: req.body.title,
+                    slug: req.body.slug,
+                    thumbnail: req.body.thumbnail,
+                    summary: req.body.summary,
+                    description: req.body.description,
+                    tag: req.body.tag,
+                    status: req.body.status,
+                    blogCategoryId: req.body.blog_category_id,
+                    adminId: req.body.admin_id
+                };
+                // console.log(blog);
 
-    // Save Blog in the database
-    Blog.create(blog)
-        .then(data => {
-            res.send(data);
+                // Save Blog in the database
+                Blog.create(blog)
+                    .then(data => {
+                        res.send(data);
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: err.message || "Some error occurred while creating the Blog."
+                        });
+                    });
+
+            }
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Blog."
+                message: "Error retrieving Question with slug=" + slug
             });
         });
+
+
+
 };
 
 // Retrieve all Blogs from the database.
@@ -87,27 +108,76 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    Blog.update(req.body, {
-            where: {
-                id: id
-            }
-        })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "Blog was updated successfully."
+    if (req.body.slug) {
+        Blog.findOne({
+                where: {
+                    slug: req.body.slug
+                }
+            }).then(data => {
+                if (data) {
+                    if (data.id == parseInt(id)) {
+                        update();
+                    } else {
+                        res.status(400).send({
+                            message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
+                        });
+                    }
+                } else {
+                    update();
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error retrieving Question with slug=" + slug
                 });
-            } else {
-                res.send({
-                    message: `Cannot update Blog with id=${id}. Maybe Blog was not found or req.body is empty!`
-                });
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating Blog with id=" + id
             });
-        });
+
+    } else {
+        update();
+    }
+
+
+    function update() {
+
+        // update blog
+        var blog = {
+            title: req.body.title,
+            slug: req.body.slug,
+            thumbnail: req.body.thumbnail,
+            summary: req.body.summary,
+            description: req.body.description,
+            tag: req.body.tag,
+            status: req.body.status,
+            blogCategoryId: req.body.blog_category_id,
+            adminId: req.body.admin_id
+        };
+
+        Blog.update(blog, {
+                where: {
+                    id: id
+                }
+            })
+            .then(num => {
+                if (num == 1) {
+                    res.send({
+                        message: "Blog was updated successfully."
+                    });
+                } else {
+                    res.send({
+                        message: `Cannot update Blog with id=${id}. Maybe Blog was not found or req.body is empty!`
+                    });
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error updating Blog with id=" + id
+                });
+            });
+
+    }
+
+
+
 };
 
 // Delete a Blog with the specified id in the request
@@ -227,13 +297,20 @@ exports.findByCategoryId = (req, res) => {
 // find one Blog by Slug
 exports.findOneBySlug = (req, res) => {
     var slug = req.params.slug;
-
+    var status = +req.query.status;
+    status = (status == 'both') ? null : 1;
+    var condition = {
+        status: status,
+        slug: slug
+    };
     Blog.findOne({
-            where: {
-                slug: slug
-            }
+            where: condition
         }).then(data => {
-            res.send(data);
+            if (data) {
+                res.send(data);
+            } else {
+                res.send(`Không tồn tại bài viết với slug = ${slug} hoặc bài viết đã bị vô hiệu hóa!`)
+            }
         })
         .catch(err => {
             res.status(500).send({

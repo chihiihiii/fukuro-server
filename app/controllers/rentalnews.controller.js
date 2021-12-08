@@ -12,37 +12,66 @@ exports.create = (req, res) => {
         return;
     }
 
-    // Create a RentalNews
-    const rentalNews = {
-        name: req.body.name,
-        image: req.body.image,
-        price: req.body.price,
-        quantity: req.body.quantity,
-        type: req.body.type,
-        address: req.body.address,
-        streetNumber: req.body.street_number,
-        street: req.body.street,
-        district: req.body.district,
-        city: req.body.city,
-        lat: req.body.lat,
-        lng: req.body.lng,
-        area: req.body.area,
-        slug: req.body.slug,
-        description: req.body.description,
-        status: req.body.status,
-        customerId: req.body.customer_id,
-    };
+    if (!req.body.name || !req.body.slug) {
+        res.status(400).send({
+            message: "Không để trống tên tin cho thuê!"
+        });
+        return;
+    }
 
-    // Save RentalNews in the database
-    RentalNews.create(rentalNews)
-        .then(data => {
-            res.send(data);
+    RentalNews.findOne({
+            where: {
+                slug: req.body.slug
+            }
+        }).then(data => {
+            if (data) {
+                res.status(400).send({
+                    message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
+                });
+            } else {
+                // Create a RentalNews
+                var rentalNews = {
+                    name: req.body.name,
+                    image: req.body.image,
+                    price: req.body.price,
+                    quantity: req.body.quantity,
+                    type: req.body.type,
+                    address: req.body.address,
+                    streetNumber: req.body.street_number,
+                    street: req.body.street,
+                    district: req.body.district,
+                    city: req.body.city,
+                    lat: req.body.lat,
+                    lng: req.body.lng,
+                    area: req.body.area,
+                    slug: req.body.slug,
+                    priority: req.body.priority,
+                    description: req.body.description,
+                    status: req.body.status,
+                    promotionId: req.body.promotion_id,
+                    customerId: req.body.customer_id,
+                };
+
+
+                // Save RentalNews in the database
+                RentalNews.create(rentalNews)
+                    .then(data => {
+                        res.send(data);
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: err.message || "Some error occurred while creating the Rental News."
+                        });
+                    });
+            }
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Rental News."
+                message: "Error retrieving Question with slug=" + slug
             });
         });
+
+
 };
 
 // Retrieve all RentalNewss from the database.
@@ -94,27 +123,86 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    RentalNews.update(req.body, {
-            where: {
-                id: id
-            }
-        })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "Rental News was updated successfully."
+    if (req.body.slug) {
+        RentalNews.findOne({
+                where: {
+                    slug: req.body.slug
+                }
+            }).then(data => {
+                if (data) {
+                    if (data.id == parseInt(id)) {
+                        update();
+                    } else {
+                        res.status(400).send({
+                            message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
+                        });
+                    }
+                } else {
+                    update();
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error retrieving Question with slug=" + slug
                 });
-            } else {
-                res.send({
-                    message: `Cannot update Rental News with id=${id}. Maybe Rental News was not found or req.body is empty!`
-                });
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating Rental News with id=" + id
             });
-        });
+
+    } else {
+        update();
+    }
+
+
+    function update() {
+
+        var rentalNews = {
+            name: req.body.name,
+            image: req.body.image,
+            price: req.body.price,
+            quantity: req.body.quantity,
+            type: req.body.type,
+            address: req.body.address,
+            streetNumber: req.body.street_number,
+            street: req.body.street,
+            district: req.body.district,
+            city: req.body.city,
+            lat: req.body.lat,
+            lng: req.body.lng,
+            area: req.body.area,
+            slug: req.body.slug,
+            priority: req.body.priority,
+            description: req.body.description,
+            status: req.body.status,
+            promotionId: req.body.promotion_id,
+            customerId: req.body.customer_id,
+        };
+
+        RentalNews.update(rentalNews, {
+                where: {
+                    id: id
+                }
+            })
+            .then(num => {
+                if (num == 1) {
+                    res.send({
+                        message: "Rental News was updated successfully."
+                    });
+                } else {
+                    res.send({
+                        message: `Cannot update Rental News with id=${id}. Maybe Rental News was not found or req.body is empty!`
+                    });
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error updating Rental News with id=" + id
+                });
+            });
+
+
+    }
+
+
+
 };
 
 // Delete a RentalNews with the specified id in the request
