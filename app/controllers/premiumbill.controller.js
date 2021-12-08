@@ -20,7 +20,8 @@ exports.create = (req, res) => {
         totalPrice: req.body.total_price,
         paymentStatus: req.body.payment_status,
         status: req.body.status,
-
+        customerId: req.body.customer_id,
+        premiumId: req.body.premium_id,
     };
 
     // Save PremiumBill in the database
