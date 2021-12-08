@@ -52,6 +52,9 @@ db.RentalNews= require("./rentalnews.js")(sequelize, Sequelize);
 db.Comments= require("./comment.js")(sequelize, Sequelize);
 db.PasswordResets= require("./passwordreset.js")(sequelize, Sequelize);
 db.Bookmarks= require("./bookmark.js")(sequelize, Sequelize);
+db.QuestionCategories= require("./questioncategory.js")(sequelize, Sequelize);
+db.Questions= require("./question.js")(sequelize, Sequelize);
+db.Answers= require("./answer.js")(sequelize, Sequelize);
 
 
 module.exports = db;

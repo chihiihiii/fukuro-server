@@ -52,6 +52,9 @@ require('./app/routes/comment.route')(app);
 require('./app/routes/passwordreset.route')(app);
 require('./app/routes/bookmark.route')(app);
 require('./app/routes/statistic.route')(app);
+require('./app/routes/questioncategory.route')(app);
+require('./app/routes/question.route')(app);
+require('./app/routes/answer.route')(app);
 
 
 // simple route
