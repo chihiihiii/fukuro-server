@@ -15,7 +15,7 @@ exports.create = (req, res) => {
     // }
 
     // Create a AdminContact
-    const adminContact = {
+    var adminContact = {
         firstName: req.body.first_name,
         lastName: req.body.last_name,
         email: req.body.email,
@@ -40,7 +40,7 @@ exports.create = (req, res) => {
 
 // Retrieve all AdminContacts from the database.
 exports.findAll = (req, res) => {
-    // const username = req.query.username;
+    // var username = req.query.username;
     // var condition = username ? {
     //     username: {
     //         [Op.like]: `%${username}%`
@@ -88,7 +88,21 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    AdminContact.update(req.body, {
+    // Update a AdminContact
+    var adminContact = {
+        firstName: req.body.first_name,
+        lastName: req.body.last_name,
+        email: req.body.email,
+        phone: req.body.phone,
+        subject: req.body.subject,
+        message: req.body.message,
+        status: req.body.status,
+        adminId: req.body.admin_id,
+
+
+    };
+
+    AdminContact.update(adminContact, {
             where: {
                 id: id
             }
@@ -197,6 +211,8 @@ exports.requestContact = (req, res) => {
             // res.send('Success');
             var adminContact = {
                 status: 1,
+                adminId: req.body.admin_id,
+
             }
 
             AdminContact.update(adminContact, {
