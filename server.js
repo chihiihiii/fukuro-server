@@ -56,6 +56,8 @@ require('./app/routes/questioncategory.route')(app);
 require('./app/routes/question.route')(app);
 require('./app/routes/answer.route')(app);
 require('./app/routes/payment.route')(app);
+require('./app/routes/rentalroom.route')(app);
+require('./app/routes/renter.route')(app);
 
 
 // simple route

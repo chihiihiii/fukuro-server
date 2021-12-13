@@ -20,13 +20,21 @@ module.exports = (sequelize, DataTypes) => {
     price: {
       type: DataTypes.DOUBLE
     },
-    electricityFee: {
+    electricityQuantity: {
       type: DataTypes.DOUBLE,
-      field: 'electricity_fee'
+      field: 'electricity_quantity'
     },
-    waterFee: {
+    electricityPrice: {
       type: DataTypes.DOUBLE,
-      field: 'water_fee'
+      field: 'electricity_price'
+    },
+    waterQuantity: {
+      type: DataTypes.DOUBLE,
+      field: 'water_quantity'
+    },
+    waterPrice: {
+      type: DataTypes.DOUBLE,
+      field: 'water_price'
     },
     internetFee: {
       type: DataTypes.DOUBLE,
@@ -64,6 +72,16 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: {
           tableName: 'Rentals',
+        },
+        key: 'id'
+      },
+    },
+    rentalRoomId: {
+      type: DataTypes.INTEGER,
+      field: 'rental_room_id',
+      references: {
+        model: {
+          tableName: 'RentalRooms',
         },
         key: 'id'
       },

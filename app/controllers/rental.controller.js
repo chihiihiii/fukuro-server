@@ -5,18 +5,21 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Rental
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.name) {
+        res.status(400).send({
+            message: "Không để trống tên trọ!"
+        });
+        return;
+    }
+
 
     // Create a Rental
     var rental = {
         name: req.body.name,
         price: req.body.price,
-        renter: req.body.renter,
+        quantity: req.body.quantity,
+        type: req.body.type,
+        address: req.body.address,
         note: req.body.note,
         status: req.body.status,
     };
@@ -35,12 +38,12 @@ exports.create = (req, res) => {
 
 // Retrieve all Rentals from the database.
 exports.findAll = (req, res) => {
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
-    var condition = {
-        status: status
-    };
-
+    var status = req.query.status;
+    console.log(status);
+    var condition = {};
+    if (status == 0 || status == 1) {
+        condition.status = status
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -82,7 +85,18 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    Rental.update(req.body, {
+    // Update a Rental
+    var rental = {
+        name: req.body.name,
+        price: req.body.price,
+        quantity: req.body.quantity,
+        type: req.body.type,
+        address: req.body.address,
+        note: req.body.note,
+        status: req.body.status,
+    };
+
+    Rental.update(rental, {
             where: {
                 id: id
             }

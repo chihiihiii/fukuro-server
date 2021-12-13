@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Rental extends Model {
+  class Renter extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,35 +13,55 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   };
-  Rental.init({
+  Renter.init({
     name: {
       type: DataTypes.STRING
     },
-    price: {
+    email: {
+      type: DataTypes.STRING
+    },
+    phone: {
+      type: DataTypes.STRING
+    },
+    birth: {
+      type: DataTypes.DATEONLY
+    },
+    idNumber: {
+      type: DataTypes.STRING,
+      field: 'id_number'
+    },
+    deposit: {
       type: DataTypes.DOUBLE
     },
-    quantity: {
+    period: {
       type: DataTypes.INTEGER
     },
-    type: {
-      type: DataTypes.INTEGER
-    },
-    address: {
-      type: DataTypes.TEXT
+    paymentDate: {
+      type: DataTypes.DATEONLY
     },
     note: {
       type: DataTypes.TEXT
     },
     status: {
       type: DataTypes.STRING,
-      defaultValue: 0
+      defaultValue: 1
     },
-    customerId: {
+    rentalId: {
       type: DataTypes.INTEGER,
-      field: 'customer_id',
+      field: 'rental_id',
       references: {
         model: {
-          tableName: 'Customers',
+          tableName: 'Rentals',
+        },
+        key: 'id'
+      },
+    },
+    rentalRoomId: {
+      type: DataTypes.INTEGER,
+      field: 'rental_room_id',
+      references: {
+        model: {
+          tableName: 'RentalRooms',
         },
         key: 'id'
       },
@@ -55,10 +75,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'updated_at'
-    }
-  }, {
+    }  }, {
     sequelize,
-    modelName: 'Rental',
+    modelName: 'Renter',
   });
-  return Rental;
+  return Renter;
 };

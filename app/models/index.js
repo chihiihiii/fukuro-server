@@ -55,6 +55,8 @@ db.Bookmarks= require("./bookmark.js")(sequelize, Sequelize);
 db.QuestionCategories= require("./questioncategory.js")(sequelize, Sequelize);
 db.Questions= require("./question.js")(sequelize, Sequelize);
 db.Answers= require("./answer.js")(sequelize, Sequelize);
+db.RentalRooms= require("./rentalroom.js")(sequelize, Sequelize);
+db.Renters= require("./renter.js")(sequelize, Sequelize);
 
 
 module.exports = db;

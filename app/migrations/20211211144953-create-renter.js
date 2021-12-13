@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('RentalBills', {
+    await queryInterface.createTable('Renters', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,39 +11,27 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
-      price: {
+      email: {
+        type: Sequelize.STRING
+      },
+      phone: {
+        type: Sequelize.STRING
+      },
+      birth: {
+        type: Sequelize.DATEONLY
+      },
+      idNumber: {
+        type: Sequelize.STRING,
+        field: 'id_number'
+      },
+      deposit: {
         type: Sequelize.DOUBLE
       },
-      electricityFee: {
-        type: Sequelize.DOUBLE,
-        field: 'electricity_fee'
+      period: {
+        type: Sequelize.INTEGER
       },
-      waterFee: {
-        type: Sequelize.DOUBLE,
-        field: 'water_fee'
-      },
-      internetFee: {
-        type: Sequelize.DOUBLE,
-        field: 'internet_fee'
-      },
-      otherFee: {
-        type: Sequelize.DOUBLE,
-        field: 'other_fee'
-      },
-      feeDesc: {
-        type: Sequelize.TEXT,
-        field: 'fee_desc'
-      },
-      prepay: {
-        type: Sequelize.DOUBLE
-      },
-      discountPrice: {
-        type: Sequelize.DOUBLE,
-        field: 'discount_price'
-      },
-      totalPrice: {
-        type: Sequelize.DOUBLE,
-        field: 'total_price'
+      paymentDate: {
+        type: Sequelize.DATEONLY
       },
       note: {
         type: Sequelize.TEXT
@@ -62,17 +50,16 @@ module.exports = {
           key: 'id'
         },
       },
-      customerId: {
+      rentalRoomId: {
         type: Sequelize.INTEGER,
-        field: 'customer_id',
+        field: 'rental_room_id',
         references: {
           model: {
-            tableName: 'Customers',
+            tableName: 'RentalRooms',
           },
           key: 'id'
         },
       },
-
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -86,6 +73,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('RentalBills');
+    await queryInterface.dropTable('Renters');
   }
 };

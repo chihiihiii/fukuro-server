@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Rentals', {
+    await queryInterface.createTable('RentalRooms', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -14,14 +14,15 @@ module.exports = {
       price: {
         type: Sequelize.DOUBLE
       },
-      quantity: {
+      area: {
         type: Sequelize.INTEGER
       },
-      type: {
-        type: Sequelize.INTEGER
+      numberPeople: {
+        type: Sequelize.INTEGER,
+        field: 'number_people'
       },
-      address: {
-        type: Sequelize.TEXT
+      vacancyDate: {
+        type: Sequelize.DATEONLY
       },
       note: {
         type: Sequelize.TEXT
@@ -29,14 +30,13 @@ module.exports = {
       status: {
         type: Sequelize.STRING,
         defaultValue: 0
-
       },
-      customerId: {
+      rentalId: {
         type: Sequelize.INTEGER,
-        field: 'customer_id',
+        field: 'rental_id',
         references: {
           model: {
-            tableName: 'Customers',
+            tableName: 'Rentals',
           },
           key: 'id'
         },
@@ -54,6 +54,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Rentals');
+    await queryInterface.dropTable('RentalRooms');
   }
 };
