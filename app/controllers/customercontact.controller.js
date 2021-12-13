@@ -39,12 +39,15 @@ exports.create = (req, res) => {
 
 // Retrieve all CustomerContacts from the database.
 exports.findAll = (req, res) => {
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
+    var status = req.query.status;
     var condition = {
-        status: status
     };
-
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {
+    } else {
+        condition.status = 1
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;

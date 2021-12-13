@@ -76,12 +76,13 @@ exports.create = (req, res) => {
 
 // Retrieve all RentalNewss from the database.
 exports.findAll = (req, res) => {
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
-    var condition = {
-        status: status
-    };
-
+    var status = req.query.status;
+    var condition = {};
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -252,9 +253,15 @@ exports.deleteAll = (req, res) => {
 
 // Retrieve RentalNews latest from the database.
 exports.findLatest = (req, res) => {
-    var condition = {
-        status: 1,
-    };
+
+    var status = req.query.status;
+
+    var condition = {};
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -285,11 +292,16 @@ exports.findLatest = (req, res) => {
 
 // Retrieve RentalNews priority from the database.
 exports.findPriority = (req, res) => {
+    var status = req.query.status;
 
     var condition = {
         priority: 1,
-        status: 1
     };
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -318,11 +330,16 @@ exports.findPriority = (req, res) => {
 // Retrieve RentalNews by customer from the database.
 exports.findByCustomerId = (req, res) => {
     var id = req.params.id;
+    var status = req.query.status;
     var condition = {
         customerId: id,
-        status: 1,
     };
 
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;

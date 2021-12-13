@@ -62,11 +62,15 @@ exports.create = (req, res) => {
 // Retrieve all Blogs from the database.
 exports.findAll = (req, res) => {
 
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
+    var status = req.query.status;
     var condition = {
-        status: status
     };
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {
+    } else {
+        condition.status = 1
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -228,11 +232,13 @@ exports.deleteAll = (req, res) => {
 // Retrieve Blogs latest from the database.
 exports.findLatest = (req, res) => {
 
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
-    var condition = {
-        status: status
-    };
+    var status = req.query.status;
+    var condition = {};
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -264,12 +270,16 @@ exports.findLatest = (req, res) => {
 exports.findByCategoryId = (req, res) => {
     var id = req.params.id;
 
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
+    var status = req.query.status;
     var condition = {
-        status: status,
         blog_category_id: id,
     };
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
+
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -297,12 +307,19 @@ exports.findByCategoryId = (req, res) => {
 // find one Blog by Slug
 exports.findOneBySlug = (req, res) => {
     var slug = req.params.slug;
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
+    var status = req.query.status;
     var condition = {
-        status: status,
         slug: slug
     };
+
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {
+    } else {
+        condition.status = 1
+    }
+
+    
     Blog.findOne({
             where: condition
         }).then(data => {

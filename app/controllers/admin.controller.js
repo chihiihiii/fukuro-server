@@ -151,11 +151,13 @@ exports.create = (req, res) => {
 
 // Retrieve all Admins from the database.
 exports.findAll = (req, res) => {
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
+    var status = req.query.status;
     var condition = {
-        status: status
+
     };
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } 
 
     var page = +req.query.page;
     var limit = +req.query.limit;

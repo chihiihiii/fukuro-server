@@ -38,13 +38,16 @@ exports.create = (req, res) => {
 
 // Retrieve all PremiumBills from the database.
 exports.findAll = (req, res) => {
-    // var username = req.query.username;
-    // var condition = username ? {
-    //     username: {
-    //         [Op.like]: `%${username}%`
-    //     }
-    // } : null;
-    var condition = null;
+    var status = req.query.status;
+
+    var condition = {
+    };
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {
+    } else {
+        condition.status = 1
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;

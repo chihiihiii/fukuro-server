@@ -55,11 +55,15 @@ exports.create = (req, res) => {
 
 // Retrieve all BlogCategory from the database.
 exports.findAll = (req, res) => {
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
-    var condition = {
-        status: status
-    };
+
+    var status = req.query.status;
+    var condition = {};
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {
+    } else {
+        condition.status = 1
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -218,12 +222,18 @@ exports.deleteAll = (req, res) => {
 // find one BlogCategory by Slug
 exports.findOneBySlug = (req, res) => {
     var slug = req.params.slug;
-    var status = +req.query.status;
-    status = (status == 'both') ? null : 1;
+    var status = req.query.status;
+
     var condition = {
-        status: status,
         slug: slug
     };
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
+
+
     BlogCategory.findOne({
             where: condition
         }).then(data => {
