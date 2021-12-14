@@ -1,51 +1,229 @@
 const db = require("../models");
 const PremiumBill = db.PremiumBills;
+const CustomerPremiumService = db.CustomerPremiumServices;
+
 const Op = db.Sequelize.Op;
 
 // Create and Save a new PremiumBill
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.customer_id || !req.body.premium_id || !req.body.expire) {
+        res.status(400).send({
+            message: "Không để trống mã khách hàng hoặc mã dịch vụ premium hoặc thời hạn!"
+        });
+        return;
+    }
+
+    var name = req.body.name;
+    var price = req.body.price;
+    var expire = req.body.expire;
+    var totalPrice = req.body.total_price;
+    var paymentStatus = req.body.payment_status;
+    var status = req.body.status;
+    var customerId = req.body.customer_id;
+    var premiumId = req.body.premium_id;
 
     // Create a PremiumBill
     var premiumBill = {
-        name: req.body.name,
-        price: req.body.price,
-        expire: req.body.expire,
-        totalPrice: req.body.total_price,
-        paymentStatus: req.body.payment_status,
-        status: req.body.status,
-        customerId: req.body.customer_id,
-        premiumId: req.body.premium_id,
+        name: name,
+        price: price,
+        expire: expire,
+        totalPrice: totalPrice,
+        paymentStatus: paymentStatus,
+        status: status,
+        customerId: customerId,
+        premiumId: premiumId,
     };
 
     // Save PremiumBill in the database
     PremiumBill.create(premiumBill)
         .then(data => {
-            res.send(data);
+            // res.send(data);
+
+            createCustomerPremiumService(customerId, premiumId, expire);
+
         })
         .catch(err => {
             res.status(500).send({
                 message: err.message || "Some error occurred while creating the Premium Bill."
             });
         });
+
+
+
+    function createCustomerPremiumService(customerId, premiumId, expire) {
+
+        CustomerPremiumService.findOne({
+                where: {
+                    customerId: customerId,
+                    premiumId: premiumId,
+                }
+            })
+            .then(data => {
+                // res.send(data);
+                var currentTime = new Date();
+
+                if (data) {
+                    var customerPremiumServiceId = data.dataValues.id
+
+                    var currentTime = new Date();
+                    var startDateDB = data.dataValues.startDate
+                    var endDateDB = data.dataValues.endDate
+
+                    if (currentTime > endDateDB) {
+
+
+                        var currentDate = currentTime.getDate();
+                        var currentMonth = currentTime.getMonth();
+                        var currentYear = currentTime.getFullYear();
+                        var currentHours = currentTime.getHours();
+                        var currentMinutes = currentTime.getMinutes();
+
+                        var endMonth = parseInt(currentMonth) + parseInt(expire);
+                        if (endMonth > 11) {
+
+                            endYear = parseInt(currentYear) + 1;
+                            endMonth = endMonth - 11
+
+                        } else {
+                            endYear = currentYear;
+                        }
+
+                        var endDate = new Date(endYear, endMonth, currentDate, currentHours, currentMinutes)
+                        var startDate = currentTime;
+                        console.log('lon');
+                        console.log(currentYear);
+                        console.log(endYear);
+
+
+                    } else {
+
+
+                        console.log('nho hon');
+                        console.log(currentTime);
+                        console.log(endDateDB);
+                        var endDate = endDateDB.getDate();
+                        var endMonth = endDateDB.getMonth();
+                        var endYear = endDateDB.getFullYear();
+                        var endHours = endDateDB.getHours();
+                        var endMinutes = endDateDB.getMinutes();
+                        console.log(endMonth);
+                        console.log(expire);
+
+                        var endMonth = parseInt(endMonth) + parseInt(expire);
+
+                        console.log(endDate);
+                        console.log(endMonth);
+                        console.log(endYear);
+                        console.log(endHours);
+                        console.log(endMinutes);
+                        if (endMonth > 11) {
+                            endYear = parseInt(endYear) + 1;
+                            endMonth = endMonth - 11
+                        }
+
+                        endDate = new Date(endYear, endMonth, endDate, endHours, endMinutes);
+                        var startDate = startDateDB;
+
+
+
+                    }
+                    console.log(startDate);
+                    console.log(endDate);
+
+                    // Update a CustomerPremiumService
+                    var customerPremiumService = {
+                        startDate: startDate,
+                        endDate: endDate,
+                        status: 1,
+
+                    };
+
+                    CustomerPremiumService.update(customerPremiumService, {
+                            where: {
+                                id: customerPremiumServiceId
+                            }
+                        })
+                        .then(num => {
+                            if (num == 1) {
+                                res.status(200).send({
+                                    message: "Customer Premium Service was updated successfully."
+                                });
+                            } else {
+                                res.status(400).send({
+                                    message: `Cannot update Customer Premium Service with id=${customerPremiumServiceId}. Maybe Customer Premium was not found or req.body is empty!`
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            res.status(500).send({
+                                message: "Error updating Customer Premium with id=" + customerPremiumServiceId
+                            });
+                        });
+
+                } else {
+                    var currentTime = new Date();
+
+                    var currentDate = currentTime.getDate();
+                    var currentMonth = currentTime.getMonth();
+                    var currentYear = currentTime.getFullYear();
+                    var currentHours = currentTime.getHours();
+                    var currentMinutes = currentTime.getMinutes();
+
+                    var endMonth = currentMonth + expire;
+                    if (endMonth > 11) {
+
+                        endYear = currentYear + 1;
+                        endMonth = endMonth - 11
+
+                    } else {
+                        endYear = currentYear;
+                    }
+
+                    var endDate = new Date(endYear, endMonth, currentDate, currentHours, currentMinutes)
+                    var startDate = currentTime;
+
+                    // Create a CustomerPremiumService
+                    var customerPremiumService = {
+                        startDate: startDate,
+                        endDate: endDate,
+                        customerId: customerId,
+                        premiumId: premiumId,
+
+                    };
+
+                    // Save CustomerPremiumService in the database
+                    CustomerPremiumService.create(customerPremiumService)
+                        .then(data => {
+                            res.send(data);
+                        })
+                        .catch(err => {
+                            res.status(500).send({
+                                message: err.message || "Some error occurred while creating the Customer Premium."
+                            });
+                        });
+
+
+                }
+
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while retrieving Admin."
+                });
+            });
+    }
 };
+
 
 // Retrieve all PremiumBills from the database.
 exports.findAll = (req, res) => {
     var status = req.query.status;
 
-    var condition = {
-    };
+    var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 

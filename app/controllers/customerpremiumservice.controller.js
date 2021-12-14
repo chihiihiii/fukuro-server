@@ -86,7 +86,7 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-        // Create a CustomerPremiumService
+        // Update a CustomerPremiumService
         var customerPremiumService = {
             startDate: req.body.start_date,
             endDate: req.body.end_date,
