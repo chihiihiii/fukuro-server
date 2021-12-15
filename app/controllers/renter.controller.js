@@ -169,7 +169,7 @@ exports.findByRentalId = (req, res) => {
     var id = req.params.id;
     var status = req.query.status;
     var condition = {
-        rentalId : id,
+        rentalId: id,
     };
 
     if (status == 0 || status == 1) {
@@ -181,16 +181,17 @@ exports.findByRentalId = (req, res) => {
     var offset = (page > 0) ? (page - 1) * limit : null;
 
     Renter.findAndCountAll({
-        where: condition,
-        offset: offset,
-        limit: limit
-    })
+            where: condition,
+            offset: offset,
+            limit: limit
+        })
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Rental News."
+                message: "Some error occurred while retrieving Rental News!",
+                error: err
             });
         });
 

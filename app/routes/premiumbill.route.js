@@ -9,6 +9,8 @@ module.exports = app => {
     // Retrieve all PremiumBills
     router.get("/", premiumBills.findAll);
 
+    // Retrieve PremiumBills by customer
+    router.get("/customer/:id", premiumBills.findByCustomerId);
 
     // Retrieve a single PremiumBill with id
     router.get("/:id", premiumBills.findOne);

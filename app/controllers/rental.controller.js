@@ -114,7 +114,8 @@ exports.findByCustomerId = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Rental News."
+                message:  "Đã xảy ra một số lỗi khi truy xuất Rental News!",
+                error: err
             });
         });
 
