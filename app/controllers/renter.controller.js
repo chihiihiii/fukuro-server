@@ -12,14 +12,14 @@ exports.create = (req, res) => {
         });
         return;
     }
-    if (req.body.rental_id && req.body.rental_room_id) {
-        res.status(400).send({
-            message: "Không thêm cả hai mã trọ và mã phòng trọ!"
-        });
-        return;
-    }
+    // if (req.body.rental_id && req.body.rental_room_id) {
+    //     res.status(400).send({
+    //         message: "Không thêm cả hai mã trọ và mã phòng trọ!"
+    //     });
+    //     return;
+    // }
 
-    if (req.body.rental_id) {
+    if (req.body.rental_id && !req.body.rental_room_id) {
         Rental.findOne({
                 where: {
                     id: req.body.rental_id,
@@ -47,11 +47,11 @@ exports.create = (req, res) => {
                 });
             });
 
-    } else if (req.body.rental_room_id) {
+    } else if (req.body.rental_id && req.body.rental_room_id) {
 
         Rental.findOne({
                 where: {
-                    id: req.body.rental_room_id,
+                    id: req.body.rental_id,
                     type: 1
                 }
             })
@@ -159,11 +159,44 @@ exports.findOne = (req, res) => {
         });
 };
 
+// Retrieve Rental by customer from the database.
+exports.findByRentalId = (req, res) => {
+    var id = req.params.id;
+    var status = req.query.status;
+    var condition = {
+        rentalId : id,
+    };
+
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {}
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    Renter.findAndCountAll({
+        where: condition,
+        offset: offset,
+        limit: limit
+    })
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving Rental News."
+            });
+        });
+
+
+};
+
 // Update a Renter by the id in the request
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    if (req.body.rental_id) {
+    if (req.body.rental_id && !req.body.rental_room_id) {
         Rental.findOne({
                 where: {
                     id: req.body.rental_id,
@@ -191,11 +224,11 @@ exports.update = (req, res) => {
                 });
             });
 
-    } else if (req.body.rental_room_id) {
+    } else if (req.body.rental_id && req.body.rental_room_id) {
 
         Rental.findOne({
                 where: {
-                    id: req.body.rental_room_id,
+                    id: req.body.rental_id,
                     type: 1
                 }
             })

@@ -89,6 +89,41 @@ exports.findOne = (req, res) => {
         });
 };
 
+// Retrieve Rental by customer from the database.
+exports.findByCustomerId = (req, res) => {
+    var id = req.params.id;
+    var status = req.query.status;
+    var condition = {
+        customerId: id,
+    };
+
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    RentalBill.findAndCountAll({
+        where: condition,
+        offset: offset,
+        limit: limit
+    })
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving Rental News."
+            });
+        });
+
+
+};
+
 // Update a RentalBill by the id in the request
 exports.update = (req, res) => {
     var id = req.params.id;
