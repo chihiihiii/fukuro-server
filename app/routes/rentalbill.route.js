@@ -13,6 +13,9 @@ module.exports = app => {
     // Retrieve a single RentalBill with id
     router.get("/:id", rentalBills.findOne);
 
+    // Retrieve RentalBill by customer
+    router.get("/customer/:id", rentalBills.findByCustomerId);
+
     // Update a RentalBill with id
     router.put("/:id", rentalBills.update);
 
