@@ -45,7 +45,8 @@ exports.create = (req, res) => {
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: err.message || "Some error occurred while creating the Question Category."
+                            message: "Đã xảy ra một số lỗi khi tạo Question Category!",
+                            error: err.message
                         });
                     });
 
@@ -53,7 +54,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Question with slug=" + slug
+                message: "Lỗi khi truy xuất Question with slug=" + slug,
+                error: err.message
             });
         });
 
@@ -86,7 +88,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Question Categories."
+                message: "Đã xảy ra một số lỗi khi truy xuất Question Categories!",
+                error: err.message
             });
         });
 };
@@ -101,7 +104,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Question Category with id=" + id
+                message: "Lỗi khi truy xuất Question Category with id=" + id,
+                error: err.message
             });
         });
 };
@@ -130,7 +134,8 @@ exports.update = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Error retrieving Question with slug=" + slug
+                    message: "Lỗi khi truy xuất Question with slug=" + slug,
+                    error: err.message
                 });
             });
 
@@ -156,17 +161,18 @@ exports.update = (req, res) => {
             .then(num => {
                 if (num == 1) {
                     res.send({
-                        message: "Question Category was updated successfully."
+                        message: "Question Category được cập nhật thành công!"
                     });
                 } else {
                     res.send({
-                        message: `Cannot update Question Category with id=${id}. Maybe Question Category was not found or req.body is empty!`
+                        message: `Không thể cập nhật thông tin Question Category with id=${id}. Maybe Question Category was not found or req.body is empty!`
                     });
                 }
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Error updating Question Category with id=" + id
+                    message: "Lỗi khi cập nhật Question Category with id=" + id,
+                    error: err.message
                 });
             });
 
@@ -190,17 +196,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Question Category was deleted successfully!"
+                    message: "Question Category đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Question Category with id=${id}. Maybe Question Category was not found!`
+                    message: `Không thể xóa Question Category with id=${id}. Maybe Question Category was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Question Category with id=" + id
+                message: "Không thể xóa Question Category with id=" + id,
+                error: err.message
             });
         });
 };
@@ -213,12 +220,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Question Categories were deleted successfully!`
+                message: `${nums} Question Categories đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all question categories."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả question categories!",
+                error: err.message
             });
         });
 };
@@ -246,7 +254,8 @@ exports.findOneBySlug = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Question Category with slug=" + slug
+                message: "Lỗi khi truy xuất Question Category with slug=" + slug,
+                error: err.message
             });
         });
 };

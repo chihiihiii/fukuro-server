@@ -32,7 +32,7 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Answer."
+                message: "Đã xảy ra một số lỗi khi tạo Answer!"
             });
         });
 };
@@ -40,15 +40,13 @@ exports.create = (req, res) => {
 // Retrieve all Answers from the database.
 exports.findAll = (req, res) => {
     var status = req.query.status;
-    var condition = {
-    };
+    var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
-    
+
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
@@ -65,7 +63,9 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Answers."
+                message: "Đã xảy ra một số lỗi khi truy xuất Answers!",
+                error: err.message
+
             });
         });
 };
@@ -118,13 +118,17 @@ exports.findOne = (req, res) => {
                             res.send(answer_data);
 
                         } else {
-                            res.send('Not exist Answer for customer id=' + customerId);
+                            res.status(400).send({
+                                message: 'Không tồn tại Answer với customer id=' + customerId
+                            });
 
                         }
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Error retrieving Answer with customer id=" + customerId + err
+                            message: "Lỗi khi truy xuất Answer với customer id=" + customerId,
+                            error: err.message
+
                         });
                     });
 
@@ -134,7 +138,9 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Answer with err=" + err
+                message: "Lỗi khi truy xuất Answer with id=" + id,
+                error: err.message
+
             });
         });
 };
@@ -163,17 +169,19 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Answer was updated successfully."
+                    message: "Answer được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Answer with id=${id}. Maybe Answer was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin Answer with id=${id}!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Answer with id=" + id
+                message: "Lỗi khi cập nhật Answer with id=" + id,
+                error: err.message
+
             });
         });
 };
@@ -190,17 +198,19 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Answer was deleted successfully!"
+                    message: "Answer đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Answer with id=${id}. Maybe Answer was not found!`
+                    message: `Không thể xóa Answer with id=${id}!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Answer with id=" + id
+                message: "Không thể xóa Answer with id=" + id,
+                error: err.message
+
             });
         });
 };
@@ -213,12 +223,14 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Answers were deleted successfully!`
+                message: `${nums} Answers đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all answers."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả answers!",
+                error: err.message
+
             });
         });
 };
@@ -232,8 +244,7 @@ exports.findByQuestionId = (req, res) => {
     };
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -281,7 +292,7 @@ exports.findByQuestionId = (req, res) => {
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Error retrieving Customer with id=" + customerId + err
+                            message: "Lỗi khi truy xuất Customer with id=" + customerId + err
                         });
                     });
 
@@ -290,7 +301,9 @@ exports.findByQuestionId = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Answers."
+                message: "Đã xảy ra một số lỗi khi truy xuất Answers!",
+                error: err.message
+
             });
         });
 
@@ -353,19 +366,21 @@ exports.updateLikeById = (req, res) => {
                     .then(num => {
                         if (num == 1) {
                             res.send({
-                                message: "Answer was updated like successfully.",
+                                message: "Answer cập nhật like thành công!",
                                 count_like: likeNumber,
                                 count_dislike: dislikeNumber,
                             });
                         } else {
                             res.send({
-                                message: `Cannot update like Answer with id=${id}. Maybe Answer was not found or req.body is empty!`
+                                message: `Không thể cập nhật like Answer with id=${id}!`
                             });
                         }
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Error updating Answer with id=" + id
+                            message: "Lỗi khi cập nhật Answer with id=" + id,
+                            error: err.message
+
                         });
                     });
 
@@ -376,7 +391,9 @@ exports.updateLikeById = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Answer with err=" + err
+                message: "Lỗi khi truy xuất Answer with id=" + id,
+                error: err.message
+
             });
         });
 };
@@ -437,19 +454,19 @@ exports.updateDislikeById = (req, res) => {
                     .then(num => {
                         if (num == 1) {
                             res.send({
-                                message: "Answer was updated dislike successfully.",
+                                message: "Answer was updated dislike successfully!",
                                 count_like: likeNumber,
                                 count_dislike: dislikeNumber,
                             });
                         } else {
                             res.send({
-                                message: `Cannot update dislike Answer with id=${id}. Maybe Answer was not found or req.body is empty!`
+                                message: `Không thể cập nhật dislike Answer with id=${id}. Maybe Answer was not found or req.body is empty!`
                             });
                         }
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Error updating Answer with id=" + id
+                            message: "Lỗi khi cập nhật Answer with id=" + id
                         });
                     });
 
@@ -458,7 +475,9 @@ exports.updateDislikeById = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Answer with err=" + err
+                message: "Lỗi khi truy xuất Answer with id=" + id,
+                error: err.message
+
             });
         });
 };

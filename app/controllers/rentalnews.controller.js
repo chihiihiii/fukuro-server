@@ -14,7 +14,7 @@ exports.create = (req, res) => {
 
     if (!req.body.name || !req.body.slug) {
         res.status(400).send({
-            message: "Không để trống tên tin cho thuê!"
+            message: "Không để trống tên Rental News!"
         });
         return;
     }
@@ -60,14 +60,17 @@ exports.create = (req, res) => {
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: err.message || "Some error occurred while creating the Rental News."
+                            message: "Đã xảy ra một số lỗi khi tạo Rental News!",
+                            error: err.message
                         });
                     });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Question with slug=" + slug
+                message: "Lỗi khi truy xuất câu hỏi với slug=" + slug,
+                error: err.message
+
             });
         });
 
@@ -100,7 +103,9 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Rental News."
+                message: "Đã xảy ra một số lỗi khi truy xuất Rental News!",
+                error: err.message
+
             });
         });
 };
@@ -115,7 +120,9 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Rental News with id=" + id
+                message: "Lỗi khi truy xuất Rental News id=" + id,
+                error: err.message
+
             });
         });
 };
@@ -144,7 +151,9 @@ exports.update = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Error retrieving Question with slug=" + slug
+                    message: "Lỗi khi truy xuất câu hỏi với slug=" + slug,
+                    error: err.message
+
                 });
             });
 
@@ -185,17 +194,19 @@ exports.update = (req, res) => {
             .then(num => {
                 if (num == 1) {
                     res.send({
-                        message: "Rental News was updated successfully."
+                        message: "Rental News được cập nhật thành công!"
                     });
                 } else {
                     res.send({
-                        message: `Cannot update Rental News with id=${id}. Maybe Rental News was not found or req.body is empty!`
+                        message: `Không thể cập nhật thông tin Rental News với id=${id}!`
                     });
                 }
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Error updating Rental News with id=" + id
+                    message: "Lỗi khi cập nhật Rental News id=" + id,
+                    error: err.message
+
                 });
             });
 
@@ -218,17 +229,19 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Rental News was deleted successfully!"
+                    message: "Rental News đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Rental News with id=${id}. Maybe Rental News was not found!`
+                    message: `Không thể xóa Rental News với id=${id}!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Rental News with id=" + id
+                message: "Không thể xóa Rental News với id=" + id,
+                error: err.message
+
             });
         });
 };
@@ -241,12 +254,14 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Rental News were deleted successfully!`
+                message: `${nums} Rental News đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all rental news."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả Rental News!",
+                error: err.message
+
             });
         });
 };
@@ -282,7 +297,9 @@ exports.findLatest = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Rental News."
+                message:"Đã xảy ra một số lỗi khi truy xuất Rental News!",
+                error: err.message
+
             });
         });
 
@@ -319,7 +336,9 @@ exports.findPriority = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Rental News."
+                message:  "Đã xảy ra một số lỗi khi truy xuất Rental News!",
+                error: err.message
+
             });
         });
 
@@ -356,7 +375,9 @@ exports.findByCustomerId = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Rental News."
+                message: "Đã xảy ra một số lỗi khi truy xuất Rental News!",
+                error: err.message
+
             });
         });
 
@@ -377,7 +398,9 @@ exports.findOneBySlug = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving RentalNews with slug=" + slug
+                message: "Lỗi khi truy xuất Rental News với slug=" + slug,
+                error: err.message
+
             });
         });
 };

@@ -67,7 +67,7 @@ exports.login = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Customer."
+                message: "Đã xảy ra một số lỗi khi truy xuất Customer!"
             });
         });
 }
@@ -164,7 +164,8 @@ exports.loginWithGoogle = (req, res) => {
                         })
                         .catch(err => {
                             res.status(500).send({
-                                message: err.message || "Some error occurred while creating the Customer."
+                                message: "Đã xảy ra một số lỗi khi tạo Customer!",
+                                error: err.message
                             });
                         });
 
@@ -173,7 +174,8 @@ exports.loginWithGoogle = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving Customer."
+                    message: "Đã xảy ra một số lỗi khi truy xuất Customer!",
+                    error: err.message
                 });
             });
 
@@ -211,7 +213,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Customer."
+                message: "Đã xảy ra một số lỗi khi truy xuất Customer!",
+                error: err.message
             });
         });
 
@@ -233,7 +236,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Customer."
+                message: "Đã xảy ra một số lỗi khi truy xuất Customer!",
+                error: err.message
             });
         });
 
@@ -261,7 +265,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Customer."
+                message: "Đã xảy ra một số lỗi khi tạo Customer!",
+                error: err.message
             });
         });
 };
@@ -269,12 +274,10 @@ exports.create = (req, res) => {
 // Retrieve all Customers from the database.
 exports.findAll = (req, res) => {
     var status = req.query.status;
-    var condition = {
-    };
+    var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -294,7 +297,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving customers."
+                message: "Đã xảy ra một số lỗi khi truy xuất customers!",
+                error: err.message
             });
         });
 };
@@ -311,7 +315,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Customer with id=" + id
+                message: "Lỗi khi truy xuất Customer with id=" + id,
+                error: err.message
             });
         });
 };
@@ -342,17 +347,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Customer was updated successfully."
+                    message: "Customer được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Customer with id=${id}. Maybe Customer was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin Customer with id=${id}. Maybe Customer was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Customer with id=" + id
+                message: "Lỗi khi cập nhật Customer with id=" + id,
+                error: err.message
             });
         });
 };
@@ -369,17 +375,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Customer was deleted successfully!"
+                    message: "Customer đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Customer with id=${id}. Maybe Customer was not found!`
+                    message: `Không thể xóa Customer with id=${id}. Maybe Customer was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Customer with id=" + id
+                message: "Không thể xóa Customer with id=" + id,
+                error: err.message
             });
         });
 };
@@ -392,12 +399,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Customers were deleted successfully!`
+                message: `${nums} Customers đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all customers."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả customers!",
+                error: err.message
             });
         });
 };
@@ -432,17 +440,18 @@ exports.changePassword = (req, res) => {
                     .then(num => {
                         if (num == 1) {
                             res.send({
-                                message: "Customer was updated password successfully."
+                                message: "Customer was updated password successfully!"
                             });
                         } else {
                             res.send({
-                                message: `Cannot update Customer password with id=${id}. Maybe Customer was not found or req.body is empty!`
+                                message: `Không thể cập nhật thông tin Customer password with id=${id}. Maybe Customer was not found or req.body is empty!`
                             });
                         }
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Error updating Customer with id=" + id
+                            message: "Lỗi khi cập nhật Customer with id=" + id,
+                            error: err.message
                         });
                     });
 
@@ -453,7 +462,8 @@ exports.changePassword = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Customer with id=" + id
+                message: "Lỗi khi truy xuất Customer with id=" + id,
+                error: err.message
             });
         });
 
@@ -538,7 +548,8 @@ exports.forgotPassword = (req, res) => {
                             })
                             .catch(err => {
                                 res.status(500).send({
-                                    message: err.message || "Some error occurred while creating the Password Reset."
+                                    message: "Đã xảy ra một số lỗi khi tạo Password Reset!",
+                                    error: err.message
                                 });
                             });
 
@@ -569,7 +580,8 @@ exports.forgotPassword = (req, res) => {
                             })
                             .catch(err => {
                                 res.status(500).send({
-                                    message: err.message || "Some error occurred while creating the Password Reset."
+                                    message: "Đã xảy ra một số lỗi khi tạo Password Reset!",
+                                    error: err.message
                                 });
                             });
 
@@ -592,7 +604,8 @@ exports.forgotPassword = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Customer."
+                message: "Đã xảy ra một số lỗi khi truy xuất Customer!",
+                error: err.message
             });
         });
 

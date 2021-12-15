@@ -32,7 +32,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Customer Contact."
+                message: "Đã xảy ra một số lỗi khi tạo Customer Contact!",
+                error: err.message
             });
         });
 };
@@ -40,12 +41,10 @@ exports.create = (req, res) => {
 // Retrieve all CustomerContacts from the database.
 exports.findAll = (req, res) => {
     var status = req.query.status;
-    var condition = {
-    };
+    var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -65,7 +64,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Customer Contacts."
+                message: "Đã xảy ra một số lỗi khi truy xuất Customer Contacts!",
+                error: err.message
             });
         });
 };
@@ -80,7 +80,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Customer Contact with id=" + id
+                message: "Lỗi khi truy xuất Customer Contact with id=" + id,
+                error: err.message
             });
         });
 };
@@ -111,17 +112,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Customer Contact was updated successfully."
+                    message: "Customer Contact được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Customer Contact with id=${id}. Maybe Customer Contact was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin Customer Contact with id=${id}. Maybe Customer Contact was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Customer Contact with id=" + id
+                message: "Lỗi khi cập nhật Customer Contact with id=" + id,
+                error: err.message
             });
         });
 };
@@ -138,17 +140,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Customer Contact was deleted successfully!"
+                    message: "Customer Contact đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Customer Contact with id=${id}. Maybe CustomerContact was not found!`
+                    message: `Không thể xóa Customer Contact with id=${id}. Maybe CustomerContact was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Customer Contact with id=" + id
+                message: "Không thể xóa Customer Contact with id=" + id,
+                error: err.message
             });
         });
 };
@@ -161,12 +164,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Customer Contacts were deleted successfully!`
+                message: `${nums} Customer Contacts đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all customer contacts."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả customer contacts!",
+                error: err.message
             });
         });
 };

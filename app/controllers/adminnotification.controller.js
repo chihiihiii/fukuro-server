@@ -26,7 +26,7 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Admin Notification."
+                message: "Đã xảy ra một số lỗi khi tạo Admin Notification!"
             });
         });
 };
@@ -39,11 +39,11 @@ exports.findAll = (req, res) => {
     //         [Op.like]: `%${username}%`
     //     }
     // } : null;
-    var condition=null;
+    var condition = null;
 
     var page = +req.query.page;
     var limit = +req.query.limit;
-    limit=limit?limit:6;
+    limit = limit ? limit : 6;
     var offset = (page > 0) ? (page - 1) * limit : null;
 
     AdminNotification.findAndCountAll({
@@ -57,7 +57,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Admin Notification."
+                message: "Đã xảy ra một số lỗi khi truy xuất Admin Notification!",
+                error: err.message
             });
         });
 };
@@ -72,7 +73,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Admin Notification with id=" + id
+                message: "Lỗi khi truy xuất Admin Notification with id=" + id,
+                error: err.message
             });
         });
 };
@@ -89,17 +91,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Admin Notification was updated successfully."
+                    message: "Admin Notification được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Admin Notification with id=${id}. Maybe Admin Notification was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin Admin Notification with id=${id}. Maybe Admin Notification was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Admin Notification with id=" + id
+                message: "Lỗi khi cập nhật Admin Notification with id=" + id,
+                error: err.message
             });
         });
 };
@@ -116,17 +119,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Admin Notification was deleted successfully!"
+                    message: "Admin Notification đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Admin Notification with id=${id}. Maybe Admin Notification was not found!`
+                    message: `Không thể xóa Admin Notification with id=${id}. Maybe Admin Notification was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Admin Notification with id=" + id
+                message: "Không thể xóa Admin Notification with id=" + id,
+                error: err.message
             });
         });
 };
@@ -139,29 +143,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Admin Notification were deleted successfully!`
+                message: `${nums} Admin Notification đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all admin notifications."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả admin notifications!",
+                error: err.message
             });
         });
 };
-
-// find all published Admin
-// exports.findAllPublished = (req, res) => {
-//     AdminNotification.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving notifications."
-//             });
-//         });
-// };

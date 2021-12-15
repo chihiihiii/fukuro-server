@@ -29,7 +29,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Customer Premium."
+                message: "Đã xảy ra một số lỗi khi tạo Customer Premium!",
+                error: err.message
             });
         });
 };
@@ -62,7 +63,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving customer premiums."
+                message: "Đã xảy ra một số lỗi khi truy xuất customer premiums!",
+                error: err.message
             });
         });
 };
@@ -77,7 +79,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Customer Premium with id=" + id
+                message: "Lỗi khi truy xuất Customer Premium with id=" + id,
+                error: err.message
             });
         });
 };
@@ -104,17 +107,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Customer Premium was updated successfully."
+                    message: "Customer Premium được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Customer Premium with id=${id}. Maybe Customer Premium was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin Customer Premium with id=${id}. Maybe Customer Premium was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Customer Premium with id=" + id
+                message: "Lỗi khi cập nhật Customer Premium with id=" + id,
+                error: err.message
             });
         });
 };
@@ -131,17 +135,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Customer Premium was deleted successfully!"
+                    message: "Customer Premium đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Customer Premium with id=${id}. Maybe Customer Premium was not found!`
+                    message: `Không thể xóa Customer Premium with id=${id}. Maybe Customer Premium was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Customer Premium with id=" + id
+                message: "Không thể xóa Customer Premium with id=" + id,
+                error: err.message
             });
         });
 };
@@ -154,29 +159,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Customer Premiums were deleted successfully!`
+                message: `${nums} Customer Premiums đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all customer premiums."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả customer premiums!",
+                error: err.message
             });
         });
 };
-
-// find all published CustomerPremiumService
-// exports.findAllPublished = (req, res) => {
-//     CustomerPremiumService.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving customer premiums."
-//             });
-//         });
-// };

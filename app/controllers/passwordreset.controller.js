@@ -52,29 +52,31 @@ exports.customerPasswordReset = (req, res) => {
                             .then(num => {
                                 if (num == 1) {
                                     res.send({
-                                        message: "Password Reset was updated successfully, Token was deleted successfully!"
+                                        message: "Password Reset was updated successfully, Token đã được xóa thành công!"
                                     });
                                 } else {
                                     res.send({
-                                        message: `Cannot delete token with email=${email}. Maybe Password Reset was not found!`
+                                        message: `Không thể xóa token with email=${email}. Maybe Password Reset was not found!`
                                     });
                                 }
                             })
                             .catch(err => {
                                 res.status(500).send({
-                                    message: "Could not delete Password Reset with id=" + id
+                                    message: "Không thể xóa Password Reset with id=" + id,
+                                    error: err.message
                                 });
                             });
 
                     } else {
                         res.send({
-                            message: `Cannot update Password Reset with id=${id}. Maybe Password Reset was not found or req.body is empty!`
+                            message: `Không thể cập nhật thông tin Password Reset with id=${id}. Maybe Password Reset was not found or req.body is empty!`
                         });
                     }
                 })
                 .catch(err => {
                     res.status(500).send({
-                        message: "Error updating PasswordReset with id=" + id
+                        message: "Lỗi khi cập nhật PasswordReset with id=" + id,
+                        error: err.message
                     });
                 });
 
@@ -84,7 +86,8 @@ exports.customerPasswordReset = (req, res) => {
 
     }).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while retrieving Password Resets."
+            message: "Đã xảy ra một số lỗi khi truy xuất Password Resets!",
+            error: err.message
         });
     });
 
@@ -137,29 +140,31 @@ exports.adminPasswordReset = (req, res) => {
                             .then(num => {
                                 if (num == 1) {
                                     res.send({
-                                        message: "Password Reset was updated successfully, Token was deleted successfully!"
+                                        message: "Password Reset was updated successfully, Token đã được xóa thành công!"
                                     });
                                 } else {
                                     res.send({
-                                        message: `Cannot delete token with email=${email}. Maybe Password Reset was not found!`
+                                        message: `Không thể xóa token with email=${email}. Maybe Password Reset was not found!`
                                     });
                                 }
                             })
                             .catch(err => {
                                 res.status(500).send({
-                                    message: "Could not delete Password Reset with id=" + id
+                                    message: "Không thể xóa Password Reset with id=" + id,
+                                    error: err.message
                                 });
                             });
 
                     } else {
                         res.send({
-                            message: `Cannot update Password Reset with id=${id}. Maybe Password Reset was not found or req.body is empty!`
+                            message: `Không thể cập nhật thông tin Password Reset with id=${id}. Maybe Password Reset was not found or req.body is empty!`
                         });
                     }
                 })
                 .catch(err => {
                     res.status(500).send({
-                        message: "Error updating PasswordReset with id=" + id
+                        message: "Lỗi khi cập nhật PasswordReset with id=" + id,
+                        error: err.message
                     });
                 });
 
@@ -169,7 +174,8 @@ exports.adminPasswordReset = (req, res) => {
 
     }).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while retrieving Password Resets."
+            message: "Đã xảy ra một số lỗi khi truy xuất Password Resets!",
+            error: err.message
         });
     });
 
@@ -187,12 +193,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Password Reset were deleted successfully!`
+                message: `${nums} Password Reset đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all password resets."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả password resets!",
+                error: err.message
             });
         });
 };

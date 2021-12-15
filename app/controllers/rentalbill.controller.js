@@ -41,7 +41,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Rental Bill."
+                message: "Đã xảy ra một số lỗi khi tạo Rental Bill!",
+                error: err.message
             });
         });
 };
@@ -69,7 +70,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving rental bills."
+                message: "Đã xảy ra một số lỗi khi truy xuất rental bills!",
+                error: err.message
             });
         });
 };
@@ -84,7 +86,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Rental Bill with id=" + id
+                message: "Lỗi khi truy xuất Rental Bill with id=" + id,
+                error: err.message
             });
         });
 };
@@ -101,17 +104,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Rental Bill was updated successfully."
+                    message: "Rental Bill được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Rental Bill with id=${id}. Maybe Rental Bill was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin Rental Bill with id=${id}. Maybe Rental Bill was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Rental Bill with id=" + id
+                message: "Lỗi khi cập nhật Rental Bill with id=" + id,
+                error: err.message
             });
         });
 };
@@ -128,17 +132,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Rental Bill was deleted successfully!"
+                    message: "Rental Bill đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Rental Bill with id=${id}. Maybe Rental Bill was not found!`
+                    message: `Không thể xóa Rental Bill with id=${id}. Maybe Rental Bill was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Rental Bill with id=" + id
+                message: "Không thể xóa Rental Bill with id=" + id,
+                error: err.message
             });
         });
 };
@@ -151,29 +156,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Rental Bills were deleted successfully!`
+                message: `${nums} Rental Bills đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all rental bills."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả rental bills!",
+                error: err.message
             });
         });
 };
-
-// find all published RentalBill
-// exports.findAllPublished = (req, res) => {
-//     RentalBill.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving rental bills."
-//             });
-//         });
-// };

@@ -40,14 +40,16 @@ exports.create = (req, res) => {
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: err.message || "Some error occurred while creating the Question."
+                            message: "Đã xảy ra một số lỗi khi tạo Question!",
+                            error: err.message
                         });
                     });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Question with slug=" + slug
+                message: "Lỗi khi truy xuất Question with slug=" + slug,
+                error: err.message
             });
         });
 
@@ -62,8 +64,7 @@ exports.findAll = (req, res) => {
     var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -83,7 +84,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Questions."
+                message: "Đã xảy ra một số lỗi khi truy xuất Questions!",
+                error: err.message
             });
         });
 };
@@ -98,7 +100,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Question with id=" + id
+                message: "Lỗi khi truy xuất Question with id=" + id,
+                error: err.message
             });
         });
 };
@@ -127,7 +130,8 @@ exports.update = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Error retrieving Question with slug=" + slug
+                    message: "Lỗi khi truy xuất Question with slug=" + slug,
+                    error: err.message
                 });
             });
 
@@ -156,17 +160,18 @@ exports.update = (req, res) => {
             .then(num => {
                 if (num == 1) {
                     res.send({
-                        message: "Question was updated successfully."
+                        message: "Question được cập nhật thành công!"
                     });
                 } else {
                     res.send({
-                        message: `Cannot update Question with id=${id}. Maybe Question was not found or req.body is empty!`
+                        message: `Không thể cập nhật thông tin Question with id=${id}. Maybe Question was not found or req.body is empty!`
                     });
                 }
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Error updating Question with id=" + id
+                    message: "Lỗi khi cập nhật Question with id=" + id,
+                    error: err.message
                 });
             });
 
@@ -190,17 +195,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Question was deleted successfully!"
+                    message: "Question đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Question with id=${id}. Maybe Question was not found!`
+                    message: `Không thể xóa Question with id=${id}. Maybe Question was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Question with id=" + id
+                message: "Không thể xóa Question with id=" + id,
+                error: err.message
             });
         });
 };
@@ -213,12 +219,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Questions were deleted successfully!`
+                message: `${nums} Questions đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all questions."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả questions!",
+                error: err.message
             });
         });
 };
@@ -230,8 +237,7 @@ exports.findLatest = (req, res) => {
     var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -254,7 +260,8 @@ exports.findLatest = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Questions."
+                message: "Đã xảy ra một số lỗi khi truy xuất Questions!",
+                error: err.message
             });
         });
 
@@ -271,8 +278,7 @@ exports.findByCategoryId = (req, res) => {
     };
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
     var page = +req.query.page;
@@ -291,7 +297,8 @@ exports.findByCategoryId = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Questions."
+                message: "Đã xảy ra một số lỗi khi truy xuất Questions!",
+                error: err.message
             });
         });
 
@@ -307,8 +314,7 @@ exports.findOneBySlug = (req, res) => {
     };
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
     Question.findOne({
@@ -322,7 +328,8 @@ exports.findOneBySlug = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Question Category with slug=" + slug
+                message: "Lỗi khi truy xuất Question Category with slug=" + slug,
+                error: err.message
             });
         });
 };

@@ -37,7 +37,7 @@ exports.create = (req, res) => {
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: err.message || "Some error occurred while creating the Blog Category."
+                            message: "Đã xảy ra một số lỗi khi tạo Blog Category!"
                         });
                     });
 
@@ -45,7 +45,7 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Question with slug=" + slug
+                message: "Lỗi khi truy xuất Question with slug=" + slug
             });
         });
 
@@ -60,8 +60,7 @@ exports.findAll = (req, res) => {
     var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -81,7 +80,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Blog Categories."
+                message: "Đã xảy ra một số lỗi khi truy xuất Blog Categories!",
+                error: err.message
             });
         });
 };
@@ -96,7 +96,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Blog Category with id=" + id
+                message: "Lỗi khi truy xuất Blog Category with id=" + id,
+                error: err.message
             });
         });
 };
@@ -125,7 +126,8 @@ exports.update = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Error retrieving Question with slug=" + slug
+                    message: "Lỗi khi truy xuất Question with slug=" + slug,
+                    error: err.message
                 });
             });
 
@@ -152,17 +154,18 @@ exports.update = (req, res) => {
             .then(num => {
                 if (num == 1) {
                     res.send({
-                        message: "Blog Category was updated successfully."
+                        message: "Blog Category được cập nhật thành công!"
                     });
                 } else {
                     res.send({
-                        message: `Cannot update Blog Category with id=${id}. Maybe Blog Category was not found or req.body is empty!`
+                        message: `Không thể cập nhật thông tin Blog Category with id=${id}. Maybe Blog Category was not found or req.body is empty!`
                     });
                 }
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Error updating Blog Category with id=" + id
+                    message: "Lỗi khi cập nhật Blog Category with id=" + id,
+                    error: err.message
                 });
             });
 
@@ -186,17 +189,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Blog Category was deleted successfully!"
+                    message: "Blog Category đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Blog Category with id=${id}. Maybe Blog Category was not found!`
+                    message: `Không thể xóa Blog Category with id=${id}. Maybe Blog Category was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Blog Category with id=" + id
+                message: "Không thể xóa Blog Category with id=" + id,
+                error: err.message
             });
         });
 };
@@ -209,12 +213,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Blog Categories were deleted successfully!`
+                message: `${nums} Blog Categories đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all blog categories."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả blog categories!",
+                error: err.message
             });
         });
 };
@@ -245,7 +250,8 @@ exports.findOneBySlug = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Blog Category with slug=" + slug
+                message: "Lỗi khi truy xuất Blog Category with slug=" + slug,
+                error: err.message
             });
         });
 };

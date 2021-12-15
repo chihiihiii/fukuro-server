@@ -29,7 +29,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Customer Notification."
+                message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
+                error: err.message
             });
         });
 };
@@ -60,7 +61,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Customer Notifications."
+                message: "Đã xảy ra một số lỗi khi truy xuất Customer Notifications!",
+                error: err.message
             });
         });
 };
@@ -75,7 +77,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Customer Notification with id=" + id
+                message: "Lỗi khi truy xuất Customer Notification with id=" + id,
+                error: err.message
             });
         });
 };
@@ -101,17 +104,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Customer Notification was updated successfully."
+                    message: "Customer Notification được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Customer Notification with id=${id}. Maybe Customer Notification was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tinCustomer Notification with id=${id}. Maybe Customer Notification was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Customer Notification with id=" + id
+                message: "Lỗi khi cập nhật Customer Notification with id=" + id,
+                error: err.message
             });
         });
 };
@@ -128,17 +132,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Customer Notification was deleted successfully!"
+                    message: "Customer Notification đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Customer Notification with id=${id}. Maybe Customer Notification was not found!`
+                    message: `Không thể xóa Customer Notification with id=${id}. Maybe Customer Notification was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Customer Notification with id=" + id
+                message: "Không thể xóa Customer Notification with id=" + id,
+                error: err.message
             });
         });
 };
@@ -151,12 +156,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Customer Notifications were deleted successfully!`
+                message: `${nums} Customer Notifications đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all customer notifications."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả customer notifications!",
+                error: err.message
             });
         });
 };
@@ -173,7 +179,7 @@ exports.deleteAll = (req, res) => {
 //         })
 //         .catch(err => {
 //             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving customer notifications."
+//                 message: "Đã xảy ra một số lỗi khi truy xuất customer notifications!"
 //             });
 //         });
 // };

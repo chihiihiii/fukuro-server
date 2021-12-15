@@ -42,7 +42,8 @@ exports.create = (req, res) => {
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: err.message || "Some error occurred while creating the RentalRoom."
+                            message: "Đã xảy ra một số lỗi khi tạo RentalRoom!",
+                            error: err.message
                         });
                     });
             } else {
@@ -54,7 +55,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Rental Room."
+                message: "Đã xảy ra một số lỗi khi truy xuất Rental Room!",
+                error: err.message
             });
         });
 
@@ -84,7 +86,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving rentalrooms."
+                message: "Đã xảy ra một số lỗi khi truy xuất rentalrooms!",
+                error: err.message
             });
         });
 };
@@ -99,7 +102,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving RentalRoom with id=" + id
+                message: "Lỗi khi truy xuất RentalRoom with id=" + id,
+                error: err.message
             });
         });
 };
@@ -130,7 +134,8 @@ exports.update = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving Rental Room."
+                    message: "Đã xảy ra một số lỗi khi truy xuất Rental Room!",
+                    error: err.message
                 });
             });
 
@@ -160,17 +165,18 @@ exports.update = (req, res) => {
             .then(num => {
                 if (num == 1) {
                     res.send({
-                        message: "RentalRoom was updated successfully."
+                        message: "RentalRoom được cập nhật thành công!"
                     });
                 } else {
                     res.send({
-                        message: `Cannot update RentalRoom with id=${id}. Maybe RentalRoom was not found or req.body is empty!`
+                        message: `Không thể cập nhật thông tin RentalRoom with id=${id}. Maybe RentalRoom was not found or req.body is empty!`
                     });
                 }
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Error updating RentalRoom with id=" + id
+                    message: "Lỗi khi cập nhật RentalRoom with id=" + id,
+                    error: err.message
                 });
             });
 
@@ -190,17 +196,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "RentalRoom was deleted successfully!"
+                    message: "RentalRoom đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete RentalRoom with id=${id}. Maybe RentalRoom was not found!`
+                    message: `Không thể xóa RentalRoom with id=${id}. Maybe RentalRoom was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete RentalRoom with id=" + id
+                message: "Không thể xóa RentalRoom with id=" + id,
+                error: err.message
             });
         });
 };
@@ -213,29 +220,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} RentalRooms were deleted successfully!`
+                message: `${nums} RentalRooms đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all rentalrooms."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả rentalrooms!",
+                error: err.message
             });
         });
 };
-
-// find all published RentalRoom
-// exports.findAllPublished = (req, res) => {
-//     RentalRoom.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving rentalrooms."
-//             });
-//         });
-// };

@@ -15,6 +15,9 @@ module.exports = app => {
     // count comments
     router.get("/comments/:time", statistics.countComment);
 
+    // count rentals
+    router.get("/rentals/:time", statistics.countRental);
+
     
 
     app.use('/api/statistics', router);

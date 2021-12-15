@@ -3,6 +3,9 @@ const RentalNew = db.RentalNews;
 const PremiumBill = db.PremiumBills;
 const Customer = db.Customers;
 const Comment = db.Comments;
+const Rental = db.Rentals;
+const RentalRoom = db.RentalRooms;
+const Renter = db.Renters;
 const Op = db.Sequelize.Op;
 
 
@@ -32,7 +35,8 @@ exports.countRentalNews = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving rental news."
+                    message: "Đã xảy ra một số lỗi khi truy xuất rental news!",
+                    error: err.message
                 });
             });
     } else if (time == 'week') {
@@ -50,7 +54,8 @@ exports.countRentalNews = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving rental news."
+                    message: "Đã xảy ra một số lỗi khi truy xuất rental news!",
+                    error: err.message
                 });
             });
     } else if (time == 'month') {
@@ -68,7 +73,8 @@ exports.countRentalNews = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving rental news."
+                    message: "Đã xảy ra một số lỗi khi truy xuất rental news!",
+                    error: err.message
                 });
             });
     } else {
@@ -86,7 +92,8 @@ exports.countRentalNews = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving rental news."
+                    message: "Đã xảy ra một số lỗi khi truy xuất rental news!",
+                    error: err.message
                 });
             });
     }
@@ -119,7 +126,8 @@ exports.countPremiumBill = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving premium bills."
+                    message: "Đã xảy ra một số lỗi khi truy xuất premium bills!",
+                    error: err.message
                 });
             });
     } else if (time == 'week') {
@@ -137,7 +145,8 @@ exports.countPremiumBill = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving premium bills."
+                    message: "Đã xảy ra một số lỗi khi truy xuất premium bills!",
+                    error: err.message
                 });
             });
     } else if (time == 'month') {
@@ -155,7 +164,8 @@ exports.countPremiumBill = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving premium bills."
+                    message: "Đã xảy ra một số lỗi khi truy xuất premium bills!",
+                    error: err.message
                 });
             });
     } else {
@@ -173,7 +183,8 @@ exports.countPremiumBill = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving premium bills."
+                    message: "Đã xảy ra một số lỗi khi truy xuất premium bills!",
+                    error: err.message
                 });
             });
     }
@@ -206,7 +217,8 @@ exports.countCustomer = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving Customers."
+                    message: "Đã xảy ra một số lỗi khi truy xuất Customers!",
+                    error: err.message
                 });
             });
     } else if (time == 'week') {
@@ -224,7 +236,8 @@ exports.countCustomer = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving Customers."
+                    message: "Đã xảy ra một số lỗi khi truy xuất Customers!",
+                    error: err.message
                 });
             });
     } else if (time == 'month') {
@@ -242,7 +255,8 @@ exports.countCustomer = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving Customers."
+                    message: "Đã xảy ra một số lỗi khi truy xuất Customers!",
+                    error: err.message
                 });
             });
     } else {
@@ -260,7 +274,8 @@ exports.countCustomer = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving premium bills."
+                    message: "Đã xảy ra một số lỗi khi truy xuất premium bills!",
+                    error: err.message
                 });
             });
     }
@@ -293,7 +308,8 @@ exports.countComment = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving Comments."
+                    message: "Đã xảy ra một số lỗi khi truy xuất Comments!",
+                    error: err.message
                 });
             });
     } else if (time == 'week') {
@@ -311,7 +327,8 @@ exports.countComment = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving Comments."
+                    message: "Đã xảy ra một số lỗi khi truy xuất Comments!",
+                    error: err.message
                 });
             });
     } else if (time == 'month') {
@@ -329,7 +346,8 @@ exports.countComment = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving Comments."
+                    message: "Đã xảy ra một số lỗi khi truy xuất Comments!",
+                    error: err.message
                 });
             });
     } else {
@@ -347,7 +365,99 @@ exports.countComment = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving Comments."
+                    message: "Đã xảy ra một số lỗi khi truy xuất Comments!",
+                    error: err.message
+                });
+            });
+    }
+
+
+};
+
+// count rentals
+exports.countRental = (req, res) => {
+    var time = req.params.time;
+    var currentTime = new Date();
+    var lastDay = new Date(new Date() - 24 * 60 * 60 * 1000);
+    var lastWeek = new Date(new Date() - 24 * 60 * 60 * 1000 * 7);
+    var lastMonth = new Date(new Date() - 24 * 60 * 60 * 1000 * 30);
+
+    console.log(currentTime);
+    // console.log(demo);
+    if (time == 'day') {
+        Rental.findAndCountAll({
+                where: {
+                    createdAt: {
+                        [Op.lt]: currentTime,
+                        [Op.gt]: lastDay
+                    }
+                }
+            })
+            .then(function (count) {
+                res.status(200).send(count);
+
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Đã xảy ra một số lỗi khi truy xuất Rentals!",
+                    error: err.message
+                });
+            });
+    } else if (time == 'week') {
+        Rental.findAndCountAll({
+                where: {
+                    createdAt: {
+                        [Op.lt]: currentTime,
+                        [Op.gt]: lastWeek
+                    }
+                }
+            })
+            .then(function (count) {
+                res.status(200).send(count);
+
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Đã xảy ra một số lỗi khi truy xuất Rentals!",
+                    error: err.message
+                });
+            });
+    } else if (time == 'month') {
+        Rental.findAndCountAll({
+                where: {
+                    createdAt: {
+                        [Op.lt]: currentTime,
+                        [Op.gt]: lastMonth
+                    }
+                }
+            })
+            .then(function (count) {
+                res.status(200).send(count);
+
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Đã xảy ra một số lỗi khi truy xuất Rentals!",
+                    error: err.message
+                });
+            });
+    } else {
+        Rental.findAndCountAll({
+                where: {
+                    // createdAt: {
+                    //     [Op.lt]: currentTime,
+                    //     [Op.gt]: lastMonth
+                    // }
+                }
+            })
+            .then(function (count) {
+                res.status(200).send(count);
+
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Đã xảy ra một số lỗi khi truy xuất Rentals!",
+                    error: err.message
                 });
             });
     }

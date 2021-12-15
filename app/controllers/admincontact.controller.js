@@ -33,7 +33,7 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the AdminContact."
+                message: "Đã xảy ra một số lỗi khi tạo AdminContact!"
             });
         });
 };
@@ -46,7 +46,7 @@ exports.findAll = (req, res) => {
     };
     if (status == 0 || status == 1) {
         condition.status = status
-    } 
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -64,7 +64,9 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving AdminContact."
+                message: "Đã xảy ra một số lỗi khi truy xuất AdminContact!",
+                error: err.message
+
             });
         });
 };
@@ -79,7 +81,9 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving AdminContact with id=" + id
+                message: "Lỗi khi truy xuất AdminContact với id=" + id,
+                error: err.message
+
             });
         });
 };
@@ -110,17 +114,19 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "AdminContact was updated successfully."
+                    message: "AdminContact được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update AdminContact with id=${id}. Maybe AdminContact was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin AdminContact với id=${id}!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating AdminContact with id=" + id
+                message: "Lỗi khi cập nhật AdminContact với id=" + id,
+                error: err.message
+
             });
         });
 };
@@ -137,17 +143,19 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "AdminContact was deleted successfully!"
+                    message: "AdminContact đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete AdminContact with id=${id}. Maybe AdminContact was not found!`
+                    message: `Không thể xóa AdminContact với id=${id}!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete AdminContact with id=" + id
+                message: "Không thể xóa AdminContact với id=" + id,
+                error: err.message
+
             });
         });
 };
@@ -160,12 +168,14 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} AdminContacts were deleted successfully!`
+                message: `${nums} AdminContacts đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all admincontacts."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả admincontacts!",
+                error: err.message
+
             });
         });
 };
@@ -223,18 +233,20 @@ exports.requestContact = (req, res) => {
                 .then(num => {
                     if (num == 1) {
                         res.send({
-                            message: "AdminContact was updated status successfully.",
+                            message: "AdminContact was updated status successfully!",
                             status: 'Success'
                         });
                     } else {
                         res.send({
-                            message: `Cannot update status AdminContact with id=${id}. Maybe AdminContact was not found or req.body is empty!`
+                            message: `Không thể cập nhật status AdminContact với id=${id}. Maybe AdminContact was not found or req.body is empty!`
                         });
                     }
                 })
                 .catch(err => {
                     res.status(500).send({
-                        message: "Error updating status AdminContact with id=" + id
+                        message: "Lỗi khi cập nhật status AdminContact với id=" + id,
+                        error: err.message
+
                     });
                 });
 

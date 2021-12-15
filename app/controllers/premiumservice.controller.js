@@ -29,7 +29,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the PremiumService."
+                message: "Đã xảy ra một số lỗi khi tạo PremiumService!",
+                error: err.message
             });
         });
 };
@@ -37,12 +38,10 @@ exports.create = (req, res) => {
 // Retrieve all PremiumServices from the database.
 exports.findAll = (req, res) => {
     var status = req.query.status;
-    var condition = {
-    };
+    var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -63,7 +62,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving premium services."
+                message: "Đã xảy ra một số lỗi khi truy xuất premium services!",
+                error: err.message
             });
         });
 };
@@ -78,7 +78,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving PremiumService with id=" + id
+                message: "Lỗi khi truy xuất PremiumService with id=" + id,
+                error: err.message
             });
         });
 };
@@ -105,17 +106,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "PremiumService was updated successfully."
+                    message: "PremiumService được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update PremiumService with id=${id}. Maybe PremiumService was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin PremiumService with id=${id}. Maybe PremiumService was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating PremiumService with id=" + id
+                message: "Lỗi khi cập nhật PremiumService with id=" + id,
+                error: err.message
             });
         });
 };
@@ -132,17 +134,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "PremiumService was deleted successfully!"
+                    message: "PremiumService đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete PremiumService with id=${id}. Maybe PremiumService was not found!`
+                    message: `Không thể xóa PremiumService with id=${id}. Maybe PremiumService was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete PremiumService with id=" + id
+                message: "Không thể xóa PremiumService with id=" + id,
+                error: err.message
             });
         });
 };
@@ -155,29 +158,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} PremiumServices were deleted successfully!`
+                message: `${nums} PremiumServices đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all premiumservices."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả premiumservices!",
+                error: err.message
             });
         });
 };
-
-// find all published PremiumService
-// exports.findAllPublished = (req, res) => {
-//     PremiumService.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving premiumservices."
-//             });
-//         });
-// };

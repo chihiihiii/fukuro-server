@@ -29,7 +29,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Comment."
+                message: "Đã xảy ra một số lỗi khi tạo Comment!",
+                error: err.message
             });
         });
 };
@@ -37,12 +38,10 @@ exports.create = (req, res) => {
 // Retrieve all Comments from the database.
 exports.findAll = (req, res) => {
     var status = req.query.status;
-    var condition = {
-    };
+    var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -62,7 +61,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Comments."
+                message: "Đã xảy ra một số lỗi khi truy xuất Comments!",
+                error: err.message
             });
         });
 };
@@ -98,7 +98,8 @@ exports.findOne = (req, res) => {
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Error retrieving Comment with customer id=" + customerId + err
+                            message: "Lỗi khi truy xuất Comment with customer id=" + customerId,
+                            error: err.message
                         });
                     });
 
@@ -108,7 +109,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Comment with err=" + err
+                message: "Lỗi khi truy xuất Comment with id=" + id,
+                error: err.message
             });
         });
 };
@@ -117,8 +119,8 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-      // Update a Comment
-      var comment = {
+    // Update a Comment
+    var comment = {
         content: req.body.content,
         status: req.body.status,
         customerId: req.body.customer_id,
@@ -134,17 +136,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Comment was updated successfully."
+                    message: "Comment được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Comment with id=${id}. Maybe Comment was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin Comment with id=${id}. Maybe Comment was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Comment with id=" + id
+                message: "Lỗi khi cập nhật Comment with id=" + id,
+                error: err.message
             });
         });
 };
@@ -161,17 +164,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Comment was deleted successfully!"
+                    message: "Comment đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Comment with id=${id}. Maybe Comment was not found!`
+                    message: `Không thể xóa Comment with id=${id}. Maybe Comment was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Comment with id=" + id
+                message: "Không thể xóa Comment with id=" + id,
+                error: err.message
             });
         });
 };
@@ -184,12 +188,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Comments were deleted successfully!`
+                message: `${nums} Comments đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all comments."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả comments!",
+                error: err.message
             });
         });
 };
@@ -204,8 +209,7 @@ exports.findByBlogId = (req, res) => {
 
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -254,7 +258,8 @@ exports.findByBlogId = (req, res) => {
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Error retrieving Customer with id=" + customerId + err
+                            message: "Lỗi khi truy xuất Customer with id=" + customerId,
+                            error: err.message
                         });
                     });
 
@@ -263,7 +268,8 @@ exports.findByBlogId = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Comments."
+                message: "Đã xảy ra một số lỗi khi truy xuất Comments!",
+                error: err.message
             });
         });
 

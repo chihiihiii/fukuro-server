@@ -45,7 +45,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Premium Bill."
+                message: "Đã xảy ra một số lỗi khi tạo Premium Bill!",
+                error: err.message
             });
         });
 
@@ -147,17 +148,18 @@ exports.create = (req, res) => {
                         .then(num => {
                             if (num == 1) {
                                 res.status(200).send({
-                                    message: "Customer Premium Service was updated successfully."
+                                    message: "Customer Premium Service được cập nhật thành công!"
                                 });
                             } else {
                                 res.status(400).send({
-                                    message: `Cannot update Customer Premium Service with id=${customerPremiumServiceId}. Maybe Customer Premium was not found or req.body is empty!`
+                                    message: `Không thể cập nhật thông tin Customer Premium Service with id=${customerPremiumServiceId}. Maybe Customer Premium was not found or req.body is empty!`
                                 });
                             }
                         })
                         .catch(err => {
                             res.status(500).send({
-                                message: "Error updating Customer Premium with id=" + customerPremiumServiceId
+                                message: "Lỗi khi cập nhật Customer Premium with id=" + customerPremiumServiceId,
+                                error: err.message
                             });
                         });
 
@@ -199,7 +201,8 @@ exports.create = (req, res) => {
                         })
                         .catch(err => {
                             res.status(500).send({
-                                message: err.message || "Some error occurred while creating the Customer Premium."
+                                message: "Đã xảy ra một số lỗi khi tạo Customer Premium!",
+                                error: err.message
                             });
                         });
 
@@ -209,7 +212,8 @@ exports.create = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving Admin."
+                    message: "Đã xảy ra một số lỗi khi truy xuất Admin!",
+                    error: err.message
                 });
             });
     }
@@ -243,7 +247,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving premium bills."
+                message: "Đã xảy ra một số lỗi khi truy xuất premium bills!",
+                error: err.message
             });
         });
 };
@@ -258,7 +263,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Premium Bill with id=" + id
+                message: "Lỗi khi truy xuất Premium Bill with id=" + id,
+                error: err.message
             });
         });
 };
@@ -287,17 +293,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Premium Bill was updated successfully."
+                    message: "Premium Bill được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Premium Bill with id=${id}. Maybe Premium Bill was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin Premium Bill with id=${id}. Maybe Premium Bill was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Premium Bill with id=" + id
+                message: "Lỗi khi cập nhật Premium Bill with id=" + id,
+                error: err.message
             });
         });
 };
@@ -314,17 +321,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Premium Bill was deleted successfully!"
+                    message: "Premium Bill đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Premium Bill with id=${id}. Maybe Premium Bill was not found!`
+                    message: `Không thể xóa Premium Bill with id=${id}. Maybe Premium Bill was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Premium Bill with id=" + id
+                message: "Không thể xóa Premium Bill with id=" + id,
+                error: err.message
             });
         });
 };
@@ -337,29 +345,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Premium Bills were deleted successfully!`
+                message: `${nums} Premium Bills đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all premium bills."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả premium bills!",
+                error: err.message
             });
         });
 };
-
-// find all published PremiumBill
-// exports.findAllPublished = (req, res) => {
-//     PremiumBill.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving premium bills."
-//             });
-//         });
-// };

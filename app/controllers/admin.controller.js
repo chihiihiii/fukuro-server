@@ -55,7 +55,8 @@ exports.login = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Admin."
+                message: "Đã xảy ra một số lỗi khi truy xuất Admin!",
+                error: err.message
             });
         });
 }
@@ -88,7 +89,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Admin."
+                message: "Đã xảy ra một số lỗi khi truy xuất Admin!",
+                error: err.message
             });
         });
 
@@ -109,7 +111,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Admin."
+                message: "Đã xảy ra một số lỗi khi truy xuất Admin!",
+                error: err.message
             });
         });
 
@@ -140,7 +143,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Admin."
+                message: "Đã xảy ra một số lỗi khi tạo Admin!",
+                error: err.message
             });
         });
 
@@ -157,7 +161,7 @@ exports.findAll = (req, res) => {
     };
     if (status == 0 || status == 1) {
         condition.status = status
-    } 
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -175,7 +179,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving admins."
+                message: "Đã xảy ra một số lỗi khi truy xuất Admin!",
+                error: err.message
             });
         });
 };
@@ -194,7 +199,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Admin with id=" + id
+                message: "Lỗi khi truy xuất Admin với id=" + id,
+                error: err.message
             });
         });
 };
@@ -227,17 +233,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Admin was updated successfully."
+                    message: "Cập nhật thông tin Admin thành công"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Admin with id=${id}. Maybe Admin was not found or req.body is empty!`
+                    message: 'Không thể cập nhật thông tin Admin với id=' + id
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Admin with id=" + id
+                message: "Lỗi khi cập nhật Admin với id=" + id,
+                error: err.message
             });
         });
 };
@@ -254,17 +261,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Admin was deleted successfully!"
+                    message: "Admin đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Admin with id=${id}. Maybe Admin was not found!`
+                    message: `Không thể xóa Admin vớiid=${id}. Maybe Admin was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Admin with id=" + id
+                message: "Không thể xóa Admin với id=" + id,
+                error: err.message
             });
         });
 };
@@ -277,12 +285,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Admins were deleted successfully!`
+                message: `${nums} Admins đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all admins."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả admins!",
+                error: err.message
             });
         });
 };
@@ -317,17 +326,18 @@ exports.changePassword = (req, res) => {
                     .then(num => {
                         if (num == 1) {
                             res.send({
-                                message: "Admin was updated password successfully."
+                                message: "Cập nhật mật khẩu thành công!"
                             });
                         } else {
                             res.send({
-                                message: `Cannot update Admin password with id=${id}. Maybe Admin was not found or req.body is empty!`
+                                message: `Không thể cập nhật thông tin Admin password with id=${id}. Maybe Admin was not found or req.body is empty!`
                             });
                         }
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Error updating Admin with id=" + id
+                            message: "Lỗi khi cập nhật Admin với id=" + id,
+                            error: err.message
                         });
                     });
 
@@ -338,7 +348,8 @@ exports.changePassword = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Admin with id=" + id
+                message: "Lỗi khi truy xuất Admin với id=" + id,
+                error: err.message
             });
         });
 
@@ -420,7 +431,8 @@ exports.forgotPassword = (req, res) => {
                             })
                             .catch(err => {
                                 res.status(500).send({
-                                    message: err.message || "Some error occurred while creating the Password Reset."
+                                    message: "Đã xảy ra một số lỗi khi tạo Password Reset!",
+                                    error: err.message
                                 });
                             });
 
@@ -451,7 +463,8 @@ exports.forgotPassword = (req, res) => {
                             })
                             .catch(err => {
                                 res.status(500).send({
-                                    message: err.message || "Some error occurred while creating the Password Reset."
+                                    message: "Đã xảy ra một số lỗi khi tạo Password Reset!",
+                                    error: err.message
                                 });
                             });
 
@@ -470,7 +483,8 @@ exports.forgotPassword = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving Admin."
+                message: "Đã xảy ra một số lỗi khi truy xuất Admin!",
+                error: err.message
             });
         });
 
@@ -478,5 +492,3 @@ exports.forgotPassword = (req, res) => {
 
 
 };
-
-

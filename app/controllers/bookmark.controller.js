@@ -47,17 +47,18 @@ exports.updateByCustomerId = (req, res) => {
                     .then(num => {
                         if (num == 1) {
                             res.send({
-                                message: "Bookmark was updated successfully."
+                                message: "Bookmark được cập nhật thành công!"
                             });
                         } else {
                             res.send({
-                                message: `Cannot update Bookmark with customer_id=${customerId}. Maybe Bookmark was not found or req.body is empty!`
+                                message: `Không thể cập nhật thông tin Bookmark with customer_id=${customerId}. Maybe Bookmark was not found or req.body is empty!`
                             });
                         }
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Error updating Bookmark with customer_id=" + customerId
+                            message: "Lỗi khi cập nhật Bookmark with customer_id=" + customerId,
+                            error: err.message
                         });
                     });
 
@@ -79,14 +80,16 @@ exports.updateByCustomerId = (req, res) => {
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: err.message || "Some error occurred while creating the Bookmark."
+                            message: "Đã xảy ra một số lỗi khi tạo Bookmark!",
+                            error: err.message
                         });
                     });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Bookmark with customer id=" + customerId
+                message: "Lỗi khi truy xuất Bookmark with customer id=" + customerId,
+                error: err.message
             });
         });
 
@@ -120,7 +123,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving bookmarks."
+                message: "Đã xảy ra một số lỗi khi truy xuất bookmarks!",
+                error: err.message
             });
         });
 };
@@ -135,37 +139,12 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Bookmark with id=" + id
+                message: "Lỗi khi truy xuất Bookmark with id=" + id,
+                error: err.message
             });
         });
 };
 
-// Update a Bookmark by the id in the request
-// exports.update = (req, res) => {
-//     var id = req.params.id;
-
-//     Bookmark.update(req.body, {
-//             where: {
-//                 id: id
-//             }
-//         })
-//         .then(num => {
-//             if (num == 1) {
-//                 res.send({
-//                     message: "Bookmark was updated successfully."
-//                 });
-//             } else {
-//                 res.send({
-//                     message: `Cannot update Bookmark with id=${id}. Maybe Bookmark was not found or req.body is empty!`
-//                 });
-//             }
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: "Error updating Bookmark with id=" + id
-//             });
-//         });
-// };
 
 // Delete a Bookmark with the specified id in the request
 exports.delete = (req, res) => {
@@ -179,17 +158,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Bookmark was deleted successfully!"
+                    message: "Bookmark đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Bookmark with id=${id}. Maybe Bookmark was not found!`
+                    message: `Không thể xóa Bookmark with id=${id}. Maybe Bookmark was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Bookmark with id=" + id
+                message: "Không thể xóa Bookmark with id=" + id,
+                error: err.message
             });
         });
 };
@@ -202,12 +182,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Bookmarks were deleted successfully!`
+                message: `${nums} Bookmarks đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all bookmarks."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả bookmarks!",
+                error: err.message
             });
         });
 };
@@ -224,17 +205,18 @@ exports.deleteAllByCustomerId = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Bookmark was deleted successfully!"
+                    message: "Bookmark đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Bookmark with id=${id}. Maybe Bookmark was not found!`
+                    message: `Không thể xóa Bookmark with id=${id}. Maybe Bookmark was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Bookmark with id=" + id
+                message: "Không thể xóa Bookmark with id=" + id,
+                error: err.message
             });
         });
 };
@@ -273,14 +255,16 @@ exports.findAllByCustomerId = (req, res) => {
                             })
                             .catch(err => {
                                 res.status(500).send({
-                                    message: "Error retrieving Rental News with id=" + i + err
+                                    message: "Lỗi khi truy xuất Rental News with id=" + i,
+                                    error: err.message
                                 });
                             });
 
                     });
-                }else{
+                } else {
                     res.status(500).send({
-                        message: "Rental News null with customer id=" + customerId 
+                        message: "Rental News null with customer id=" + customerId,
+                        error: err.message
                     });
                 }
 
@@ -294,7 +278,8 @@ exports.findAllByCustomerId = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Bookmark with customer id=" + customerId + err
+                message: "Lỗi khi truy xuất Bookmark with customer id=" + customerId,
+                error: err.message
             });
         });
 

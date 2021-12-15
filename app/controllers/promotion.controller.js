@@ -30,7 +30,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while creating the Promotion."
+                message: "Đã xảy ra một số lỗi khi tạo Promotion!",
+                error: err.message
             });
         });
 };
@@ -38,12 +39,10 @@ exports.create = (req, res) => {
 // Retrieve all Promotions from the database.
 exports.findAll = (req, res) => {
     var status = req.query.status;
-    var condition = {
-    };
+    var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -64,7 +63,8 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while retrieving promotions."
+                message: "Đã xảy ra một số lỗi khi truy xuất promotions!",
+                error: err.message
             });
         });
 };
@@ -79,7 +79,8 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Promotion with id=" + id
+                message: "Lỗi khi truy xuất Promotion with id=" + id,
+                error: err.message
             });
         });
 };
@@ -105,17 +106,18 @@ exports.update = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Promotion was updated successfully."
+                    message: "Promotion được cập nhật thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot update Promotion with id=${id}. Maybe Promotion was not found or req.body is empty!`
+                    message: `Không thể cập nhật thông tin Promotion with id=${id}. Maybe Promotion was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Promotion with id=" + id
+                message: "Lỗi khi cập nhật Promotion with id=" + id,
+                error: err.message
             });
         });
 };
@@ -132,17 +134,18 @@ exports.delete = (req, res) => {
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Promotion was deleted successfully!"
+                    message: "Promotion đã được xóa thành công!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Promotion with id=${id}. Maybe Promotion was not found!`
+                    message: `Không thể xóa Promotion with id=${id}. Maybe Promotion was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Promotion with id=" + id
+                message: "Không thể xóa Promotion with id=" + id,
+                error: err.message
             });
         });
 };
@@ -155,29 +158,13 @@ exports.deleteAll = (req, res) => {
         })
         .then(nums => {
             res.send({
-                message: `${nums} Promotions were deleted successfully!`
+                message: `${nums} Promotions đã được xóa thành công!`
             });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while removing all promotions."
+                message: "Đã xảy ra một số lỗi khi xóa tất cả promotions!",
+                error: err.message
             });
         });
 };
-
-// find all published Promotion
-// exports.findAllPublished = (req, res) => {
-//     Promotion.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: err.message || "Some error occurred while retrieving promotions."
-//             });
-//         });
-// };
