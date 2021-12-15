@@ -6,7 +6,8 @@ const Op = db.Sequelize.Op;
 // update Bookmark by Customer id 
 exports.updateByCustomerId = (req, res) => {
     // Validate request
-    if (!req.query.customer_id) {
+
+    if (!req.params.id) {
         res.status(400).send({
             message: "Không để trống id tài khoản người dùng!"
         });
@@ -15,7 +16,7 @@ exports.updateByCustomerId = (req, res) => {
 
     var customerId = req.params.id;
     var rentalNews = req.body.rental_news;
-
+    var flag = false;
 
     Bookmark.findOne({
             where: {
@@ -29,7 +30,9 @@ exports.updateByCustomerId = (req, res) => {
                 if (rentalNewsArray.includes(rentalNews)) {
                     var index = rentalNewsArray.indexOf(rentalNews);
                     rentalNewsArray.splice(index, 1);
-
+                    if(rentalNewsArray.length === 0){
+                        flag = true;
+                    }
                 } else {
                     rentalNewsArray.push(rentalNews);
                     // Create a Bookmark
@@ -46,9 +49,20 @@ exports.updateByCustomerId = (req, res) => {
                     })
                     .then(num => {
                         if (num == 1) {
-                            res.send({
-                                message: "Bookmark was updated successfully."
-                            });
+                            if(flag == true){
+                                Bookmark.destroy({
+                                    where: {
+                                        customer_id: customerId
+                                    }
+                                });
+                                res.send({
+                                    message: "empty"
+                                });
+                            }else{
+                                res.send({
+                                    message: "Bookmark was updated successfully."
+                                });
+                            }
                         } else {
                             res.send({
                                 message: `Cannot update Bookmark with customer_id=${customerId}. Maybe Bookmark was not found or req.body is empty!`
@@ -273,7 +287,7 @@ exports.findAllByCustomerId = (req, res) => {
                             })
                             .catch(err => {
                                 res.status(500).send({
-                                    message: "Error retrieving Rental News with id=" + i + err
+                                    message: "Error retrieving Rental News with id=" + customerId + err
                                 });
                             });
 

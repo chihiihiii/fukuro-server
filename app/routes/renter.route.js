@@ -12,6 +12,9 @@ module.exports = app => {
     // Retrieve a single Renter with id
     router.get("/:id", renters.findOne);
 
+    // Retrieve Renter by rental
+    router.get("/rental/:id", renters.findByRentalId);
+
     // Update a Renter with id
     router.put("/:id", renters.update);
 
