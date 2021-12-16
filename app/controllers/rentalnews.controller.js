@@ -87,6 +87,20 @@ exports.findAll = (req, res) => {
         condition.status = 1
     }
 
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'price-desc') {
+        order = [
+            ['price', 'DESC']
+        ];
+    } else if (orderby == 'price') {
+        order = [
+            ['price', 'ASC']
+        ];
+    }
+    // [
+    //     ['created_at', 'DESC']
+    // ]
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
@@ -94,8 +108,10 @@ exports.findAll = (req, res) => {
 
     RentalNews.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+
         })
         .then(data => {
             res.send(data);
@@ -297,7 +313,7 @@ exports.findLatest = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message:"Đã xảy ra một số lỗi khi truy xuất Rental News!",
+                message: "Đã xảy ra một số lỗi khi truy xuất Rental News!",
                 error: err.message
 
             });
@@ -336,7 +352,7 @@ exports.findPriority = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message:  "Đã xảy ra một số lỗi khi truy xuất Rental News!",
+                message: "Đã xảy ra một số lỗi khi truy xuất Rental News!",
                 error: err.message
 
             });
