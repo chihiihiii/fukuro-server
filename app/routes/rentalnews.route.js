@@ -9,6 +9,9 @@ module.exports = app => {
     // Retrieve all RentalNews
     router.get("/", rentalNews.findAll);
 
+    // Search RentalNews  
+    router.post("/search", rentalNews.search);
+  
     // Retrieve RentalNews latest 
     router.get("/latest", rentalNews.findLatest);
 

@@ -420,3 +420,36 @@ exports.findOneBySlug = (req, res) => {
             });
         });
 };
+
+// Search all Rental News from the database.
+exports.search = (req, res) => {
+    var address = req.body.address;
+    var condition = address ? {
+        address: {
+            [Op.like]: `%${address}%`
+        }
+    } : null;
+    
+    // var condition = null;
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    RentalNews.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit
+        })
+        .then(data => {
+            res.send(data);
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Đã xảy ra một số lỗi khi truy xuất RentalNews!",
+                error: err.message
+            });
+        });
+};
