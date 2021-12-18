@@ -1,6 +1,8 @@
 const db = require("../models");
 const Answer = db.Answers;
 const Customer = db.Customers;
+const CustomerNotification = db.CustomerNotifications;
+
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Answer
@@ -12,6 +14,17 @@ exports.create = (req, res) => {
         });
         return;
     }
+
+    if (!req.body.detail_url) {
+        res.status(400).send({
+            message: "Không để trống đường dẫn chi tiết của thông báo!"
+        });
+        return;
+    }
+    var detailUrl = req.body.detail_url;
+    var customerId = req.body.customer_id;
+
+
 
     // Create a Answer
     var answer = {
@@ -28,7 +41,37 @@ exports.create = (req, res) => {
     // Save Answer in the database
     Answer.create(answer)
         .then(data => {
-            res.send(data);
+            // res.send(data);
+
+            if (data) {
+
+                detailUrl+=data.dataValues.id;
+
+                var message = 'Bạn có một câu trả lời mới!'
+                var customerNotification = {
+                    message: message,
+                    detailUrl: detailUrl,
+                    customerId: customerId,
+        
+                };
+        
+                // Save CustomerNotification in the database
+                CustomerNotification.create(customerNotification)
+                    .then(dataNotification => {
+                        res.send({
+                            data: data,
+                            dataNotification: dataNotification
+                        });
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
+                            error: err.message
+                        });
+                    });
+
+            }
+
         })
         .catch(err => {
             res.status(500).send({

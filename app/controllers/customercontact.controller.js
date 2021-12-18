@@ -1,5 +1,7 @@
 const db = require("../models");
 const CustomerContact = db.CustomerContacts;
+const CustomerNotification = db.CustomerNotifications;
+
 const Op = db.Sequelize.Op;
 
 // Create and Save a new CustomerContact
@@ -11,6 +13,15 @@ exports.create = (req, res) => {
         });
         return;
     }
+
+    if (!req.body.detail_url) {
+        res.status(400).send({
+            message: "Không để trống đường dẫn chi tiết của thông báo!"
+        });
+        return;
+    }
+
+
 
     // Create a CustomerContact
     var customerContact = {
@@ -25,10 +36,44 @@ exports.create = (req, res) => {
 
     };
 
+    var detailUrl = req.body.detail_url;
+    var customerId = req.body.customer_id;
+    var rentalNewsId = req.body.retail_news_id;
+
     // Save CustomerContact in the database
     CustomerContact.create(customerContact)
         .then(data => {
-            res.send(data);
+            // res.send(data);
+
+            if (data) {
+
+                detailUrl+=data.dataValues.id;
+
+                var message = 'Bạn có một liên hệ mới!'
+                var customerNotification = {
+                    message: message,
+                    detailUrl: detailUrl,
+                    customerId: customerId,
+                    rentalNewsId: rentalNewsId,
+        
+                };
+        
+                // Save CustomerNotification in the database
+                CustomerNotification.create(customerNotification)
+                    .then(dataNotification => {
+                        res.send({
+                            data: data,
+                            dataNotification: dataNotification
+                        });
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
+                            error: err.message
+                        });
+                    });
+
+            }
         })
         .catch(err => {
             res.status(500).send({
@@ -36,6 +81,7 @@ exports.create = (req, res) => {
                 error: err.message
             });
         });
+
 };
 
 // Retrieve all CustomerContacts from the database.

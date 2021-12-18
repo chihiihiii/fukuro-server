@@ -1,18 +1,27 @@
 const db = require("../models");
 const AdminContact = db.AdminContacts;
 const Admin = db.Admins;
+const AdminNotification = db.AdminNotifications;
+
 const Op = db.Sequelize.Op;
 
 const nodemailer = require('nodemailer');
 // Create and Save a new AdminContact
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.first_name || !req.body.first_name) {
+        res.status(400).send({
+            message: "Không để trống tên!"
+        });
+        return;
+    }
+
+    if (!req.body.detail_url) {
+        res.status(400).send({
+            message: "Không để trống đường dẫn chi tiết của thông báo!"
+        });
+        return;
+    }
 
     // Create a AdminContact
     var adminContact = {
@@ -26,10 +35,41 @@ exports.create = (req, res) => {
 
     };
 
+    var detailUrl = req.body.detail_url;
+
     // Save AdminContact in the database
     AdminContact.create(adminContact)
         .then(data => {
-            res.send(data);
+            // res.send(data);
+
+            if (data) {
+
+                detailUrl+=data.dataValues.id;
+
+                var message = 'Bạn có một liên hệ mới!'
+                var adminNotification = {
+                    message: message,
+                    detailUrl: detailUrl,
+        
+                };
+        
+                // Save CustomerNotification in the database
+                AdminNotification.create(adminNotification)
+                    .then(dataNotification => {
+                        res.send({
+                            data: data,
+                            dataNotification: dataNotification
+                        });
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
+                            error: err.message
+                        });
+                    });
+
+            }
+
         })
         .catch(err => {
             res.status(500).send({

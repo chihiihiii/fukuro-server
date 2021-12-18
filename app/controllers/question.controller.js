@@ -1,5 +1,7 @@
 const db = require("../models");
 const Question = db.Questions;
+const AdminNotification = db.AdminNotifications;
+
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Question
@@ -11,6 +13,15 @@ exports.create = (req, res) => {
         });
         return;
     }
+
+    if (!req.body.detail_url) {
+        res.status(400).send({
+            message: "Không để trống đường dẫn chi tiết của thông báo!"
+        });
+        return;
+    }
+
+    var detailUrl = req.body.detail_url;
 
     Question.findOne({
             where: {
@@ -36,7 +47,36 @@ exports.create = (req, res) => {
                 // Save Question in the database
                 Question.create(question)
                     .then(data => {
-                        res.send(data);
+                        // res.send(data);
+
+                        if (data) {
+
+                            detailUrl+=data.dataValues.id;
+            
+                            var message = 'Bạn có một câu hỏi mới!'
+                            var adminNotification = {
+                                message: message,
+                                detailUrl: detailUrl,
+                    
+                            };
+                    
+                            // Save CustomerNotification in the database
+                            AdminNotification.create(adminNotification)
+                                .then(dataNotification => {
+                                    res.send({
+                                        data: data,
+                                        dataNotification: dataNotification
+                                    });
+                                })
+                                .catch(err => {
+                                    res.status(500).send({
+                                        message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
+                                        error: err.message
+                                    });
+                                });
+            
+                        }
+
                     })
                     .catch(err => {
                         res.status(500).send({
