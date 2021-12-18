@@ -30,6 +30,10 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: 0
       },
+      transactionCode: {
+        type: Sequelize.STRING,
+        field: 'transaction_code',
+      },
       customerId: {
         type: Sequelize.INTEGER,
         field: 'customer_id',

@@ -36,6 +36,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 0
     },
+    transactionCode: {
+      type: DataTypes.STRING,
+      field: 'transaction_code',
+    },
     customerId: {
       type: DataTypes.INTEGER,
       field: 'customer_id',
@@ -66,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       field: 'updated_at'
     }
-}, {
+  }, {
     sequelize,
     modelName: 'PremiumBill',
   });

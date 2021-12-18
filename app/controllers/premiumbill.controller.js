@@ -20,6 +20,7 @@ exports.create = (req, res) => {
     var totalPrice = req.body.total_price;
     var paymentStatus = req.body.payment_status;
     var status = req.body.status;
+    var transactionCode = req.body.transaction_code;
     var customerId = req.body.customer_id;
     var premiumId = req.body.premium_id;
 
@@ -317,6 +318,7 @@ exports.update = (req, res) => {
         totalPrice: req.body.total_price,
         paymentStatus: req.body.payment_status,
         status: req.body.status,
+        transactionCode = req.body.transaction_code,
         customerId: req.body.customer_id,
         premiumId: req.body.premium_id,
     };
