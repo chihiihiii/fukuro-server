@@ -1,6 +1,10 @@
 const db = require("../models");
 const PremiumBill = db.PremiumBills;
 const CustomerPremiumService = db.CustomerPremiumServices;
+const PremiumService = db.PremiumServices;
+const Customer = db.Customers;
+const ejs = require('ejs');
+const nodemailer = require('nodemailer');
 
 const Op = db.Sequelize.Op;
 
@@ -13,7 +17,6 @@ exports.create = (req, res) => {
         });
         return;
     }
-
     var name = req.body.name;
     var price = req.body.price;
     var expire = req.body.expire;
@@ -32,16 +35,40 @@ exports.create = (req, res) => {
         totalPrice: totalPrice,
         paymentStatus: paymentStatus,
         status: status,
+        transactionCode: transactionCode,
         customerId: customerId,
         premiumId: premiumId,
     };
+
+    var arr = {};
 
     // Save PremiumBill in the database
     PremiumBill.create(premiumBill)
         .then(data => {
             // res.send(data);
 
+            arr = data.dataValues;
+            if(arr.status == 0){
+                arr.status = 'Đang xử lý';
+            }else if(res.status == 1){
+                arr.status = 'Xử lý thành công';
+            }
+            if(arr.paymentStatus == 0){
+                arr.paymentStatus = 'Chưa thanh toán';
+            }else if(arr.paymentStatus == 1){
+                arr.paymentStatus = 'Đã thanh toán';
+            }
+            arr.startDate = arr.createdAt.toISOString().slice(0, 10);
+            const d = new Date();
+            arr.endDate = d.setMonth(arr.expire - 1);
+            arr.endDate = d.toISOString().slice(0, 10);
+            arr.price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(arr.price);
+            arr.totalPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(arr.totalPrice);
+
+            getDataPremium(arr.premiumId);
+            getDataCustomer(arr.customerId);
             createCustomerPremiumService(customerId, premiumId, expire);
+
 
         })
         .catch(err => {
@@ -51,7 +78,47 @@ exports.create = (req, res) => {
             });
         });
 
+    async function getDataPremium(id){
+        await PremiumService.findByPk(id)
+            .then(res => {
+                arr.premiumName = res.dataValues.name;
+            })
+    }
+    async function getDataCustomer(id){
+        await Customer.findByPk(id)
+            .then(result => {
+                arr.customerUsername = result.dataValues.username;
+                arr.customerEmail = result.dataValues.email;
+                console.log(arr);
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.SEND_MAIL_USER,
+                        pass: process.env.SEND_MAIL_PASS
+                    }
+                });
+                ejs.renderFile(process.cwd() + "/email-templates/bill.ejs", arr, {}, function (err, str) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        var mainOptions = {
+                            from: process.env.SEND_MAIL_USER,
+                            to: arr.customerEmail,
+                            subject: 'FUKURO - ĐĂNG KÝ DỊCH VỤ',
+                            html: str
+                        };
+                        transporter.sendMail(mainOptions, function (err, info) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                res.send('Success');
+                            }
+                        });
+                    }
 
+                });
+            })
+    }
 
     function createCustomerPremiumService(customerId, premiumId, expire) {
 
@@ -318,7 +385,7 @@ exports.update = (req, res) => {
         totalPrice: req.body.total_price,
         paymentStatus: req.body.payment_status,
         status: req.body.status,
-        transactionCode = req.body.transaction_code,
+        transactionCode: req.body.transaction_code,
         customerId: req.body.customer_id,
         premiumId: req.body.premium_id,
     };

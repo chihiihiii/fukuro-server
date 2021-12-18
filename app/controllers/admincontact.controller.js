@@ -2,10 +2,10 @@ const db = require("../models");
 const AdminContact = db.AdminContacts;
 const Admin = db.Admins;
 const AdminNotification = db.AdminNotifications;
+const nodemailer = require('nodemailer');
+const ejs = require('ejs');
 
 const Op = db.Sequelize.Op;
-
-const nodemailer = require('nodemailer');
 // Create and Save a new AdminContact
 exports.create = (req, res) => {
     // Validate request
@@ -245,54 +245,65 @@ exports.requestContact = (req, res) => {
         }
     });
 
-    var mailOptions = {
-        from: process.env.SEND_MAIL_USER,
-        to: email,
-        subject: subject,
-        text: message,
-    };
+    var arr = {};
+    arr.message = message;
 
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            // console.log(error);
-            res.send(error);
+    ejs.renderFile(process.cwd() + "/email-templates/feedback.ejs", arr, {}, function (err, str) {
+        if (err) {
+            console.log(err);
         } else {
-            // console.log('Email sent: ' + info.response);
-            // res.send('Success');
-            var adminContact = {
-                status: 1,
-                adminId: req.body.admin_id,
+            var mailOptions = {
+                from: process.env.SEND_MAIL_USER,
+                to: email,
+                subject: subject,
+                html: str,
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    // console.log(error);
+                    res.send(error);
+                } else {
+                    // console.log('Email sent: ' + info.response);
+                    // res.send('Success');
+                    var adminContact = {
+                        status: 1,
+                        adminId: req.body.admin_id,
 
-            }
-
-            AdminContact.update(adminContact, {
-                    where: {
-                        id: id
                     }
-                })
-                .then(num => {
-                    if (num == 1) {
-                        res.send({
-                            message: "AdminContact was updated status successfully!",
-                            status: 'Success'
+
+                    AdminContact.update(adminContact, {
+                        where: {
+                            id: id
+                        }
+                    })
+                        .then(num => {
+                            if (num == 1) {
+                                res.send({
+                                    message: "AdminContact was updated status successfully!",
+                                    status: 'Success'
+                                });
+                            } else {
+                                res.send({
+                                    message: `Không thể cập nhật status AdminContact với id=${id}. Maybe AdminContact was not found or req.body is empty!`
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            res.status(500).send({
+                                message: "Lỗi khi cập nhật status AdminContact với id=" + id,
+                                error: err.message
+
+                            });
                         });
-                    } else {
-                        res.send({
-                            message: `Không thể cập nhật status AdminContact với id=${id}. Maybe AdminContact was not found or req.body is empty!`
-                        });
-                    }
-                })
-                .catch(err => {
-                    res.status(500).send({
-                        message: "Lỗi khi cập nhật status AdminContact với id=" + id,
-                        error: err.message
-
-                    });
-                });
 
 
+                }
+            });
         }
+
     });
+
+
 
 
 };
