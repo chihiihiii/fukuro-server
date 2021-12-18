@@ -4,9 +4,8 @@ const PasswordReset = db.PasswordResets;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-
-
-
+const nodemailer = require('nodemailer');
+const ejs = require('ejs');
 
 
 // Admin login
@@ -367,10 +366,13 @@ exports.forgotPassword = (req, res) => {
     }
     // res.send(condition);
 
+    var arr = {};
+
     Admin.findOne({
             where: condition
         })
         .then(data => {
+            arr = data.dataValues;
             // res.send(data);
 
             if (data) {
@@ -385,13 +387,13 @@ exports.forgotPassword = (req, res) => {
                     }
                 });
 
-                var mailOptions = {
-                    from: process.env.SEND_MAIL_USER,
-                    to: email,
-                    subject: 'Reset Password for ' + username,
-                    // text: 'hahahaha',
-                    html: `<a href="${process.env.PORT_CLIENT}/auth/reset-password?email=${email}&token=${token}">Đặt lại mật khẩu</a>`
-                };
+                // var mailOptions = {
+                //     from: process.env.SEND_MAIL_USER,
+                //     to: email,
+                //     subject: 'Reset Password for ' + username,
+                //     // text: 'hahahaha',
+                //     html: `<a href="${process.env.PORT_CLIENT}/auth/reset-password?email=${email}&token=${token}">Đặt lại mật khẩu</a>`
+                // };
 
                 PasswordReset.findOne({
                     where: {
@@ -413,15 +415,28 @@ exports.forgotPassword = (req, res) => {
                             })
                             .then(num => {
                                 if (num == 1) {
-                                    transporter.sendMail(mailOptions, function (error, info) {
-                                        if (error) {
-                                            // console.log(error);
-                                            res.send(error);
+                                    arr.mail = email;
+                                    arr.token = token;
+                                    arr.link = process.env.PORT_ADMIN+'/auth/reset-password';
+                                    ejs.renderFile(process.cwd() + "/email-templates/forgot-password.mail.ejs", arr, {}, function (err, str) {
+                                        if (err) {
+                                            console.log(err);
                                         } else {
-                                            // console.log('Email sent: ' + info.response);
-                                            res.send('Success');
-
+                                            var mainOptions = {
+                                                from: process.env.SEND_MAIL_USER,
+                                                to: email,
+                                                subject: 'FUKURO - YÊU CẦU ĐẶT LẠI MẬT KHẨU',
+                                                html: str
+                                            };
+                                            transporter.sendMail(mainOptions, function (err, info) {
+                                                if (err) {
+                                                    console.log(err);
+                                                } else {
+                                                    res.send('Success');
+                                                }
+                                            });
                                         }
+
                                     });
                                 } else {
                                     res.send({
@@ -449,15 +464,28 @@ exports.forgotPassword = (req, res) => {
                             .then(data => {
                                 // res.send(data);
 
-                                transporter.sendMail(mailOptions, function (error, info) {
-                                    if (error) {
-                                        // console.log(error);
-                                        res.send(error);
+                                arr.mail = passwordReset.email;
+                                arr.token = passwordReset.token;
+                                arr.link = process.env.PORT_ADMIN+'/auth/reset-password';
+                                ejs.renderFile(process.cwd() + "/email-templates/forgot-password.mail.ejs", arr, {}, function (err, str) {
+                                    if (err) {
+                                        console.log(err);
                                     } else {
-                                        // console.log('Email sent: ' + info.response);
-                                        res.send('Success');
-
+                                        var mainOptions = {
+                                            from: process.env.SEND_MAIL_USER,
+                                            to: email,
+                                            subject: 'FUKURO - YÊU CẦU ĐẶT LẠI MẬT KHẨU',
+                                            html: str
+                                        };
+                                        transporter.sendMail(mainOptions, function (err, info) {
+                                            if (err) {
+                                                console.log(err);
+                                            } else {
+                                                res.send('Success');
+                                            }
+                                        });
                                     }
+
                                 });
 
                             })
