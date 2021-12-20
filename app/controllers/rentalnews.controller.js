@@ -649,8 +649,44 @@ exports.search = (req, res) => {
 };
 
 
-// Search all Rental News from the database.
+// Group district Rental News from the database.
 exports.findDistrict = (req, res) => {
+
+    var condition = {
+        city: {
+            [Op.like]: 'Cần Thơ'
+        }
+    };
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    RentalNews.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit,
+            group: ['district'],
+            attributes: ['district'],
+            raw: true,
+            nest: true
+        })
+        .then(data => {
+            res.send(data);
+            console.log(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Đã xảy ra một số lỗi khi truy xuất RentalNews!",
+                error: err.message
+            });
+        });
+};
+
+
+// Search all Rental News from the database.
+exports.demo = (req, res) => {
     // var address = req.body.address;
     // var condition = address ? {
     //     address: {

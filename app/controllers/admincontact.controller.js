@@ -68,6 +68,8 @@ exports.create = (req, res) => {
                         });
                     });
 
+            } else {
+                res.send(data);
             }
 
         })
@@ -104,7 +106,15 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                model: Admin,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar'],
+                required: false
+            }],
+            raw: true,
+            nest: true
+
         })
         .then(data => {
             res.send(data);
@@ -123,7 +133,19 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    AdminContact.findByPk(id)
+    AdminContact.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                model: Admin,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar'],
+                required: false
+            }],
+            raw: true,
+            nest: true
+
+        })
         .then(data => {
             res.send(data);
         })

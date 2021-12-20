@@ -1,5 +1,6 @@
 const db = require("../models");
 const Blog = db.Blogs;
+const BlogCategory = db.BlogCategories;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Blog
@@ -89,7 +90,17 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: BlogCategory,
+                    where: {
+                        status: 1
+                    },
+                },
+
+            ],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);
@@ -107,7 +118,21 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    Blog.findByPk(id)
+    Blog.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                    model: BlogCategory,
+                    where: {
+                        status: 1
+                    },
+                },
+
+            ],
+            raw: true,
+            nest: true
+        })
         .then(data => {
             res.send(data);
         })

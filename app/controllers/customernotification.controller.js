@@ -5,12 +5,12 @@ const Op = db.Sequelize.Op;
 // Create and Save a new CustomerNotification
 exports.create = (req, res) => {
     // Validate request
-    // if (!req.body.username) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.message || !req.body.detail_url) {
+        res.status(400).send({
+            message: "Không được để trống nội dung thông báo hoặc chi tiết url!"
+        });
+        return;
+    }
 
     // Create a CustomerNotification
     var customerNotification = {
@@ -18,7 +18,6 @@ exports.create = (req, res) => {
         detailUrl: req.body.detail_url,
         status: req.body.status,
         customerId: req.body.customer_id,
-        rentalNewsId: req.body.rental_news_id,
 
     };
 

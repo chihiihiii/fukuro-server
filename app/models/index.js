@@ -111,6 +111,22 @@ db.RentalNews.belongsTo(db.Promotions, {
   foreignKey: "promotionId",
 });
 
+// AdminContacts
+db.Admins.hasMany(db.AdminContacts, {
+  foreignKey: "adminId",
+});
+db.AdminContacts.belongsTo(db.Admins, {
+  foreignKey: "adminId",
+});
+
+// AdminNotifications
+db.Admins.hasMany(db.AdminNotifications, {
+  foreignKey: "adminId",
+});
+db.AdminNotifications.belongsTo(db.Admins, {
+  foreignKey: "adminId",
+});
+
 
 
 

@@ -1,5 +1,6 @@
 const db = require("../models");
 const AdminNotification = db.AdminNotifications;
+const Admin = db.Admins;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Admin
@@ -59,7 +60,13 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                model: Admin,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar'],
+                required: false
+
+            }],
         })
         .then(data => {
             res.send(data);

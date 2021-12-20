@@ -22,6 +22,18 @@ exports.create = (req, res) => {
         });
         return;
     }
+    if (!req.body.customer_id && !req.body.admin_id) {
+        res.status(400).send({
+            message: "Không để trống mã tài khoản trả lời!"
+        });
+        return;
+    }
+    if (req.body.customer_id && req.body.admin_id) {
+        res.status(400).send({
+            message: "Chỉ thêm một mã tài khoản trả lời!"
+        });
+        return;
+    }
     var detailUrl = req.body.detail_url;
     var customerId = req.body.customer_id;
 
@@ -46,64 +58,66 @@ exports.create = (req, res) => {
 
             if (data) {
 
-                Question.findOne({
-                        where: {
-                            id: questionId,
-                            customerId: customerId,
-
-                        },
-                        raw: true,
-                        nest: true
-                    }).then(dataQuestions => {
-
-                        if (dataQuestions) {
-                            console.log(dataQuestions);
-                            res.status(200).send({
-                                message: 'Thêm câu trả lời thành công!',
-                                data: data,
-                            });
-
-                        } else {
-                            console.log(dataQuestions);
-
-                            detailUrl += data.dataValues.id;
-
-                            var message = 'Bạn có một câu trả lời mới!'
-                            var customerNotification = {
-                                message: message,
-                                detailUrl: detailUrl,
+                if (customerId) {
+                    Question.findOne({
+                            where: {
+                                id: questionId,
                                 customerId: customerId,
 
-                            };
+                            },
+                            raw: true,
+                            nest: true
+                        }).then(dataQuestions => {
 
-                            // Save CustomerNotification in the database
-                            CustomerNotification.create(customerNotification)
-                                .then(dataNotification => {
-                                    res.status(200).send({
-                                        message: 'Thêm câu trả lời thành công!',
-                                        data: data,
-                                        dataNotification: dataNotification
+                            if (dataQuestions) {
+                                console.log(dataQuestions);
+                                res.send(data);
+
+                            } else {
+                                console.log(dataQuestions);
+
+                                detailUrl += data.dataValues.id;
+
+                                var message = 'Bạn có một câu trả lời mới!'
+                                var customerNotification = {
+                                    message: message,
+                                    detailUrl: detailUrl,
+                                    customerId: customerId,
+
+                                };
+
+                                // Save CustomerNotification in the database
+                                CustomerNotification.create(customerNotification)
+                                    .then(dataNotification => {
+                                        res.status(200).send({
+                                            data: data,
+                                            dataNotification: dataNotification
+                                        });
+                                    })
+                                    .catch(err => {
+                                        res.status(500).send({
+                                            message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
+                                            error: err.message
+                                        });
                                     });
-                                })
-                                .catch(err => {
-                                    res.status(500).send({
-                                        message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
-                                        error: err.message
-                                    });
-                                });
 
 
-                        }
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            message: "Lỗi khi truy xuất Answer với customer id=" + customerId,
-                            error: err.message
+                            }
+                        })
+                        .catch(err => {
+                            res.status(500).send({
+                                message: "Lỗi khi truy xuất Answer với customer id=" + customerId,
+                                error: err.message
 
+                            });
                         });
-                    });
 
+                } else {
+                    res.send(data);
+                }
 
+            } else {
+                res.send(data);
 
             }
 
@@ -184,7 +198,6 @@ exports.findOne = (req, res) => {
         })
         .then(data => {
             if (data) {
-                var customerId = data.customerId;
 
                 var like = data.like;
                 var dislike = data.dislike;
@@ -205,12 +218,11 @@ exports.findOne = (req, res) => {
 
                 }
 
-                res.status(200).send(data);
+                res.send(data);
 
             } else {
-                res.status(400).send({
-                    message: 'Không tồn tại Answer với id=' + id
-                });
+                res.send(data);
+
             }
 
         })
@@ -378,9 +390,7 @@ exports.findByQuestionId = (req, res) => {
 
                 }
             }
-            // console.log(data);
-            res.status(200).send(data);
-
+            res.send(data);
         })
         .catch(err => {
             res.status(500).send({
