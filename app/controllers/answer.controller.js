@@ -2,6 +2,7 @@ const db = require("../models");
 const Answer = db.Answers;
 const Customer = db.Customers;
 const CustomerNotification = db.CustomerNotifications;
+const Question = db.Questions;
 
 const Op = db.Sequelize.Op;
 
@@ -24,7 +25,7 @@ exports.create = (req, res) => {
     var detailUrl = req.body.detail_url;
     var customerId = req.body.customer_id;
 
-
+    var questionId = req.body.question_id;
 
     // Create a Answer
     var answer = {
@@ -32,9 +33,9 @@ exports.create = (req, res) => {
         like: req.body.like,
         dislike: req.body.dislike,
         status: req.body.status,
-        customerId: req.body.customer_id,
+        customerId: customerId,
         adminId: req.body.admin_id,
-        questionId: req.body.question_id,
+        questionId: questionId,
 
     };
 
@@ -45,30 +46,63 @@ exports.create = (req, res) => {
 
             if (data) {
 
-                detailUrl += data.dataValues.id;
+                Question.findOne({
+                        where: {
+                            id: questionId,
+                            customerId: customerId,
 
-                var message = 'Bạn có một câu trả lời mới!'
-                var customerNotification = {
-                    message: message,
-                    detailUrl: detailUrl,
-                    customerId: customerId,
+                        },
+                        raw: true
+                    }).then(dataQuestions => {
 
-                };
+                        if (dataQuestions) {
+                            console.log(dataQuestions);
+                            res.status(200).send({
+                                message: 'Thêm câu trả lời thành công!',
+                                data: data,
+                            });
 
-                // Save CustomerNotification in the database
-                CustomerNotification.create(customerNotification)
-                    .then(dataNotification => {
-                        res.send({
-                            data: data,
-                            dataNotification: dataNotification
-                        });
+                        } else {
+                            console.log(dataQuestions);
+
+                            detailUrl += data.dataValues.id;
+
+                            var message = 'Bạn có một câu trả lời mới!'
+                            var customerNotification = {
+                                message: message,
+                                detailUrl: detailUrl,
+                                customerId: customerId,
+
+                            };
+
+                            // Save CustomerNotification in the database
+                            CustomerNotification.create(customerNotification)
+                                .then(dataNotification => {
+                                    res.status(200).send({
+                                        message: 'Thêm câu trả lời thành công!',
+                                        data: data,
+                                        dataNotification: dataNotification
+                                    });
+                                })
+                                .catch(err => {
+                                    res.status(500).send({
+                                        message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
+                                        error: err.message
+                                    });
+                                });
+
+
+                        }
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
+                            message: "Lỗi khi truy xuất Answer với customer id=" + customerId,
                             error: err.message
+
                         });
                     });
+
+
 
             }
 
