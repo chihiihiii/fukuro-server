@@ -32,6 +32,7 @@ exports.create = (req, res) => {
         totalPrice: totalPrice,
         paymentStatus: paymentStatus,
         status: status,
+        transactionCode: transactionCode,
         customerId: customerId,
         premiumId: premiumId,
     };
@@ -318,7 +319,7 @@ exports.update = (req, res) => {
         totalPrice: req.body.total_price,
         paymentStatus: req.body.payment_status,
         status: req.body.status,
-        transactionCode = req.body.transaction_code,
+        transactionCode : req.body.transaction_code,
         customerId: req.body.customer_id,
         premiumId: req.body.premium_id,
     };

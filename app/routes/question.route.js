@@ -16,9 +16,6 @@ module.exports = app => {
     router.get("/category/:id", questions.findByCategoryId);
 
 
-    // Retrieve a single Question by slug
-    router.get("/slug/:slug", questions.findOneBySlug);
-
     // Retrieve a single Question with id
     router.get("/:id", questions.findOne);
 

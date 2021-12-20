@@ -1,5 +1,6 @@
 const db = require("../models");
 const CustomerPremiumService = db.CustomerPremiumServices;
+
 const Op = db.Sequelize.Op;
 
 // Create and Save a new CustomerPremiumService
@@ -38,12 +39,10 @@ exports.create = (req, res) => {
 // Retrieve all CustomerPremiumServices from the database.
 exports.findAll = (req, res) => {
     var status = req.query.status;
-    var condition = {
-    };
+    var condition = {};
     if (status == 0 || status == 1) {
         condition.status = status
-    } else if (status == 'both') {
-    } else {
+    } else if (status == 'both') {} else {
         condition.status = 1
     }
 
@@ -89,15 +88,15 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-        // Update a CustomerPremiumService
-        var customerPremiumService = {
-            startDate: req.body.start_date,
-            endDate: req.body.end_date,
-            status: req.body.status,
-            customerId: req.body.customer_id,
-            premiumId: req.body.premium_id,
-    
-        };
+    // Update a CustomerPremiumService
+    var customerPremiumService = {
+        startDate: req.body.start_date,
+        endDate: req.body.end_date,
+        status: req.body.status,
+        customerId: req.body.customer_id,
+        premiumId: req.body.premium_id,
+
+    };
 
     CustomerPremiumService.update(customerPremiumService, {
             where: {
@@ -168,4 +167,46 @@ exports.deleteAll = (req, res) => {
                 error: err.message
             });
         });
+};
+
+exports.checkExpire = (req, res) => {
+
+
+    var currentTime = new Date();
+    // var checkTime = new Date(new Date() + 24 * 60 * 60 * 1000 * 7);
+    var checkTime = new Date(new Date() - (-24 * 60 * 60 * 1000 * 7));
+
+    console.log(checkTime);
+    console.log(currentTime);
+
+    CustomerPremiumService.findAndCountAll({
+            where: {
+                [Op.and]: [{
+                        endDate: {
+                            [Op.between]: [currentTime, checkTime]
+                        }
+                    },
+                    {
+                        status: 1
+                    }
+                ]
+
+            },
+            raw: true,
+            nest: true,
+        })
+        .then(data => {
+            res.send(data);
+            
+        })
+        .catch(err => {
+            // console.log(err.toJSON());
+            res.status(500).send({
+                message: "Đã xảy ra một số lỗi khi truy xuất Customer Premium Service!",
+                error: err.message
+                // error: err
+            });
+        });
+
+
 };

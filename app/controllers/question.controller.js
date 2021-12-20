@@ -7,7 +7,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Question
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body.title || !req.body.slug || !req.body.question_category_id || !req.body.customer_id) {
+    if (!req.body.title || !req.body.question_category_id || !req.body.customer_id) {
         res.status(400).send({
             message: "Không để trống tựa câu hỏi, mã danh mục câu hỏi và mã khách hàng!"
         });
@@ -23,75 +23,59 @@ exports.create = (req, res) => {
 
     var detailUrl = req.body.detail_url;
 
-    Question.findOne({
-            where: {
-                slug: req.body.slug
-            }
-        }).then(data => {
+    // Create a Question
+    var question = {
+        title: req.body.title,
+        content: req.body.content,
+        status: req.body.status,
+        questionCategoryId: req.body.question_category_id,
+        customerId: req.body.customer_id
+    };
+    // console.log(question);
+
+    // Save Question in the database
+    Question.create(question)
+        .then(data => {
+            // res.send(data);
+
             if (data) {
-                res.status(400).send({
-                    message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
-                });
-            } else {
-                // Create a Question
-                var question = {
-                    title: req.body.title,
-                    slug: req.body.slug,
-                    content: req.body.content,
-                    status: req.body.status,
-                    questionCategoryId: req.body.question_category_id,
-                    customerId: req.body.customer_id
+
+                detailUrl += data.dataValues.id;
+
+                var message = 'Bạn có một câu hỏi mới!'
+                var adminNotification = {
+                    message: message,
+                    detailUrl: detailUrl,
+
                 };
-                // console.log(question);
 
-                // Save Question in the database
-                Question.create(question)
-                    .then(data => {
-                        // res.send(data);
-
-                        if (data) {
-
-                            detailUrl+=data.dataValues.id;
-            
-                            var message = 'Bạn có một câu hỏi mới!'
-                            var adminNotification = {
-                                message: message,
-                                detailUrl: detailUrl,
-                    
-                            };
-                    
-                            // Save CustomerNotification in the database
-                            AdminNotification.create(adminNotification)
-                                .then(dataNotification => {
-                                    res.send({
-                                        data: data,
-                                        dataNotification: dataNotification
-                                    });
-                                })
-                                .catch(err => {
-                                    res.status(500).send({
-                                        message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
-                                        error: err.message
-                                    });
-                                });
-            
-                        }
-
+                // Save CustomerNotification in the database
+                AdminNotification.create(adminNotification)
+                    .then(dataNotification => {
+                        res.send({
+                            data: data,
+                            dataNotification: dataNotification
+                        });
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Đã xảy ra một số lỗi khi tạo Question!",
+                            message: "Đã xảy ra một số lỗi khi tạo Customer Notification!",
                             error: err.message
                         });
                     });
+
             }
+
         })
         .catch(err => {
             res.status(500).send({
-                message: "Lỗi khi truy xuất Question with slug=" + slug,
+                message: "Đã xảy ra một số lỗi khi tạo Question!",
                 error: err.message
             });
         });
+
+
+
 
 
 };
@@ -150,73 +134,39 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     var id = req.params.id;
 
-    if (req.body.slug) {
-        Question.findOne({
-                where: {
-                    slug: req.body.slug
-                }
-            }).then(data => {
-                if (data) {
-                    if (data.id == parseInt(id)) {
-                        update();
-                    } else {
-                        res.status(400).send({
-                            message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
-                        });
-                    }
-                } else {
-                    update();
-                }
-            })
-            .catch(err => {
-                res.status(500).send({
-                    message: "Lỗi khi truy xuất Question with slug=" + slug,
-                    error: err.message
+
+    // Update a Question
+    var question = {
+        title: req.body.title,
+        content: req.body.content,
+        status: req.body.status,
+        questionCategoryId: req.body.question_category_id,
+        customerId: req.body.customer_id
+    };
+
+    Question.update(question, {
+            where: {
+                id: id
+            }
+        })
+        .then(num => {
+            if (num == 1) {
+                res.send({
+                    message: "Question được cập nhật thành công!"
                 });
-            });
-
-    } else {
-        update();
-    }
-
-
-    function update() {
-
-        // Update a Question
-        var question = {
-            title: req.body.title,
-            slug: req.body.slug,
-            content: req.body.content,
-            status: req.body.status,
-            questionCategoryId: req.body.question_category_id,
-            customerId: req.body.customer_id
-        };
-
-        Question.update(question, {
-                where: {
-                    id: id
-                }
-            })
-            .then(num => {
-                if (num == 1) {
-                    res.send({
-                        message: "Question được cập nhật thành công!"
-                    });
-                } else {
-                    res.send({
-                        message: `Không thể cập nhật thông tin Question with id=${id}. Maybe Question was not found or req.body is empty!`
-                    });
-                }
-            })
-            .catch(err => {
-                res.status(500).send({
-                    message: "Lỗi khi cập nhật Question with id=" + id,
-                    error: err.message
+            } else {
+                res.send({
+                    message: `Không thể cập nhật thông tin Question with id=${id}. Maybe Question was not found or req.body is empty!`
                 });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Lỗi khi cập nhật Question with id=" + id,
+                error: err.message
             });
+        });
 
-
-    }
 
 
 
@@ -343,33 +293,4 @@ exports.findByCategoryId = (req, res) => {
         });
 
 
-};
-
-// find one Question by Slug
-exports.findOneBySlug = (req, res) => {
-    var slug = req.params.slug;
-    var status = req.query.status;
-    var condition = {
-        slug: slug
-    };
-    if (status == 0 || status == 1) {
-        condition.status = status
-    } else if (status == 'both') {} else {
-        condition.status = 1
-    }
-    Question.findOne({
-            where: condition
-        }).then(data => {
-            if (data) {
-                res.send(data);
-            } else {
-                res.send(`Không tồn tại câu hỏi với slug = ${slug} hoặc câu hỏi đã bị vô hiệu hóa!`)
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Lỗi khi truy xuất Question Category with slug=" + slug,
-                error: err.message
-            });
-        });
 };

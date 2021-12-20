@@ -11,9 +11,6 @@ module.exports = {
       title: {
         type: Sequelize.TEXT
       },
-      slug: {
-        type: Sequelize.TEXT
-      },
       content: {
         type: Sequelize.TEXT
       },

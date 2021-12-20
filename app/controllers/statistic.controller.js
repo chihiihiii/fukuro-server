@@ -1,5 +1,5 @@
 const db = require("../models");
-const RentalNew = db.RentalNews;
+const RentalNews = db.RentalNews;
 const PremiumBill = db.PremiumBills;
 const Customer = db.Customers;
 const Comment = db.Comments;
@@ -19,7 +19,7 @@ exports.countRentalNews = (req, res) => {
     var lastMonth = new Date(new Date() - 24 * 60 * 60 * 1000 * 30);
 
     if (time == 'day') {
-        RentalNew.findAndCountAll({
+        RentalNews.findAndCountAll({
             where: {
                 createdAt: {
                     [Op.lt]: currentTime,
@@ -38,7 +38,7 @@ exports.countRentalNews = (req, res) => {
                 });
             });
     } else if (time == 'week') {
-        RentalNew.findAndCountAll({
+        RentalNews.findAndCountAll({
             where: {
                 createdAt: {
                     [Op.lt]: currentTime,
@@ -57,7 +57,7 @@ exports.countRentalNews = (req, res) => {
                 });
             });
     } else if (time == 'month') {
-        RentalNew.findAndCountAll({
+        RentalNews.findAndCountAll({
             where: {
                 createdAt: {
                     [Op.lt]: currentTime,
@@ -76,7 +76,7 @@ exports.countRentalNews = (req, res) => {
                 });
             });
     } else {
-        RentalNew.findAndCountAll({
+        RentalNews.findAndCountAll({
             where: {
                 // createdAt: {
                 //     [Op.lt]: currentTime,
@@ -104,7 +104,7 @@ exports.countRentalNewsByDate = (req, res) => {
     var start = req.query.start;
     var end = req.query.end;
     if (start && end) {
-        RentalNew.findAndCountAll({
+        RentalNews.findAndCountAll({
                 where: {
                     createdAt: {
                         [Op.lt]: end,
@@ -123,7 +123,7 @@ exports.countRentalNewsByDate = (req, res) => {
             });
     }
     else {
-        RentalNew.findAndCountAll()
+        RentalNews.findAndCountAll()
             .then(function (count) {
                 res.status(200).send(count);
             })

@@ -9,6 +9,9 @@ module.exports = app => {
     // Retrieve all CustomerPremiumServices
     router.get("/", customerPremiumServices.findAll);
 
+    // Retrieve all CustomerPremiumServices
+    router.get("/check-expire", customerPremiumServices.checkExpire);
+
 
     // Retrieve a single CustomerPremiumService with id
     router.get("/:id", customerPremiumServices.findOne);

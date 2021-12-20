@@ -45,7 +45,7 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Lỗi khi truy xuất Question with slug=" + slug
+                message: "Lỗi khi truy xuất Blog Category with slug=" + slug
             });
         });
 
@@ -126,7 +126,7 @@ exports.update = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: "Lỗi khi truy xuất Question with slug=" + slug,
+                    message: "Lỗi khi truy xuất Blog Category with slug=" + slug,
                     error: err.message
                 });
             });
