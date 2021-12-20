@@ -237,7 +237,9 @@ exports.checkExpire = (req, res) => {
                                 }
                             },
                             {
-                                status: 1
+                                status: {
+                                    [Op.or]: [1, 2]
+                                }
                             }
                         ]
                     },
