@@ -59,7 +59,7 @@ db.RentalRooms = require("./rentalroom.js")(sequelize, Sequelize);
 db.Renters = require("./renter.js")(sequelize, Sequelize);
 
 
-// PremiumService
+// CustomerPremiumServices
 db.PremiumServices.hasMany(db.CustomerPremiumServices, {
   foreignKey: "premiumId",
   // as: "customerPremiumService"
@@ -67,6 +67,12 @@ db.PremiumServices.hasMany(db.CustomerPremiumServices, {
 db.CustomerPremiumServices.belongsTo(db.PremiumServices, {
   foreignKey: "premiumId",
   // as: "premiumService",
+});
+db.Customers.hasMany(db.CustomerPremiumServices, {
+  foreignKey: "customerId",
+});
+db.CustomerPremiumServices.belongsTo(db.Customers, {
+  foreignKey: "customerId",
 });
 
 // Answers

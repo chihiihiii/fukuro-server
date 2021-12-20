@@ -1,5 +1,7 @@
 const db = require("../models");
 const CustomerPremiumService = db.CustomerPremiumServices;
+const Customer = db.Customers;
+const PremiumService = db.PremiumServices;
 
 const Op = db.Sequelize.Op;
 
@@ -40,7 +42,7 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
     var status = req.query.status;
     var condition = {};
-    if (status == 0 || status == 1) {
+    if (status == 0 || status == 1 || status == 2) {
         condition.status = status
     } else if (status == 'both') {} else {
         condition.status = 1
@@ -63,7 +65,19 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: PremiumService,
+
+                }
+            ],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);
@@ -81,7 +95,23 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    CustomerPremiumService.findByPk(id)
+    CustomerPremiumService.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: PremiumService,
+
+                }
+            ],
+            raw: true,
+            nest: true
+        })
         .then(data => {
             res.send(data);
         })
@@ -206,7 +236,7 @@ exports.checkExpire = (req, res) => {
         })
         .then(data => {
             res.send(data);
-            
+
         })
         .catch(err => {
             // console.log(err.toJSON());
@@ -218,4 +248,63 @@ exports.checkExpire = (req, res) => {
         });
 
 
+};
+
+
+// Retrieve all CustomerPremiumServices by customer id from the database.
+exports.findByCustomerId = (req, res) => {
+    var id = req.params.id;
+
+
+    var status = req.query.status;
+    var condition = {
+        customerId: id
+    };
+    if (status == 0 || status == 1 || status == 2) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
+
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    CustomerPremiumService.findAndCountAll({
+            where: condition,
+            order: order,
+            offset: offset,
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: PremiumService,
+
+                }
+            ],
+            raw: true,
+            nest: true
+        })
+        .then(data => {
+            res.send(data);
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Đã xảy ra một số lỗi khi truy xuất customer premiums!",
+                error: err.message
+            });
+        });
 };
