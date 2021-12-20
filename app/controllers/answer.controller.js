@@ -141,7 +141,15 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+            }, {
+                model: Question
+            }],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);
@@ -160,64 +168,43 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    Answer.findByPk(id)
+    Answer.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+            }, {
+                model: Question
+            }],
+            raw: true,
+            nest: true
+        })
         .then(data => {
             if (data) {
-                var customerId = data.dataValues.customerId;
-                var answer_data = data.dataValues;
+                var customerId = data.customerId;
 
-                var like = data.dataValues.like;
-                var dislike = data.dataValues.dislike;
+                var like = data.like;
+                var dislike = data.dislike;
                 if (like) {
                     var likeArray = like.split(',');
                     var likeNumber = likeArray.length;
-                    answer_data.count_like = likeNumber;
+                    data.count_like = likeNumber;
                 } else {
-                    answer_data.count_like = 0;
+                    data.count_like = 0;
                 }
                 if (dislike) {
                     var dislikeArray = dislike.split(',');
                     var dislikeNumber = dislikeArray.length;
-                    answer_data.count_dislike = dislikeNumber;
+                    data.count_dislike = dislikeNumber;
 
                 } else {
-                    answer_data.count_dislike = 0;
+                    data.count_dislike = 0;
 
                 }
 
-
-
-
-                Customer.findOne({
-                        where: {
-                            id: customerId,
-                            // status: 1
-                        },
-                        attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
-                    }).then(data => {
-
-                        if (data) {
-
-                            answer_data.customer_info = data.dataValues;
-
-
-                            res.send(answer_data);
-
-                        } else {
-                            res.status(400).send({
-                                message: 'Không tồn tại Answer với customer id=' + customerId
-                            });
-
-                        }
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            message: "Lỗi khi truy xuất Answer với customer id=" + customerId,
-                            error: err.message
-
-                        });
-                    });
-
+                res.status(200).send(data);
 
             }
 
@@ -334,6 +321,12 @@ exports.findByQuestionId = (req, res) => {
         condition.status = 1
     }
 
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
@@ -341,48 +334,45 @@ exports.findByQuestionId = (req, res) => {
 
     Answer.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+            }, {
+                model: Question
+            }],
+            raw: true,
+            nest: true
         })
         .then(data => {
 
+            // res.send(data)
+            // console.log(data);
 
-            var answerData = data.rows;
-            // var results = [];
-            answerData.forEach((value, index, array) => {
-                var customerId = answerData[index].customerId;
+            for (var i = 0; i < data.rows.length; i++) {
+                var like = data.rows[i].like;
+                var dislike = data.rows[i].dislike;
+                if (like) {
+                    var likeArray = like.split(',');
+                    var likeNumber = likeArray.length;
+                    data.rows[i].count_like = likeNumber;
+                } else {
+                    data.rows[i].count_like = 0;
+                }
+                if (dislike) {
+                    var dislikeArray = dislike.split(',');
+                    var dislikeNumber = dislikeArray.length;
+                    data.rows[i].count_dislike = dislikeNumber;
 
-                console.log(customerId);
+                } else {
+                    data.rows[i].count_dislike = 0;
 
-
-                Customer.findOne({
-                        where: {
-                            id: customerId,
-                            status: 1
-                        },
-                        attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
-                    }).then(data => {
-
-                        // res.send(data);
-                        // console.log(data.dataValues);
-                        // console.log(answerData[index]);
-
-                        if (data) {
-                            answerData[index].dataValues.customer_info = data.dataValues;
-                            console.log(answerData[index].dataValues);
-                        }
-
-                        if (index == array.length - 1) {
-                            res.send(answerData);
-                        }
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            message: "Lỗi khi truy xuất Customer with id=" + customerId + err
-                        });
-                    });
-
-            });
+                }
+            }
+            // console.log(data);
+            res.status(200).send(data);
 
         })
         .catch(err => {
