@@ -52,7 +52,8 @@ exports.create = (req, res) => {
                             customerId: customerId,
 
                         },
-                        raw: true
+                        raw: true,
+                        nest: true
                     }).then(dataQuestions => {
 
                         if (dataQuestions) {

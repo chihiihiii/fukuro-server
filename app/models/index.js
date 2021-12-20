@@ -83,6 +83,20 @@ db.Answers.belongsTo(db.Customers, {
   foreignKey: "customerId",
 });
 
+// Questions
+db.QuestionCategories.hasMany(db.Questions, {
+  foreignKey: "questionCategoryId",
+});
+db.Questions.belongsTo(db.QuestionCategories, {
+  foreignKey: "questionCategoryId",
+});
+db.Customers.hasMany(db.Questions, {
+  foreignKey: "customerId",
+});
+db.Questions.belongsTo(db.Customers, {
+  foreignKey: "customerId",
+});
+
 
 
 
