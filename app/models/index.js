@@ -97,6 +97,20 @@ db.Questions.belongsTo(db.Customers, {
   foreignKey: "customerId",
 });
 
+// RentalNews
+db.Customers.hasMany(db.RentalNews, {
+  foreignKey: "customerId",
+});
+db.RentalNews.belongsTo(db.Customers, {
+  foreignKey: "customerId",
+});
+db.Promotions.hasMany(db.RentalNews, {
+  foreignKey: "promotionId",
+});
+db.RentalNews.belongsTo(db.Promotions, {
+  foreignKey: "promotionId",
+});
+
 
 
 

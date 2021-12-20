@@ -1,5 +1,12 @@
 const db = require("../models");
+const premiumservice = require("../models/premiumservice");
 const RentalNews = db.RentalNews;
+const CustomerPremiumService = db.CustomerPremiumServices;
+const PremiumService = db.PremiumServices;
+const Customer = db.Customers;
+const Promotion = db.Promotions;
+// const premiumService = db.PremiumServices;
+
 const Op = db.Sequelize.Op;
 
 // Create and Save a new RentalNews
@@ -18,61 +25,137 @@ exports.create = (req, res) => {
         });
         return;
     }
+    if (!req.body.customer_id) {
+        res.status(400).send({
+            message: "Không để trống mã khách hàng!"
+        });
+        return;
+    }
 
-    RentalNews.findOne({
+    CustomerPremiumService.findOne({
             where: {
-                slug: req.body.slug
-            }
-        }).then(data => {
+                customerId: req.body.customer_id,
+                status: {
+                    [Op.or]: [1, 2]
+                }
+            },
+            include: [{
+                model: PremiumService,
+                where: {
+                    type: {
+                        [Op.or]: [2, 3]
+                    },
+                    status: 1
+                },
+            }],
+            raw: true,
+            nest: true
+
+        })
+        .then(data => {
+            res.send(data);
             if (data) {
-                res.status(400).send({
-                    message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
-                });
-            } else {
-                // Create a RentalNews
-                var rentalNews = {
-                    name: req.body.name,
-                    image: req.body.image,
-                    price: req.body.price,
-                    quantity: req.body.quantity,
-                    type: req.body.type,
-                    address: req.body.address,
-                    streetNumber: req.body.street_number,
-                    street: req.body.street,
-                    district: req.body.district,
-                    city: req.body.city,
-                    lat: req.body.lat,
-                    lng: req.body.lng,
-                    area: req.body.area,
-                    slug: req.body.slug,
-                    priority: req.body.priority,
-                    description: req.body.description,
-                    status: req.body.status,
-                    promotionId: req.body.promotion_id,
-                    customerId: req.body.customer_id,
-                };
 
-
-                // Save RentalNews in the database
-                RentalNews.create(rentalNews)
-                    .then(data => {
-                        res.send(data);
+                RentalNews.findOne({
+                        where: {
+                            slug: req.body.slug
+                        }
+                    }).then(data => {
+                        if (data) {
+                            res.status(400).send({
+                                message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
+                            });
+                        } else {
+                            create()
+                        }
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message: "Đã xảy ra một số lỗi khi tạo Rental News!",
+                            message: "Lỗi khi truy xuất Rental News với slug=" + slug,
                             error: err.message
+
                         });
                     });
+
+            } else {
+
+                RentalNews.findOne({
+                        where: {
+                            customerId: req.body.customer_id
+                        }
+                    }).then(data => {
+                        if (data) {
+                            res.status(400).send({
+                                message: "Bạn chỉ được đăng một tin cho thuê. Vui lòng đăng ký gói dịch vụ để có thể đăng tin không giới hạn!"
+                            });
+                        } else {
+                            create();
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: "Lỗi khi truy xuất Rental News với customer id=" + req.body.customer_id,
+                            error: err.message
+
+                        });
+                    });
+
+
+                res.status(400).send({
+                    message: 'Bạn không có quyền đăng tin cho thuê! Vui lòng liên hệ với quản trị viên!'
+                })
             }
+
         })
         .catch(err => {
+            console.log(err);
             res.status(500).send({
-                message: "Lỗi khi truy xuất câu hỏi với slug=" + slug,
+                message: "Đã xảy ra một số lỗi khi truy xuất customer premiums service!",
                 error: err.message
-
+                // error: err
             });
         });
+
+
+    function create() {
+        // Create a RentalNews
+        var rentalNews = {
+            name: req.body.name,
+            image: req.body.image,
+            price: req.body.price,
+            quantity: req.body.quantity,
+            type: req.body.type,
+            address: req.body.address,
+            streetNumber: req.body.street_number,
+            street: req.body.street,
+            district: req.body.district,
+            city: req.body.city,
+            lat: req.body.lat,
+            lng: req.body.lng,
+            area: req.body.area,
+            slug: req.body.slug,
+            priority: req.body.priority,
+            description: req.body.description,
+            status: req.body.status,
+            promotionId: req.body.promotion_id,
+            customerId: req.body.customer_id,
+        };
+
+
+        // Save RentalNews in the database
+        RentalNews.create(rentalNews)
+            .then(data => {
+                res.send(data);
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Đã xảy ra một số lỗi khi tạo Rental News!",
+                    error: err.message
+                });
+            });
+
+    }
+
 
 
 };
@@ -115,6 +198,22 @@ exports.findAll = (req, res) => {
             order: order,
             offset: offset,
             limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Promotion,
+                    where: {
+                        status: 1
+                    },
+                    required: false
+                }
+            ],
+            raw: true,
+            nest: true
+
 
         })
         .then(data => {
@@ -134,9 +233,36 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    RentalNews.findByPk(id)
+    RentalNews.findOne({
+            where: {
+                id: id,
+            },
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Promotion,
+                    where: {
+                        status: 1
+                    },
+                    required: false
+                }
+            ],
+            raw: true,
+            nest: true
+
+        })
         .then(data => {
-            res.send(data);
+            if (data) {
+                res.status(200).send(data);
+            } else {
+                res.status(400).send({
+                    message: 'Không tồn tại Rental News với id=' + id
+                });
+            }
+
         })
         .catch(err => {
             res.status(500).send({
@@ -286,45 +412,6 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// Retrieve RentalNews latest from the database.
-exports.findLatest = (req, res) => {
-
-    var status = req.query.status;
-
-    var condition = {};
-    if (status == 0 || status == 1) {
-        condition.status = status
-    } else if (status == 'both') {} else {
-        condition.status = 1
-    }
-
-    var page = +req.query.page;
-    var limit = +req.query.limit;
-    limit = limit ? limit : 6;
-    var offset = (page > 0) ? (page - 1) * limit : null;
-
-    RentalNews.findAndCountAll({
-            where: condition,
-            order: [
-                ['created_at', 'DESC']
-            ],
-            offset: offset,
-            limit: limit
-        })
-        .then(data => {
-            res.send(data);
-
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Đã xảy ra một số lỗi khi truy xuất Rental News!",
-                error: err.message
-
-            });
-        });
-
-
-};
 
 
 // Retrieve RentalNews priority from the database.
@@ -340,6 +427,15 @@ exports.findPriority = (req, res) => {
         condition.status = 1
     }
 
+
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
@@ -347,8 +443,24 @@ exports.findPriority = (req, res) => {
 
     RentalNews.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Promotion,
+                    where: {
+                        status: 1
+                    },
+                    required: false
+                }
+            ],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);
@@ -379,6 +491,15 @@ exports.findByCustomerId = (req, res) => {
     } else if (status == 'both') {} else {
         condition.status = 1
     }
+
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
@@ -386,8 +507,24 @@ exports.findByCustomerId = (req, res) => {
 
     RentalNews.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Promotion,
+                    where: {
+                        status: 1
+                    },
+                    required: false
+                }
+            ],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);
@@ -412,7 +549,23 @@ exports.findOneBySlug = (req, res) => {
     RentalNews.findOne({
             where: {
                 slug: slug
-            }
+            },
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Promotion,
+                    where: {
+                        status: 1
+                    },
+                    required: false
+                }
+            ],
+            raw: true,
+            nest: true
+
         }).then(data => {
             res.send(data);
         })
@@ -427,14 +580,34 @@ exports.findOneBySlug = (req, res) => {
 
 // Search all Rental News from the database.
 exports.search = (req, res) => {
+    var condition = {};
+
     var address = req.body.address;
-    var condition = address ? {
-        address: {
+    if (address) {
+        condition.address = {
             [Op.like]: `%${address}%`
         }
-    } : null;
+    }
+
 
     // var condition = null;
+    var status = req.query.status;
+
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
+
+
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -444,11 +617,66 @@ exports.search = (req, res) => {
     RentalNews.findAndCountAll({
             where: condition,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Promotion,
+                    where: {
+                        status: 1
+                    },
+                    required: false
+                }
+            ],
+            raw: true,
+            nest: true
+
+
         })
         .then(data => {
             res.send(data);
 
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Đã xảy ra một số lỗi khi truy xuất RentalNews!",
+                error: err.message
+            });
+        });
+};
+
+
+// Search all Rental News from the database.
+exports.findDistrict = (req, res) => {
+    // var address = req.body.address;
+    // var condition = address ? {
+    //     address: {
+    //         [Op.like]: `%${address}%`
+    //     }
+    // } : null;
+
+    var condition = null;
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    RentalNews.findAndCountAll({
+            where: condition,
+            offset: offset,
+            limit: limit,
+            group: ['district', 'city'],
+            attributes: ['district', 'city'],
+            raw: true,
+            nest: true
+        })
+        .then(data => {
+            res.send(data);
+            console.log(data);
         })
         .catch(err => {
             res.status(500).send({

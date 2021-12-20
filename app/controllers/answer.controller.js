@@ -207,6 +207,10 @@ exports.findOne = (req, res) => {
 
                 res.status(200).send(data);
 
+            } else {
+                res.status(400).send({
+                    message: 'Không tồn tại Answer với id=' + id
+                });
             }
 
         })
