@@ -89,7 +89,11 @@ exports.findAll = (req, res) => {
 
     var orderby = req.query.orderby;
     var order = [];
-    if (orderby == 'price-desc') {
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    } else if (orderby == 'price-desc') {
         order = [
             ['price', 'DESC']
         ];
@@ -429,7 +433,7 @@ exports.search = (req, res) => {
             [Op.like]: `%${address}%`
         }
     } : null;
-    
+
     // var condition = null;
 
     var page = +req.query.page;

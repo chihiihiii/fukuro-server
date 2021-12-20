@@ -46,6 +46,13 @@ exports.findAll = (req, res) => {
         condition.status = 1
     }
 
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -54,6 +61,7 @@ exports.findAll = (req, res) => {
 
     CustomerNotification.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
             limit: limit
         })
@@ -169,20 +177,3 @@ exports.deleteAll = (req, res) => {
             });
         });
 };
-
-// find all published CustomerNotification
-// exports.findAllPublished = (req, res) => {
-//     CustomerNotification.findAll({
-//             where: {
-//                 published: true
-//             }
-//         })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message: "Đã xảy ra một số lỗi khi truy xuất customer notifications!"
-//             });
-//         });
-// };

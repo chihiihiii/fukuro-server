@@ -119,6 +119,14 @@ exports.findAll = (req, res) => {
     //     status: status
     // };
 
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
     var condition = null;
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -127,6 +135,7 @@ exports.findAll = (req, res) => {
 
     Bookmark.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
             limit: limit
         })
@@ -240,10 +249,19 @@ exports.findAllByCustomerId = (req, res) => {
     // var rentalNewsArray = data.rentalNews.split(',');
     var customerId = req.params.id;
 
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
     Bookmark.findOne({
             where: {
                 customer_id: customerId,
-            }
+            },
+            order: order,
         }).then(data => {
 
             if (data) {

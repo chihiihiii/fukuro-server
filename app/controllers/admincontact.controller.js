@@ -44,15 +44,15 @@ exports.create = (req, res) => {
 
             if (data) {
 
-                detailUrl+=data.dataValues.id;
+                detailUrl += data.dataValues.id;
 
                 var message = 'Bạn có một liên hệ mới!'
                 var adminNotification = {
                     message: message,
                     detailUrl: detailUrl,
-        
+
                 };
-        
+
                 // Save CustomerNotification in the database
                 AdminNotification.create(adminNotification)
                     .then(dataNotification => {
@@ -87,6 +87,13 @@ exports.findAll = (req, res) => {
     if (status == 0 || status == 1) {
         condition.status = status
     }
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -95,6 +102,7 @@ exports.findAll = (req, res) => {
 
     AdminContact.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
             limit: limit
         })
@@ -272,10 +280,10 @@ exports.requestContact = (req, res) => {
                     }
 
                     AdminContact.update(adminContact, {
-                        where: {
-                            id: id
-                        }
-                    })
+                            where: {
+                                id: id
+                            }
+                        })
                         .then(num => {
                             if (num == 1) {
                                 res.send({

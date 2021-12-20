@@ -162,6 +162,16 @@ exports.findAll = (req, res) => {
         condition.status = status
     }
 
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
+
+
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
@@ -169,6 +179,7 @@ exports.findAll = (req, res) => {
 
     Admin.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
             limit: limit
         })
@@ -417,7 +428,7 @@ exports.forgotPassword = (req, res) => {
                                 if (num == 1) {
                                     arr.mail = email;
                                     arr.token = token;
-                                    arr.link = process.env.PORT_ADMIN+'/auth/reset-password';
+                                    arr.link = process.env.PORT_ADMIN + '/auth/reset-password';
                                     ejs.renderFile(process.cwd() + "/email-templates/forgot-password.mail.ejs", arr, {}, function (err, str) {
                                         if (err) {
                                             console.log(err);
@@ -466,7 +477,7 @@ exports.forgotPassword = (req, res) => {
 
                                 arr.mail = passwordReset.email;
                                 arr.token = passwordReset.token;
-                                arr.link = process.env.PORT_ADMIN+'/auth/reset-password';
+                                arr.link = process.env.PORT_ADMIN + '/auth/reset-password';
                                 ejs.renderFile(process.cwd() + "/email-templates/forgot-password.mail.ejs", arr, {}, function (err, str) {
                                     if (err) {
                                         console.log(err);

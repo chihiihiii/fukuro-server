@@ -63,6 +63,13 @@ exports.findAll = (req, res) => {
     } else if (status == 'both') {} else {
         condition.status = 1
     }
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
 
     var page = +req.query.page;
     var limit = +req.query.limit;
@@ -71,6 +78,7 @@ exports.findAll = (req, res) => {
 
     BlogCategory.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
             limit: limit
         })
