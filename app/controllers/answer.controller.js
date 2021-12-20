@@ -321,6 +321,8 @@ exports.findByQuestionId = (req, res) => {
         condition.status = 1
     }
 
+    var orderby = req.query.orderby;
+    var order = [];
     if (orderby == 'desc') {
         order = [
             ['created_at', 'DESC']
