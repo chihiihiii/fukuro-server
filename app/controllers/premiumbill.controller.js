@@ -48,22 +48,28 @@ exports.create = (req, res) => {
             // res.send(data);
 
             arr = data.dataValues;
-            if(arr.status == 0){
+            if (arr.status == 0) {
                 arr.status = 'Đang xử lý';
-            }else if(res.status == 1){
+            } else if (res.status == 1) {
                 arr.status = 'Xử lý thành công';
             }
-            if(arr.paymentStatus == 0){
+            if (arr.paymentStatus == 0) {
                 arr.paymentStatus = 'Chưa thanh toán';
-            }else if(arr.paymentStatus == 1){
+            } else if (arr.paymentStatus == 1) {
                 arr.paymentStatus = 'Đã thanh toán';
             }
             arr.startDate = arr.createdAt.toISOString().slice(0, 10);
             const d = new Date();
             arr.endDate = d.setMonth(arr.expire - 1);
             arr.endDate = d.toISOString().slice(0, 10);
-            arr.price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(arr.price);
-            arr.totalPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(arr.totalPrice);
+            arr.price = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(arr.price);
+            arr.totalPrice = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(arr.totalPrice);
 
             getDataPremium(arr.premiumId);
             getDataCustomer(arr.customerId);
@@ -78,13 +84,13 @@ exports.create = (req, res) => {
             });
         });
 
-    async function getDataPremium(id){
+    async function getDataPremium(id) {
         await PremiumService.findByPk(id)
             .then(res => {
                 arr.premiumName = res.dataValues.name;
             })
     }
-    async function getDataCustomer(id){
+    async function getDataCustomer(id) {
         await Customer.findByPk(id)
             .then(result => {
                 arr.customerUsername = result.dataValues.username;
@@ -160,32 +166,32 @@ exports.create = (req, res) => {
 
                         var endDate = new Date(endYear, endMonth, currentDate, currentHours, currentMinutes)
                         var startDate = currentTime;
-                        console.log('lon');
-                        console.log(currentYear);
-                        console.log(endYear);
+                        // console.log('lon');
+                        // console.log(currentYear);
+                        // console.log(endYear);
 
 
                     } else {
 
 
-                        console.log('nho hon');
-                        console.log(currentTime);
-                        console.log(endDateDB);
+                        // console.log('nho hon');
+                        // console.log(currentTime);
+                        // console.log(endDateDB);
                         var endDate = endDateDB.getDate();
                         var endMonth = endDateDB.getMonth();
                         var endYear = endDateDB.getFullYear();
                         var endHours = endDateDB.getHours();
                         var endMinutes = endDateDB.getMinutes();
-                        console.log(endMonth);
-                        console.log(expire);
+                        // console.log(endMonth);
+                        // console.log(expire);
 
                         var endMonth = parseInt(endMonth) + parseInt(expire);
 
-                        console.log(endDate);
-                        console.log(endMonth);
-                        console.log(endYear);
-                        console.log(endHours);
-                        console.log(endMinutes);
+                        // console.log(endDate);
+                        // console.log(endMonth);
+                        // console.log(endYear);
+                        // console.log(endHours);
+                        // console.log(endMinutes);
                         if (endMonth > 11) {
                             endYear = parseInt(endYear) + 1;
                             endMonth = endMonth - 11
@@ -197,8 +203,8 @@ exports.create = (req, res) => {
 
 
                     }
-                    console.log(startDate);
-                    console.log(endDate);
+                    // console.log(startDate);
+                    // console.log(endDate);
 
                     // Update a CustomerPremiumService
                     var customerPremiumService = {
@@ -316,7 +322,20 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: PremiumService,
+
+                }
+            ],
+            raw: true,
+            nest: true
+
         })
         .then(data => {
             res.send(data);
@@ -334,7 +353,25 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    PremiumBill.findByPk(id)
+    PremiumBill.findOne({
+            where: {
+                id: id
+            },
+
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: PremiumService,
+
+                }
+            ],
+            raw: true,
+            nest: true
+
+        })
         .then(data => {
             res.send(data);
         })
@@ -367,7 +404,19 @@ exports.findByCustomerId = (req, res) => {
     PremiumBill.findAndCountAll({
             where: condition,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: PremiumService,
+
+                }
+            ],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);
@@ -394,7 +443,7 @@ exports.update = (req, res) => {
         totalPrice: req.body.total_price,
         paymentStatus: req.body.payment_status,
         status: req.body.status,
-        transactionCode : req.body.transaction_code,
+        transactionCode: req.body.transaction_code,
         customerId: req.body.customer_id,
         premiumId: req.body.premium_id,
     };

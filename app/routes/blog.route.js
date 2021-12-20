@@ -9,8 +9,6 @@ module.exports = app => {
     // Retrieve all Blogs
     router.get("/", blogs.findAll);
     
-    // Retrieve all Blogs latest
-    router.get("/latest", blogs.findLatest);
 
     // Retrieve all Blogs by category
     router.get("/category/:id", blogs.findByCategoryId);

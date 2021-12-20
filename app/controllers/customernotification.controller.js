@@ -1,5 +1,6 @@
 const db = require("../models");
 const CustomerNotification = db.CustomerNotifications;
+const Customer = db.Customers;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new CustomerNotification
@@ -62,7 +63,17 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+
+            ],
+            raw: true,
+            nest: true
+
         })
         .then(data => {
             res.send(data);
@@ -80,7 +91,21 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    CustomerNotification.findByPk(id)
+    CustomerNotification.findOne({
+        where: {
+            id: id
+        },
+        include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+            },
+
+        ],
+        raw: true,
+        nest: true
+
+    })
         .then(data => {
             res.send(data);
         })

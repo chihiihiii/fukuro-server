@@ -1,6 +1,8 @@
 const db = require("../models");
 const Bookmark = db.Bookmarks;
 const RentalNews = db.RentalNews;
+const Customer = db.Customers;
+const Promotion = db.Promotions;
 const Op = db.Sequelize.Op;
 
 // update Bookmark by Customer id 
@@ -21,7 +23,17 @@ exports.updateByCustomerId = (req, res) => {
     Bookmark.findOne({
             where: {
                 customer_id: customerId,
-            }
+            },
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+
+            ],
+            raw: true,
+            nest: true
+
         }).then(data => {
 
             if (data) {
@@ -30,7 +42,7 @@ exports.updateByCustomerId = (req, res) => {
                 if (rentalNewsArray.includes(rentalNews)) {
                     var index = rentalNewsArray.indexOf(rentalNews);
                     rentalNewsArray.splice(index, 1);
-                    if(rentalNewsArray.length === 0){
+                    if (rentalNewsArray.length === 0) {
                         flag = true;
                     }
                 } else {
@@ -49,7 +61,7 @@ exports.updateByCustomerId = (req, res) => {
                     })
                     .then(num => {
                         if (num == 1) {
-                            if(flag == true){
+                            if (flag == true) {
                                 Bookmark.destroy({
                                     where: {
                                         customer_id: customerId
@@ -58,7 +70,7 @@ exports.updateByCustomerId = (req, res) => {
                                 res.send({
                                     message: "empty"
                                 });
-                            }else{
+                            } else {
                                 res.send({
                                     message: "Bookmark được cập nhật thành công!"
                                 });
@@ -137,7 +149,16 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+
+            ],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);
@@ -156,7 +177,22 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    Bookmark.findByPk(id)
+    Bookmark.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+
+            ],
+            raw: true,
+            nest: true
+
+
+        })
         .then(data => {
             res.send(data);
         })
@@ -262,21 +298,39 @@ exports.findAllByCustomerId = (req, res) => {
                 customer_id: customerId,
             },
             order: order,
+            raw: true,
+            nest: true
         }).then(data => {
-
+            console.log(data);
             if (data) {
                 if (data.rentalNews) {
                     var rentalNewsArray = data.rentalNews.split(',');
 
                     var results = [];
                     rentalNewsArray.forEach((value, index, array) => {
+                        console.log(value);
                         RentalNews.findOne({
                                 where: {
                                     id: parseInt(value),
                                     status: 1
-                                }
-                            }).then(data => {
+                                },
+                                include: [{
+                                        model: Customer,
+                                        attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
 
+                                    },
+                                    {
+                                        model: Promotion,
+                                        where: {
+                                            status: 1
+                                        },
+                                        required: false
+                                    }
+                                ],
+                                raw: true,
+                                nest: true
+                            }).then(data => {
+                                console.log(data);
                                 if (data) {
                                     results.push(data);
                                 }

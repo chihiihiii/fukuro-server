@@ -1,13 +1,28 @@
 const db = require("../models");
 const RentalBill = db.RentalBills;
+const Rental = db.Rentals;
+const RentalRoom = db.RentalRooms;
+const Customer = db.Customers;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new RentalBill
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body.name) {
+    if (!req.body.name || (!req.body.rental_id && !req.body.rental_room_id)) {
         res.status(400).send({
-            message: "Content can not be empty!"
+            message: "Không để trống tên hóa đơn hoặc để trống mã trọ và mã phòng trọ!"
+        });
+        return;
+    }
+    if (req.body.rental_id && req.body.rental_room_id) {
+        res.status(400).send({
+            message: "Không thêm cả hai mã trọ và mã phòng trọ!"
+        });
+        return;
+    }
+    if (!req.body.customer_id) {
+        res.status(400).send({
+            message: "Không để trống mã người dùng!"
         });
         return;
     }
@@ -34,6 +49,8 @@ exports.create = (req, res) => {
 
     };
 
+    // console.log(req.body);
+    // res.send(rentalBill);
     // Save RentalBill in the database
     RentalBill.create(rentalBill)
         .then(data => {
@@ -72,7 +89,21 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Rental,
+                },
+                {
+                    model: RentalRoom,
+                },
+            ],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);
@@ -90,7 +121,25 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    RentalBill.findByPk(id)
+    RentalBill.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Rental,
+                },
+                {
+                    model: RentalRoom,
+                },
+            ],
+            raw: true,
+            nest: true
+        })
         .then(data => {
             res.send(data);
         })
@@ -121,10 +170,24 @@ exports.findByCustomerId = (req, res) => {
     var offset = (page > 0) ? (page - 1) * limit : null;
 
     RentalBill.findAndCountAll({
-        where: condition,
-        offset: offset,
-        limit: limit
-    })
+            where: condition,
+            offset: offset,
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Rental,
+                },
+                {
+                    model: RentalRoom,
+                },
+            ],
+            raw: true,
+            nest: true
+        })
         .then(data => {
             res.send(data);
         })

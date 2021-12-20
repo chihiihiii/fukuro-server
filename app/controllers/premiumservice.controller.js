@@ -1,5 +1,6 @@
 const db = require("../models");
 const PremiumService = db.PremiumServices;
+const Promotion = db.Promotions;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new PremiumService
@@ -62,7 +63,16 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                model: Promotion,
+                where: {
+                    status: 1
+                },
+                required: false
+            }],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);
@@ -80,7 +90,20 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    PremiumService.findByPk(id)
+    PremiumService.findAndCountAll({
+        where: {
+            id: id
+        },
+        include: [{
+            model: Promotion,
+            where: {
+                status: 1
+            },
+            required: false
+        }],
+        raw: true,
+        nest: true
+    })
         .then(data => {
             res.send(data);
         })

@@ -1,6 +1,7 @@
 const db = require("../models");
 const Comment = db.Comments;
 const Customer = db.Customers;
+const Blog = db.Blogs;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Comment
@@ -62,7 +63,20 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Blog,
+
+                }
+            ],
+            raw: true,
+            nest: true
+
         })
         .then(data => {
             res.send(data);
@@ -80,40 +94,25 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    Comment.findByPk(id)
+    Comment.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Blog,
+                }
+            ],
+            raw: true,
+            nest: true
+
+        })
         .then(data => {
-            if (data) {
-                var customerId = data.dataValues.customerId;
-                var comment_data = data.dataValues;
-
-                Customer.findOne({
-                        where: {
-                            id: customerId,
-                            // status: 1
-                        },
-                        attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
-                    }).then(data => {
-
-                        if (data) {
-
-                            comment_data.customer_info = data.dataValues;
-
-                            res.send(comment_data);
-
-                        } else {
-                            res.send('Not exist Comment for customer id=' + customerId);
-
-                        }
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            message: "Lỗi khi truy xuất Comment with customer id=" + customerId,
-                            error: err.message
-                        });
-                    });
-
-
-            }
+            res.send(data);
 
         })
         .catch(err => {
@@ -231,48 +230,24 @@ exports.findByBlogId = (req, res) => {
     Comment.findAndCountAll({
             where: condition,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: Blog,
+
+                }
+            ],
+            raw: true,
+            nest: true
+
         })
         .then(data => {
 
-
-            var commentData = data.rows;
-            // var results = [];
-            commentData.forEach((value, index, array) => {
-                var customerId = commentData[index].customerId;
-
-                console.log(customerId);
-
-
-                Customer.findOne({
-                        where: {
-                            id: customerId,
-                            status: 1
-                        },
-                        attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
-                    }).then(data => {
-
-                        // res.send(data);
-                        // console.log(data.dataValues);
-                        // console.log(commentData[index]);
-
-                        if (data) {
-                            commentData[index].dataValues.customer_info = data.dataValues;
-                            console.log(commentData[index].dataValues);
-                        }
-
-                        if (index == array.length - 1) {
-                            res.send(commentData);
-                        }
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            message: "Lỗi khi truy xuất Customer with id=" + customerId,
-                            error: err.message
-                        });
-                    });
-
-            });
+            res.send(data);
 
         })
         .catch(err => {

@@ -269,44 +269,6 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// Retrieve Blogs latest from the database.
-exports.findLatest = (req, res) => {
-
-    var status = req.query.status;
-    var condition = {};
-    if (status == 0 || status == 1) {
-        condition.status = status
-    } else if (status == 'both') {} else {
-        condition.status = 1
-    }
-
-    var page = +req.query.page;
-    var limit = +req.query.limit;
-    limit = limit ? limit : 6;
-    var offset = (page > 0) ? (page - 1) * limit : null;
-
-    Blog.findAndCountAll({
-            where: condition,
-            order: [
-                ['created_at', 'DESC']
-            ],
-            offset: offset,
-            limit: limit
-        })
-        .then(data => {
-            res.send(data);
-
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Đã xảy ra một số lỗi khi truy xuất Blogs!",
-                error: err.message
-
-            });
-        });
-
-
-};
 
 // Retrieve Blogs by category from the database.
 exports.findByCategoryId = (req, res) => {

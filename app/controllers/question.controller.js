@@ -251,44 +251,6 @@ exports.deleteAll = (req, res) => {
         });
 };
 
-// Retrieve Questions latest from the database.
-exports.findLatest = (req, res) => {
-
-    var status = req.query.status;
-    var condition = {};
-    if (status == 0 || status == 1) {
-        condition.status = status
-    } else if (status == 'both') {} else {
-        condition.status = 1
-    }
-
-    var page = +req.query.page;
-    var limit = +req.query.limit;
-    limit = limit ? limit : 6;
-    var offset = (page > 0) ? (page - 1) * limit : null;
-
-    Question.findAndCountAll({
-            where: condition,
-            order: [
-                ['created_at', 'DESC']
-            ],
-            offset: offset,
-            limit: limit
-        })
-        .then(data => {
-            res.send(data);
-
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Đã xảy ra một số lỗi khi truy xuất Questions!",
-                error: err.message
-            });
-        });
-
-
-};
-
 // Retrieve Questions by category from the database.
 exports.findByCategoryId = (req, res) => {
     var id = req.params.id;
@@ -310,7 +272,15 @@ exports.findByCategoryId = (req, res) => {
     Question.findAndCountAll({
             where: condition,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+            }, {
+                model: QuestionCategory
+            }],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);

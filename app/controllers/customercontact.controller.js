@@ -1,6 +1,8 @@
 const db = require("../models");
 const CustomerContact = db.CustomerContacts;
 const CustomerNotification = db.CustomerNotifications;
+const Customer = db.Customers;
+const RentalNews = db.RentalNews;
 
 const Op = db.Sequelize.Op;
 
@@ -111,7 +113,17 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+            },
+            {
+                model: RentalNews,
+            }
+        ],
+        raw: true,
+        nest: true
         })
         .then(data => {
             res.send(data);
@@ -129,7 +141,21 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    CustomerContact.findByPk(id)
+    CustomerContact.findOne({
+        where: {
+            id:id
+        },
+        include: [{
+            model: Customer,
+            attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+        },
+        {
+            model: RentalNews,
+        }
+    ],
+    raw: true,
+    nest: true
+    })
         .then(data => {
             res.send(data);
         })

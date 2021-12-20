@@ -1,6 +1,7 @@
 const db = require("../models");
 const Renter = db.Renters;
 const Rental = db.Rentals;
+const RentalRoom = db.RentalRooms;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Renter
@@ -12,12 +13,18 @@ exports.create = (req, res) => {
         });
         return;
     }
-    // if (req.body.rental_id && req.body.rental_room_id) {
-    //     res.status(400).send({
-    //         message: "Không thêm cả hai mã trọ và mã phòng trọ!"
-    //     });
-    //     return;
-    // }
+    if (req.body.rental_id && req.body.rental_room_id) {
+        res.status(400).send({
+            message: "Không thêm cả hai mã trọ và mã phòng trọ!"
+        });
+        return;
+    }
+    if (!req.body.customer_id) {
+        res.status(400).send({
+            message: "Không để trống mã người dùng!"
+        });
+        return;
+    }
 
     if (req.body.rental_id && !req.body.rental_room_id) {
         Rental.findOne({
@@ -141,7 +148,14 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Rental,
+                },
+                {
+                    model: RentalRoom,
+                }
+            ],
         })
         .then(data => {
             res.send(data);
@@ -159,7 +173,18 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    Renter.findByPk(id)
+    Renter.findAndCountAll({
+            where: {
+                id: id
+            },
+            include: [{
+                    model: Rental,
+                },
+                {
+                    model: RentalRoom,
+                }
+            ],
+        })
         .then(data => {
             res.send(data);
         })
@@ -190,7 +215,14 @@ exports.findByRentalId = (req, res) => {
     Renter.findAndCountAll({
             where: condition,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Rental,
+                },
+                {
+                    model: RentalRoom,
+                }
+            ],
         })
         .then(data => {
             res.send(data);

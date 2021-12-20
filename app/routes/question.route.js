@@ -9,8 +9,6 @@ module.exports = app => {
     // Retrieve all Questions
     router.get("/", questions.findAll);
     
-    // Retrieve all Questions latest
-    router.get("/latest", questions.findLatest);
 
     // Retrieve all Questions by category
     router.get("/category/:id", questions.findByCategoryId);

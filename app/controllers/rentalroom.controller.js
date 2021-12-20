@@ -85,7 +85,15 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                    model: Rental,
+                },
+
+            ],
+            raw: true,
+            nest: true
+
         })
         .then(data => {
             res.send(data);
@@ -94,7 +102,8 @@ exports.findAll = (req, res) => {
         .catch(err => {
             res.status(500).send({
                 message: "Đã xảy ra một số lỗi khi truy xuất rentalrooms!",
-                error: err.message
+                // error: err.message
+                error: err
             });
         });
 };
@@ -103,7 +112,19 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    RentalRoom.findByPk(id)
+    RentalRoom.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                    model: Rental,
+                },
+
+            ],
+            raw: true,
+            nest: true
+
+        })
         .then(data => {
             res.send(data);
         })
@@ -120,7 +141,7 @@ exports.findByRentalId = (req, res) => {
     var id = req.params.id;
     var status = req.query.status;
     var condition = {
-        rentalId : id,
+        rentalId: id,
     };
 
     if (status == 0 || status == 1) {
@@ -132,16 +153,23 @@ exports.findByRentalId = (req, res) => {
     var offset = (page > 0) ? (page - 1) * limit : null;
 
     RentalRoom.findAndCountAll({
-        where: condition,
-        offset: offset,
-        limit: limit
-    })
+            where: condition,
+            offset: offset,
+            limit: limit,
+            include: [{
+                    model: Rental,
+                },
+
+            ],
+            raw: true,
+            nest: true
+        })
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message:  "Đã xảy ra một số lỗi khi truy xuất Rental News!",
+                message: "Đã xảy ra một số lỗi khi truy xuất Rental News!",
                 error: err
             });
         });

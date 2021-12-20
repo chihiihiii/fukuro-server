@@ -1,5 +1,6 @@
 const db = require("../models");
 const Rental = db.Rentals;
+const Customer = db.Customers;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Rental
@@ -64,7 +65,14 @@ exports.findAll = (req, res) => {
             where: condition,
             order: order,
             offset: offset,
-            limit: limit
+            limit: limit,
+            include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+            }, ],
+            raw: true,
+            nest: true
         })
         .then(data => {
             res.send(data);
@@ -82,7 +90,22 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     var id = req.params.id;
 
-    Rental.findByPk(id)
+    Rental.findOne({
+            where: {
+                id: id
+            },
+            include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+            }, ],
+            raw: true,
+            nest: true
+        })
+        .then(data => {
+            res.send(data);
+
+        })
         .then(data => {
             res.send(data);
         })
@@ -114,16 +137,23 @@ exports.findByCustomerId = (req, res) => {
     var offset = (page > 0) ? (page - 1) * limit : null;
 
     Rental.findAndCountAll({
-        where: condition,
-        offset: offset,
-        limit: limit
-    })
+            where: condition,
+            offset: offset,
+            limit: limit,
+            include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+            }, ],
+            raw: true,
+            nest: true
+        })
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message:  "Đã xảy ra một số lỗi khi truy xuất Rental News!",
+                message: "Đã xảy ra một số lỗi khi truy xuất Rental News!",
                 error: err
             });
         });

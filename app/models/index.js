@@ -59,21 +59,23 @@ db.RentalRooms = require("./rentalroom.js")(sequelize, Sequelize);
 db.Renters = require("./renter.js")(sequelize, Sequelize);
 
 
-// CustomerPremiumServices
-db.PremiumServices.hasMany(db.CustomerPremiumServices, {
-  foreignKey: "premiumId",
-  // as: "customerPremiumService"
+// AdminContacts
+db.Admins.hasMany(db.AdminContacts, {
+  foreignKey: "adminId",
 });
-db.CustomerPremiumServices.belongsTo(db.PremiumServices, {
-  foreignKey: "premiumId",
-  // as: "premiumService",
+db.AdminContacts.belongsTo(db.Admins, {
+  foreignKey: "adminId",
 });
-db.Customers.hasMany(db.CustomerPremiumServices, {
-  foreignKey: "customerId",
+
+
+// AdminNotifications
+db.Admins.hasMany(db.AdminNotifications, {
+  foreignKey: "adminId",
 });
-db.CustomerPremiumServices.belongsTo(db.Customers, {
-  foreignKey: "customerId",
+db.AdminNotifications.belongsTo(db.Admins, {
+  foreignKey: "adminId",
 });
+
 
 // Answers
 db.Questions.hasMany(db.Answers, {
@@ -89,6 +91,103 @@ db.Answers.belongsTo(db.Customers, {
   foreignKey: "customerId",
 });
 
+
+// Blogs
+db.BlogCategories.hasMany(db.Blogs, {
+  foreignKey: "blogCategoryId",
+});
+db.Blogs.belongsTo(db.BlogCategories, {
+  foreignKey: "blogCategoryId",
+});
+db.Admins.hasMany(db.Blogs, {
+  foreignKey: "adminId",
+});
+db.Blogs.belongsTo(db.Admins, {
+  foreignKey: "adminId",
+});
+
+// Bookmarks
+db.Customers.hasOne(db.Bookmarks, {
+  foreignKey: "customerId",
+});
+db.Bookmarks.belongsTo(db.Customers, {
+  foreignKey: "customerId",
+});
+
+// Comments
+db.Customers.hasMany(db.Comments, {
+  foreignKey: "customerId",
+});
+db.Comments.belongsTo(db.Customers, {
+  foreignKey: "customerId",
+});
+db.Blogs.hasMany(db.Comments, {
+  foreignKey: "blogId",
+});
+db.Comments.belongsTo(db.Blogs, {
+  foreignKey: "blogId",
+});
+
+// CustomerContacts
+db.RentalNews.hasMany(db.CustomerContacts, {
+  foreignKey: "rentalNewsId",
+});
+db.CustomerContacts.belongsTo(db.RentalNews, {
+  foreignKey: "rentalNewsId",
+});
+db.Customers.hasMany(db.CustomerContacts, {
+  foreignKey: "customerId",
+});
+db.CustomerContacts.belongsTo(db.Customers, {
+  foreignKey: "customerId",
+});
+
+// CustomerNotifications
+db.Customers.hasMany(db.CustomerNotifications, {
+  foreignKey: "customerId",
+});
+db.CustomerNotifications.belongsTo(db.Customers, {
+  foreignKey: "customerId",
+});
+
+
+// CustomerPremiumServices
+db.PremiumServices.hasMany(db.CustomerPremiumServices, {
+  foreignKey: "premiumId",
+});
+db.CustomerPremiumServices.belongsTo(db.PremiumServices, {
+  foreignKey: "premiumId",
+});
+db.Customers.hasMany(db.CustomerPremiumServices, {
+  foreignKey: "customerId",
+});
+db.CustomerPremiumServices.belongsTo(db.Customers, {
+  foreignKey: "customerId",
+});
+
+// PremiumBills
+db.Customers.hasMany(db.PremiumBills, {
+  foreignKey: "customerId",
+});
+db.PremiumBills.belongsTo(db.Customers, {
+  foreignKey: "customerId",
+});
+db.PremiumServices.hasMany(db.PremiumBills, {
+  foreignKey: "premiumId",
+});
+db.PremiumBills.belongsTo(db.PremiumServices, {
+  foreignKey: "premiumId",
+});
+
+// PremiumServices
+db.Promotions.hasMany(db.PremiumServices, {
+  foreignKey: "promotionId",
+});
+db.PremiumServices.belongsTo(db.Promotions, {
+  foreignKey: "promotionId",
+});
+
+
 // Questions
 db.QuestionCategories.hasMany(db.Questions, {
   foreignKey: "questionCategoryId",
@@ -102,6 +201,35 @@ db.Customers.hasMany(db.Questions, {
 db.Questions.belongsTo(db.Customers, {
   foreignKey: "customerId",
 });
+
+// Rentals
+db.Customers.hasMany(db.Rentals, {
+  foreignKey: "customerId",
+});
+db.Rentals.belongsTo(db.Customers, {
+  foreignKey: "customerId",
+});
+
+// RentalBills
+db.Rentals.hasMany(db.RentalBills, {
+  foreignKey: "rentalId",
+});
+db.RentalBills.belongsTo(db.Rentals, {
+  foreignKey: "rentalId",
+});
+db.RentalRooms.hasMany(db.RentalBills, {
+  foreignKey: "rentalRoomId",
+});
+db.RentalBills.belongsTo(db.RentalRooms, {
+  foreignKey: "rentalRoomId",
+});
+db.Customers.hasMany(db.RentalBills, {
+  foreignKey: "customerId",
+});
+db.RentalBills.belongsTo(db.Customers, {
+  foreignKey: "customerId",
+});
+
 
 // RentalNews
 db.Customers.hasMany(db.RentalNews, {
@@ -117,21 +245,28 @@ db.RentalNews.belongsTo(db.Promotions, {
   foreignKey: "promotionId",
 });
 
-// AdminContacts
-db.Admins.hasMany(db.AdminContacts, {
-  foreignKey: "adminId",
+// RentalRooms
+db.Rentals.hasMany(db.RentalRooms, {
+  foreignKey: "rentalId",
 });
-db.AdminContacts.belongsTo(db.Admins, {
-  foreignKey: "adminId",
+db.RentalRooms.belongsTo(db.Rentals, {
+  foreignKey: "rentalId",
 });
 
-// AdminNotifications
-db.Admins.hasMany(db.AdminNotifications, {
-  foreignKey: "adminId",
+// Renters
+db.Rentals.hasMany(db.Renters, {
+  foreignKey: "rentalId",
 });
-db.AdminNotifications.belongsTo(db.Admins, {
-  foreignKey: "adminId",
+db.Renters.belongsTo(db.Rentals, {
+  foreignKey: "rentalId",
 });
+db.RentalRooms.hasMany(db.Renters, {
+  foreignKey: "rentalRoomId",
+});
+db.Renters.belongsTo(db.RentalRooms, {
+  foreignKey: "rentalRoomId",
+});
+
 
 
 
