@@ -6,6 +6,7 @@ const Sequelize = require('sequelize');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const PasswordReset = db.PasswordResets;
+const ejs = require('ejs');
 
 // Google Auth
 const {
@@ -261,6 +262,34 @@ exports.create = (req, res) => {
     // Save Customer in the database
     Customer.create(customer)
         .then(data => {
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.SEND_MAIL_USER,
+                    pass: process.env.SEND_MAIL_PASS
+                }
+            });
+            data.pass = req.body.password;
+            ejs.renderFile(process.cwd() + "/email-templates/register.ejs", data, {}, function (err, str) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var mainOptions = {
+                        from: process.env.SEND_MAIL_USER,
+                        to: data.email,
+                        subject: 'FUKURO - THÔNG BÁO TÀI KHOẢN ĐĂNG KÝ',
+                        html: str
+                    };
+                    transporter.sendMail(mainOptions, function (err, info) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            res.send('Success');
+                        }
+                    });
+                }
+
+            });
             res.send(data);
         })
         .catch(err => {
@@ -480,12 +509,13 @@ exports.forgotPassword = (req, res) => {
     }
     // res.send(condition);
 
-
+    var arr = {};
 
     Customer.findOne({
             where: condition
         })
         .then(data => {
+            arr = data.dataValues;
             // res.send(data);
 
 
@@ -500,14 +530,6 @@ exports.forgotPassword = (req, res) => {
                         pass: process.env.SEND_MAIL_PASS
                     }
                 });
-
-                var mailOptions = {
-                    from: process.env.SEND_MAIL_USER,
-                    to: email,
-                    subject: 'Reset Password for ' + username,
-                    // text: 'hahahaha',
-                    html: `<a href="${process.env.PORT_CLIENT}/reset-password?email=${email}&token=${token}">Đặt lại mật khẩu</a>`
-                };
 
                 PasswordReset.findOne({
                     where: {
@@ -530,15 +552,30 @@ exports.forgotPassword = (req, res) => {
                             })
                             .then(num => {
                                 if (num == 1) {
-                                    transporter.sendMail(mailOptions, function (error, info) {
-                                        if (error) {
-                                            // console.log(error);
-                                            res.send(error);
-                                        } else {
-                                            // console.log('Email sent: ' + info.response);
-                                            res.send('Success');
+                                    arr.mail = email;
+                                    arr.token = token;
+                                    arr.link = process.env.PORT_CLIENT+'/reset-password';
 
+                                    ejs.renderFile(process.cwd() + "/email-templates/forgot-password.mail.ejs", arr, {}, function (err, str) {
+                                        if (err) {
+                                            console.log(err);
+                                        } else {
+                                            var mainOptions = {
+                                                from: process.env.SEND_MAIL_USER,
+                                                to: email,
+                                                // subject: 'FUKURO - YÊU CẦU ĐẶT LẠI MẬT KHẨU CỦA ' + username,
+                                                subject: 'FUKURO - YÊU CẦU ĐẶT LẠI MẬT KHẨU',
+                                                html: str
+                                            };
+                                            transporter.sendMail(mainOptions, function (err, info) {
+                                                if (err) {
+                                                    console.log(err);
+                                                } else {
+                                                    res.send('Success');
+                                                }
+                                            });
                                         }
+
                                     });
                                 } else {
                                     res.send({
@@ -564,19 +601,30 @@ exports.forgotPassword = (req, res) => {
                         // Save token in the database
                         PasswordReset.create(passwordReset)
                             .then(data => {
+                                arr.mail = passwordReset.email;
+                                arr.token = passwordReset.token;
+                                arr.link = process.env.PORT_CLIENT+'/reset-password';
+
                                 // res.send(data);
-
-                                transporter.sendMail(mailOptions, function (error, info) {
-                                    if (error) {
-                                        // console.log(error);
-                                        res.send(error);
+                                ejs.renderFile(process.cwd() + "/email-templates/forgot-password.mail.ejs", arr, {}, function (err, str) {
+                                    if (err) {
+                                        console.log(err);
                                     } else {
-                                        // console.log('Email sent: ' + info.response);
-                                        res.send('Success');
-
+                                        var mainOptions = {
+                                            from: process.env.SEND_MAIL_USER,
+                                            to: email,
+                                            subject: 'FUKURO - YÊU CẦU ĐẶT LẠI MẬT KHẨU',
+                                            html: str
+                                        };
+                                        transporter.sendMail(mainOptions, function (err, info) {
+                                            if (err) {
+                                                console.log(err);
+                                            } else {
+                                                res.send('Success');
+                                            }
+                                        });
                                     }
                                 });
-
                             })
                             .catch(err => {
                                 res.status(500).send({

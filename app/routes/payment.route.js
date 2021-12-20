@@ -9,5 +9,8 @@ module.exports = app => {
     // Api result
     router.get("/result", payment.result);
 
+    // Api Checksum
+    // router.get("/vnpay_ipn", payment.checksum);
+
     app.use('/api/payment', router);
 };
