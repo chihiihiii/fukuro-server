@@ -212,7 +212,6 @@ exports.checkExpire = (req, res) => {
 
 
     var currentTime = new Date();
-    // var checkTime = new Date(new Date() + 24 * 60 * 60 * 1000 * 7);
     var checkTime = new Date(new Date() - (-24 * 60 * 60 * 1000 * 7));
 
     console.log(checkTime);
@@ -220,22 +219,64 @@ exports.checkExpire = (req, res) => {
 
     CustomerPremiumService.findAndCountAll({
             where: {
-                [Op.and]: [{
-                        endDate: {
-                            [Op.between]: [currentTime, checkTime]
-                        }
+                [Op.or]: [{
+                        [Op.and]: [{
+                                endDate: {
+                                    [Op.between]: [currentTime, checkTime]
+                                }
+                            },
+                            {
+                                status: 1
+                            }
+                        ]
                     },
                     {
-                        status: 1
-                    }
+                        [Op.and]: [{
+                                endDate: {
+                                    [Op.lt]: currentTime
+                                }
+                            },
+                            {
+                                status: 1
+                            }
+                        ]
+                    },
                 ]
 
+
             },
+            attributes: ['id', 'endDate'],
             raw: true,
             nest: true,
         })
         .then(data => {
-            res.send(data);
+            console.log(data);
+            for (var i = 0; i < data.rows.length; i++) {
+                if (data.rows[i].endDate < currentTime) {
+                    CustomerPremiumService.update({
+                        status: 0
+                    }, {
+                        where: {
+                            id: data.rows[i].id
+                        },
+                    })
+                } else {
+                    CustomerPremiumService.update({
+                        status: 2
+                    }, {
+                        where: {
+                            id: data.rows[i].id
+                        },
+                    })
+                }
+
+            }
+
+            res.send({
+                message: 'Cập nhật trạng thái Customer Premium Service thành công!',
+                data: data
+            });
+
 
         })
         .catch(err => {
