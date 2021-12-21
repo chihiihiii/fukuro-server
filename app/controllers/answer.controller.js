@@ -410,12 +410,20 @@ exports.updateLikeById = (req, res) => {
     var likeCustomerId = req.body.customer_id;
 
 
-    Answer.findByPk(id)
+    Answer.findOne({
+            where: {
+                id: id,
+            },
+            raw: true,
+            nest: true
+        })
         .then(data => {
             if (data) {
 
-                var like = data.dataValues.like;
-                var dislike = data.dataValues.dislike;
+                var like = data.like;
+                var dislike = data.dislike;
+                console.log(like);
+                console.log(dislike);
                 if (like) {
                     var likeArray = like.split(',');
                     if (likeArray.includes(likeCustomerId)) {
@@ -432,19 +440,23 @@ exports.updateLikeById = (req, res) => {
                 } else {
                     var likeNumber = 1;
                     var like = likeCustomerId;
+                    console.log('like');
 
                 }
 
 
                 if (dislike) {
-                    var dislikeArray = like.split(',');
+                    var dislikeArray = dislike.split(',');
                     if (dislikeArray.includes(likeCustomerId)) {
                         var index = dislikeArray.indexOf(likeCustomerId);
                         dislikeArray.splice(index, 1);
                     }
                     var dislikeNumber = dislikeArray.length;
+                    console.log('dis'+dislikeNumber);
+
                 } else {
                     var dislikeNumber = 0;
+                    console.log('dis');
                 }
 
                 var answer = {
