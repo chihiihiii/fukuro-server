@@ -582,10 +582,20 @@ exports.findOneBySlug = (req, res) => {
 exports.search = (req, res) => {
     var condition = {};
 
-    var address = req.body.address;
-    if (address) {
-        condition.address = {
-            [Op.like]: `%${address}%`
+    var search = req.body.search;
+    if (search) {
+        condition = {
+            [Op.or]: [{
+                    address: {
+                        [Op.like]: `N%${search}%`
+                    }
+                },
+                {
+                    name: {
+                        [Op.like]: `N%${search}%`
+                    }
+                }
+            ],
         }
     }
 
@@ -633,9 +643,7 @@ exports.search = (req, res) => {
                 }
             ],
             raw: true,
-            nest: true
-
-
+            nest: true,
         })
         .then(data => {
             res.send(data);
@@ -682,7 +690,7 @@ exports.findDistrict = (req, res) => {
     var offset = (page > 0) ? (page - 1) * limit : null;
 
     RentalNews.findAndCountAll({
-            where: condition,   
+            where: condition,
             order: order,
             offset: offset,
             limit: limit,
