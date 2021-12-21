@@ -9,6 +9,8 @@ module.exports = app => {
     // Retrieve all CustomerNotifications
     router.get("/", customerNotifications.findAll);
 
+    // Retrieve CustomerNotifications by customer
+    router.get("/customer/:id", customerNotifications.findByCustomerId);
 
     // Retrieve a single CustomerNotification with id
     router.get("/:id", customerNotifications.findOne);

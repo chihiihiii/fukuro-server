@@ -200,7 +200,7 @@ exports.findAll = (req, res) => {
             limit: limit,
             include: [{
                     model: Customer,
-                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+                    attributes: ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'google_id']
 
                 },
                 {
@@ -239,7 +239,7 @@ exports.findOne = (req, res) => {
             },
             include: [{
                     model: Customer,
-                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+                    attributes: ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'google_id']
 
                 },
                 {
@@ -448,7 +448,7 @@ exports.findPriority = (req, res) => {
             limit: limit,
             include: [{
                     model: Customer,
-                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+                    attributes: ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'google_id']
 
                 },
                 {
@@ -512,7 +512,7 @@ exports.findByCustomerId = (req, res) => {
             limit: limit,
             include: [{
                     model: Customer,
-                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+                    attributes: ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'google_id']
 
                 },
                 {
@@ -552,7 +552,7 @@ exports.findOneBySlug = (req, res) => {
             },
             include: [{
                     model: Customer,
-                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+                    attributes: ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'google_id']
 
                 },
                 {
@@ -621,7 +621,7 @@ exports.search = (req, res) => {
             limit: limit,
             include: [{
                     model: Customer,
-                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+                    attributes: ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'google_id']
 
                 },
                 {
