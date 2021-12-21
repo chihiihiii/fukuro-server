@@ -297,7 +297,7 @@ exports.checkPremiumByCustomerId = (req, res) => {
 
     var id = req.params.id;
 
-    CustomerPremiumService.findOne({
+    CustomerPremiumService.findAndCountAll({
             where: {
                 customerId: id,
                 status: {
