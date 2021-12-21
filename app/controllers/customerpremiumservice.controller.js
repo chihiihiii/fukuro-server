@@ -293,6 +293,48 @@ exports.checkExpire = (req, res) => {
 
 };
 
+exports.checkPremiumByCustomerId = (req, res) => {
+
+    var id = req.params.id;
+
+    CustomerPremiumService.findOne({
+            where: {
+                customerId: id,
+                status: {
+                    [Op.or]: [1, 2]
+                }
+            },
+            include: [{
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+                },
+                {
+                    model: PremiumService,
+                }
+            ],
+            raw: true,
+            nest: true,
+        })
+        .then(data => {
+            console.log(data);
+            res.send(data);
+
+        })
+        .catch(err => {
+            // console.log(err.toJSON());
+            res.status(500).send({
+                message: "Đã xảy ra một số lỗi khi truy xuất Customer Premium Service!",
+                error: err.message
+                // error: err
+            });
+        });
+
+
+};
+
+
+
 
 // Retrieve all CustomerPremiumServices by customer id from the database.
 exports.findByCustomerId = (req, res) => {
