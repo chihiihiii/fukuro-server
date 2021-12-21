@@ -1,8 +1,12 @@
+const {
+    sequelize
+} = require("../models");
 const db = require("../models");
 const Question = db.Questions;
 const AdminNotification = db.AdminNotifications;
 const QuestionCategory = db.QuestionCategories;
 const Customer = db.Customers;
+const Answer = db.Answers;
 
 const Op = db.Sequelize.Op;
 
@@ -107,28 +111,81 @@ exports.findAll = (req, res) => {
     limit = limit ? limit : 6;
     var offset = (page > 0) ? (page - 1) * limit : null;
 
+
+
+
     Question.findAndCountAll({
             where: condition,
             order: order,
             offset: offset,
             limit: limit,
             include: [{
-                model: Customer,
-                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
-            }, {
-                model: QuestionCategory
-            }],
+                    model: Customer,
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+                }, {
+                    model: QuestionCategory
+                },
+
+
+            ],
+
             raw: true,
             nest: true
         })
         .then(data => {
-            res.send(data);
+
+            console.log(data);
+            // res.send(data);
+            data.rows.forEach((value, index, array) => {
+
+                console.log(value.id);
+                console.log(index);
+                // console.log(array);
+
+                Answer.count({
+                        where: {
+                            questionId: value.id
+                        },
+                        raw: true,
+                        nest: true
+                    })
+                    .then(dataAnswer => {
+
+                        data.rows[index].countAnswer = dataAnswer;
+
+                        if (index == array.length - 1) {
+                            console.log(data);
+                            res.send(data);
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: "Đã xảy ra một số lỗi khi truy xuất Answers!",
+                            error: err.message
+
+                        });
+                    });
+
+            });
+
+            // sequelize.query(`(
+            //     SELECT Answer.question_id, 
+            //     count(Answer.id) AS count 
+            //     FROM Answers AS Answer 
+            //     LEFT OUTER JOIN Questions AS Question 
+            //     ON Answer.question_id = Question.id 
+            //     GROUP BY question_id)`)
+
+
+
 
         })
         .catch(err => {
+            console.log(err);
             res.status(500).send({
                 message: "Đã xảy ra một số lỗi khi truy xuất Questions!",
-                error: err.message
+                error: err
+                // error: err.message
             });
         });
 };
@@ -138,18 +195,18 @@ exports.findOne = (req, res) => {
     var id = req.params.id;
 
     Question.findOne({
-        where: {
-            id: id
-        },
-        include: [{
-            model: Customer,
-            attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
-        }, {
-            model: QuestionCategory
-        }],
-        raw: true,
-        nest: true
-    })
+            where: {
+                id: id
+            },
+            include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+            }, {
+                model: QuestionCategory
+            }],
+            raw: true,
+            nest: true
+        })
         .then(data => {
             res.send(data);
         })
@@ -272,7 +329,7 @@ exports.findByCategoryId = (req, res) => {
             ['created_at', 'DESC']
         ];
     }
-    
+
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
