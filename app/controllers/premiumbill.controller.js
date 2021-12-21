@@ -305,6 +305,12 @@ exports.findAll = (req, res) => {
         condition.status = 1
     }
 
+    var paymentStatus = req.query.paymentStatus;
+    if (paymentStatus) {
+        condition.paymentStatus = paymentStatus
+    }
+
+
     var orderby = req.query.orderby;
     var order = [];
     if (orderby == 'desc') {
@@ -396,6 +402,12 @@ exports.findByCustomerId = (req, res) => {
     } else if (status == 'both') {} else {
         condition.status = 1
     }
+
+    var paymentStatus = req.query.paymentStatus;
+    if (paymentStatus) {
+        condition.paymentStatus = paymentStatus
+    }
+
 
     var orderby = req.query.orderby;
     var order = [];
