@@ -87,6 +87,54 @@ exports.findAll = (req, res) => {
         });
 };
 
+// Retrieve all Customer Notification by customer id from the database.
+exports.findByCustomerId = (req, res) => {
+    var id = req.params.id;
+
+
+    var status = req.query.status;
+    var condition = {
+        customerId: id
+    };
+    if (status == 0 || status == 1 || status == 2) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
+
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    CustomerNotification.findAndCountAll({
+        where: condition,
+        order: order,
+        offset: offset,
+        limit: limit,
+        raw: true,
+        nest: true
+    })
+        .then(data => {
+            res.send(data);
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Đã xảy ra một số lỗi khi truy xuất customer premiums!",
+                error: err.message
+            });
+        });
+};
+
 // Find a single CustomerNotification with an id
 exports.findOne = (req, res) => {
     var id = req.params.id;

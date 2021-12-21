@@ -9,6 +9,11 @@ module.exports = app => {
     // Retrieve all CustomerContacts
     router.get("/", customerContacts.findAll);
 
+    // Customer request contact form to customer by Customer contact id
+    router.post("/request-contact/:id", customerContacts.requestContact);
+
+    // Retrieve PremiumBills by customer
+    router.get("/customer/:id", customerContacts.findByCustomerId);
 
     // Retrieve a single CustomerContact with id
     router.get("/:id", customerContacts.findOne);

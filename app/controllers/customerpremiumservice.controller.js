@@ -2,6 +2,8 @@ const db = require("../models");
 const CustomerPremiumService = db.CustomerPremiumServices;
 const Customer = db.Customers;
 const PremiumService = db.PremiumServices;
+const nodemailer = require('nodemailer');
+const ejs = require('ejs');
 
 const Op = db.Sequelize.Op;
 
@@ -244,17 +246,22 @@ exports.checkExpire = (req, res) => {
                         ]
                     },
                 ]
-
-
             },
-            attributes: ['id', 'endDate'],
+            include: [{
+                model: Customer,
+                attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+
+            },{
+                model: PremiumService
+            }
+            ],
             raw: true,
             nest: true,
         })
         .then(data => {
-            console.log(data);
             for (var i = 0; i < data.rows.length; i++) {
                 if (data.rows[i].endDate < currentTime) {
+                    sendMailExpire(data.rows[i].Customer.email, data.rows[i].PremiumService.name, data.rows[i].Customer.username);
                     CustomerPremiumService.update({
                         status: 0
                     }, {
@@ -263,6 +270,7 @@ exports.checkExpire = (req, res) => {
                         },
                     })
                 } else {
+                    sendMailExtend(data.rows[i].Customer.email, data.rows[i].PremiumService.name, data.rows[i].Customer.username);
                     CustomerPremiumService.update({
                         status: 2
                     }, {
@@ -279,6 +287,74 @@ exports.checkExpire = (req, res) => {
                 data: data
             });
 
+            function sendMailExpire(email, name, username){
+                var arr = {
+                    email : email,
+                    name: name,
+                    username
+                };
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.SEND_MAIL_USER,
+                        pass: process.env.SEND_MAIL_PASS
+                    }
+                });
+                ejs.renderFile(process.cwd() + "/email-templates/expire.ejs", arr, {}, function (err, str) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        var mainOptions = {
+                            from: process.env.SEND_MAIL_USER,
+                            to: email,
+                            subject: 'FUKURO - THÔNG BÁO TRẠNG THÁI GÓI PREMIUM',
+                            html: str
+                        };
+                        transporter.sendMail(mainOptions, function (err, info) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                res.send('Success');
+                            }
+                        });
+                    }
+
+                });
+            }
+            function sendMailExtend(email, name, username){
+                var arr = {
+                    email : email,
+                    name: name,
+                    username
+                };
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.SEND_MAIL_USER,
+                        pass: process.env.SEND_MAIL_PASS
+                    }
+                });
+                ejs.renderFile(process.cwd() + "/email-templates/extend.ejs", arr, {}, function (err, str) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        var mainOptions = {
+                            from: process.env.SEND_MAIL_USER,
+                            to: email,
+                            subject: 'FUKURO - THÔNG BÁO TRẠNG THÁI GÓI PREMIUM',
+                            html: str
+                        };
+                        transporter.sendMail(mainOptions, function (err, info) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                res.send('Success');
+                            }
+                        });
+                    }
+
+                });
+            }
 
         })
         .catch(err => {
@@ -317,7 +393,6 @@ exports.checkPremiumByCustomerId = (req, res) => {
             nest: true,
         })
         .then(data => {
-            console.log(data);
             res.send(data);
 
         })

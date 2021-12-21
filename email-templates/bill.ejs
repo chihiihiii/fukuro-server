@@ -105,7 +105,7 @@
                 <tr>
                     <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lora', serif; font-size: 16px; font-weight: 400; line-height: 25px;">
                         <p style="margin: 0;">
-                            Xin chào <%=customerUsername %>, <br>
+                            Xin chào <%=firstName %> <%=lastName %>, <br>
                             Cảm ơn bạn đã đăng ký sử dụng gói dịch vụ tại Fukuro.<br>
                             Dưới đây là thông tin đơn hàng của bạn:
                         </p>
@@ -131,13 +131,13 @@
                             </tr>
                             <tr>
                                 <td style="width:50%;padding:30px;vertical-align:top">
-<!--                                    <p style="margin:0 0 10px 0;padding:0;font-size:14px;font-family: 'Lora', serif;color: #666666;"><span style="font-weight:bold;font-size:15px">Họ: </span> Đỗ</p>-->
+                                    <p style="margin:0 0 10px 0;padding:0;font-size:14px;font-family: 'Lora', serif;color: #666666;"><span style="font-weight:bold;font-size:15px">Họ: </span> <%=lastName %></p>
                                     <p style="margin:0 0 10px 0;padding:0;font-size:14px;font-family: 'Lora', serif;color: #666666;"><span style="font-weight:bold;font-size:14px;">Username: </span> <%=customerUsername %></p>
                                     <p style="margin:0 0 10px 0;padding:0;font-size:14px;font-family: 'Lora', serif;color: #666666;"><span style="font-weight:bold;font-size:14px;">Trạng thái đơn hàng: </span> <%=status %></p>
                                     <p style="margin:0 0 10px 0;padding:0;font-size:14px;font-family: 'Lora', serif;color: #666666;"><span style="font-weight:bold;font-size:14px;">Ngày đăng ký: </span> <%=startDate %></p>
                                 </td>
                                 <td style="width:50%;padding:30px;vertical-align:top">
-<!--                                    <p style="margin:0 0 10px 0;padding:0;font-size:14px;font-family: 'Lora', serif;color: #666666;"><span style="font-weight:bold;font-size:15px;">Tên: </span> Mai</p>-->
+                                    <p style="margin:0 0 10px 0;padding:0;font-size:14px;font-family: 'Lora', serif;color: #666666;"><span style="font-weight:bold;font-size:15px;">Tên: </span> <%=firstName %></p>
                                     <p style="margin:0 0 10px 0;padding:0;font-size:14px;font-family: 'Lora', serif;color: #666666;"><span style="font-weight:bold;font-size:14px;">Email: </span> <%=customerEmail %></p>
                                     <p style="margin:0 0 10px 0;padding:0;font-size:14px;font-family: 'Lora', serif;color: #666666;"><span style="font-weight:bold;font-size:14px;">Trạng thái thanh toán: </span> <%=paymentStatus %></p>
                                     <p style="margin:0 0 10px 0;padding:0;font-size:14px;font-family: 'Lora', serif;color: #666666;"><span style="font-weight:bold;font-size:14px;">Ngày hết hạn: </span> <%=endDate %></p>

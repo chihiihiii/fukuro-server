@@ -3,6 +3,8 @@ const CustomerContact = db.CustomerContacts;
 const CustomerNotification = db.CustomerNotifications;
 const Customer = db.Customers;
 const RentalNews = db.RentalNews;
+const nodemailer = require('nodemailer');
+const ejs = require('ejs');
 
 const Op = db.Sequelize.Op;
 
@@ -37,10 +39,29 @@ exports.create = (req, res) => {
         rentalNewsId: req.body.rental_news_id,
 
     };
-
+    var arr = {};
     var detailUrl = req.body.detail_url;
     var customerId = req.body.customer_id;
     var rentalNewsId = req.body.retail_news_id;
+
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.SEND_MAIL_USER,
+            pass: process.env.SEND_MAIL_PASS
+        }
+    });
+
+    Customer.findByPk(req.body.customer_id)
+        .then(data => {
+            arr.email = data.email;
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Lỗi khi truy xuất Customer with id=" + customerId,
+                error: err.message
+            });
+        });
 
     // Save CustomerContact in the database
     CustomerContact.create(customerContact)
@@ -63,6 +84,26 @@ exports.create = (req, res) => {
                 // Save CustomerNotification in the database
                 CustomerNotification.create(customerNotification)
                     .then(dataNotification => {
+                        ejs.renderFile(process.cwd() + "/email-templates/notification.ejs", arr, {}, function (err, str) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                var mailOptions = {
+                                    from: process.env.SEND_MAIL_USER,
+                                    to: arr.email,
+                                    subject: "Fukuro - Liên hệ mới từ "+customerContact.firstName,
+                                    html: str,
+                                };
+                                transporter.sendMail(mailOptions, function (error, info) {
+                                    if (error) {
+                                        res.send(error);
+                                    } else {
+                                        res.send(error);
+                                    }
+                                });
+                            }
+
+                        });
                         res.send({
                             data: data,
                             dataNotification: dataNotification
@@ -132,6 +173,54 @@ exports.findAll = (req, res) => {
         .catch(err => {
             res.status(500).send({
                 message: "Đã xảy ra một số lỗi khi truy xuất Customer Contacts!",
+                error: err.message
+            });
+        });
+};
+
+// Retrieve all CustomerPremiumServices by customer id from the database.
+exports.findByCustomerId = (req, res) => {
+    var id = req.params.id;
+
+
+    var status = req.query.status;
+    var condition = {
+        customerId: id
+    };
+    if (status == 0 || status == 1 || status == 2) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
+
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
+    var page = +req.query.page;
+    var limit = +req.query.limit;
+    limit = limit ? limit : 6;
+    var offset = (page > 0) ? (page - 1) * limit : null;
+
+    CustomerContact.findAndCountAll({
+        where: condition,
+        order: order,
+        offset: offset,
+        limit: limit,
+        raw: true,
+        nest: true
+    })
+        .then(data => {
+            res.send(data);
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Đã xảy ra một số lỗi khi truy xuất customer premiums!",
                 error: err.message
             });
         });
@@ -254,4 +343,84 @@ exports.deleteAll = (req, res) => {
                 error: err.message
             });
         });
+};
+
+// Request contact form
+exports.requestContact = (req, res) => {
+    var id = req.params.id;
+
+    // Validate request
+    if (!req.body.subject || !req.body.message || !req.body.email) {
+        res.status(400).send({
+            message: "Không để trống chủ đề, nội dung hoặc email!"
+        });
+        return;
+    }
+
+
+    var subject = req.body.subject;
+    var message = req.body.message;
+    var email = req.body.email;
+
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.SEND_MAIL_USER,
+            pass: process.env.SEND_MAIL_PASS
+        }
+    });
+
+    var arr = {};
+    arr.message = message;
+
+    ejs.renderFile(process.cwd() + "/email-templates/feedback.ejs", arr, {}, function (err, str) {
+        if (err) {
+            console.log(err);
+        } else {
+            var mailOptions = {
+                from: process.env.SEND_MAIL_USER,
+                to: email,
+                subject: subject,
+                html: str,
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    res.send(error);
+                } else {
+                    var customerContact = {
+                        status: 1,
+                        customerId: req.body.customer_id,
+                    }
+                    CustomerContact.update(customerContact, {
+                        where: {
+                            id: id
+                        }
+                    })
+                        .then(num => {
+                            if (num == 1) {
+                                res.send({
+                                    message: "CustomerContact sent feedback successfully!",
+                                    status: 'Success'
+                                });
+                            } else {
+                                res.send({
+                                    message: `Không thể cập nhật status CustomerContact với id=${id}. Maybe CustomerContact was not found or req.body is empty!`
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            res.status(500).send({
+                                message: "Lỗi khi cập nhật status CustomerContact với id=" + id,
+                                error: err.message
+
+                            });
+                        });
+
+
+                }
+            });
+        }
+
+    });
+
 };
