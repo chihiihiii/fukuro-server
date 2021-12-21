@@ -104,15 +104,32 @@
                 <tr>
                     <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lora', serif; font-size: 16px; font-weight: 400; line-height: 25px;">
                         <p style="margin: 0;">
-                            <%=message %><br>
-                       </p>
-                   </td>
-               </tr>
-<!--                <tr>-->
-<!--                    <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lora', serif; font-size: 16px; font-weight: 400; line-height: 25px;">-->
-<!--                        <p style="margin: 0;">Nếu bạn có bất kỳ câu hỏi nào, chỉ cần trả lời email này — chúng tôi luôn sẵn lòng trợ giúp.</p>-->
-<!--                    </td>-->
-<!--                </tr>-->
+                            Xin chào <%=username %>, <br>
+                            Gói dịch vụ "<%=name %>" mà bạn đăng ký sắp hết hạn.<br>
+                            <span style="font-weight: bold">Vui lòng lòng gia hạn để tiếp tục sử dụng dịch vụ!</span>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td bgcolor="#ffffff" align="left">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
+                                    <table border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td align="center" style="border-radius: 3px;" bgcolor="#2540A2"><a href="<%=process.env.PORT_CLIENT %>/my-account/manage-premiums" target="_blank" style="font-size: 18px; font-family: 'Lora', serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #2540A2; display: inline-block;">Gia hạn dịch vụ</a></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr> <!-- COPY -->
+                <tr>
+                    <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lora', serif; font-size: 16px; font-weight: 400; line-height: 25px;">
+                        <p style="margin: 0;">Bạn có thể xem thông tin chi tiết dịch vụ bạn đã đăng ký tại <a href="<%=process.env.PORT_CLIENT %>/my-account/manage-premiums"> đây </a></p>
+                    </td>
+                </tr>
                 <tr>
                     <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; border-radius: 0px 0px 4px 4px; color: #666666; font-family: 'Lora', serif; font-size: 16px; font-weight: 400; line-height: 25px;">
                         <p style="margin: 0;">Trân trọng,<br>Fukuro Teams.</p>
