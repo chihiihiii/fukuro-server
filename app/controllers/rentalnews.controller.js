@@ -616,6 +616,7 @@ exports.search = (req, res) => {
 
     RentalNews.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
             limit: limit,
             include: [{
@@ -658,13 +659,31 @@ exports.findDistrict = (req, res) => {
         }
     };
 
+    var status = req.query.status;
+
+    if (status == 0 || status == 1) {
+        condition.status = status
+    } else if (status == 'both') {} else {
+        condition.status = 1
+    }
+
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
+
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
     var offset = (page > 0) ? (page - 1) * limit : null;
 
     RentalNews.findAndCountAll({
-            where: condition,
+            where: condition,   
+            order: order,
             offset: offset,
             limit: limit,
             group: ['district'],

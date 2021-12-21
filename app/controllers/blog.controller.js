@@ -285,6 +285,14 @@ exports.findByCategoryId = (req, res) => {
     }
 
 
+    var orderby = req.query.orderby;
+    var order = [];
+    if (orderby == 'desc') {
+        order = [
+            ['created_at', 'DESC']
+        ];
+    }
+
     var page = +req.query.page;
     var limit = +req.query.limit;
     limit = limit ? limit : 6;
@@ -292,6 +300,7 @@ exports.findByCategoryId = (req, res) => {
 
     Blog.findAndCountAll({
             where: condition,
+            order: order,
             offset: offset,
             limit: limit
         })
