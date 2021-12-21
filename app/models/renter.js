@@ -37,7 +37,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     paymentDate: {
-      type: DataTypes.DATEONLY
+      type: DataTypes.INTEGER,
+      field: 'payment_date'
     },
     note: {
       type: DataTypes.TEXT
@@ -75,7 +76,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.DATE,
       field: 'updated_at'
-    }  }, {
+    }
+  }, {
     sequelize,
     modelName: 'Renter',
   });

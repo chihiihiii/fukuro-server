@@ -31,7 +31,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       paymentDate: {
-        type: Sequelize.DATEONLY
+        type: Sequelize.INTEGER,
+        field: 'payment_date'
       },
       note: {
         type: Sequelize.TEXT
