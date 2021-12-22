@@ -14,12 +14,12 @@ exports.create = (req, res) => {
         });
         return;
     }
-    if (req.body.rental_id && req.body.rental_room_id) {
-        res.status(400).send({
-            message: "Không thêm cả hai mã trọ và mã phòng trọ!"
-        });
-        return;
-    }
+    // if (req.body.rental_id && req.body.rental_room_id) {
+    //     res.status(400).send({
+    //         message: "Không thêm cả hai mã trọ và mã phòng trọ!"
+    //     });
+    //     return;
+    // }
     if (!req.body.customer_id) {
         res.status(400).send({
             message: "Không để trống mã người dùng!"

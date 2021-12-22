@@ -18,6 +18,7 @@ exports.create = (req, res) => {
         name: req.body.name,
         price: req.body.price,
         description: req.body.description,
+        type: req.body.type,
         status: req.body.status,
         promotionId: req.body.promotion_id,
 
