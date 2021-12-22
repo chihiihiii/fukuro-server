@@ -241,7 +241,7 @@ exports.findByBlogId = (req, res) => {
             limit: limit,
             include: [{
                     model: Customer,
-                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar']
+                    attributes: ['username', 'first_name', 'last_name', 'email', 'avatar', 'google_id']
 
                 },
                 {
