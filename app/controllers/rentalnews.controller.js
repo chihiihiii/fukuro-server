@@ -32,6 +32,7 @@ exports.create = (req, res) => {
         return;
     }
 
+
     CustomerPremiumService.findOne({
             where: {
                 customerId: req.body.customer_id,
@@ -43,7 +44,7 @@ exports.create = (req, res) => {
                 model: PremiumService,
                 where: {
                     type: {
-                        [Op.or]: [2, 3]
+                        [Op.or]: [1, 3]
                     },
                     status: 1
                 },
@@ -53,29 +54,9 @@ exports.create = (req, res) => {
 
         })
         .then(data => {
-            res.send(data);
+            // res.send(data);
             if (data) {
-
-                RentalNews.findOne({
-                        where: {
-                            slug: req.body.slug
-                        }
-                    }).then(data => {
-                        if (data) {
-                            res.status(400).send({
-                                message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
-                            });
-                        } else {
-                            create()
-                        }
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            message: "Lỗi khi truy xuất Rental News với slug=" + slug,
-                            error: err.message
-
-                        });
-                    });
+                checkSlug();
 
             } else {
 
@@ -88,8 +69,9 @@ exports.create = (req, res) => {
                             res.status(400).send({
                                 message: "Bạn chỉ được đăng một tin cho thuê. Vui lòng đăng ký gói dịch vụ để có thể đăng tin không giới hạn!"
                             });
+                            return;
                         } else {
-                            create();
+                            checkSlug()
                         }
                     })
                     .catch(err => {
@@ -98,12 +80,15 @@ exports.create = (req, res) => {
                             error: err.message
 
                         });
+                        return;
                     });
 
 
-                res.status(400).send({
-                    message: 'Bạn không có quyền đăng tin cho thuê! Vui lòng liên hệ với quản trị viên!'
-                })
+                // res.status(400).send({
+                //     message: 'Bạn không có quyền đăng tin cho thuê! Vui lòng liên hệ với quản trị viên!'
+                // });
+                // return;
+
             }
 
         })
@@ -114,7 +99,63 @@ exports.create = (req, res) => {
                 error: err.message
                 // error: err
             });
+            return;
         });
+
+    function checkSlug() {
+        RentalNews.findOne({
+                where: {
+                    slug: req.body.slug
+                }
+            }).then(data => {
+                if (data) {
+                    res.status(400).send({
+                        message: "Slug đã tồn tại. Vui lòng chọn tên khác!"
+                    });
+                    return;
+                } else {
+                    checkLatLng()
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Lỗi khi truy xuất Rental News với slug=" + req.body.slug,
+                    error: err.message
+
+                });
+                return;
+            });
+    }
+
+
+    function checkLatLng() {
+        RentalNews.findOne({
+                where: {
+                    lat: req.body.lat,
+                    lng: req.body.lng,
+                }
+            }).then(data => {
+                if (data) {
+                    res.status(400).send({
+                        message: "Tọa độ đã tồn tại. Vui lòng chọn địa điểm khác!"
+                    });
+                    return;
+                } else {
+                    create()
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).send({
+                    message: `Lỗi khi truy xuất Rental News với lat=${req.body.lat} và lng=${req.body.lng}`,
+                    error: err.message
+
+                });
+            });
+
+    }
+
+
 
 
     function create() {
@@ -153,6 +194,8 @@ exports.create = (req, res) => {
                     error: err.message
                 });
             });
+
+
 
     }
 
