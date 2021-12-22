@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     status: {
       type: DataTypes.STRING,
-      defaultValue: 0
+      defaultValue: 1
     },
     transactionCode: {
       type: DataTypes.STRING,
