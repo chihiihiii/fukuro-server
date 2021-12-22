@@ -583,24 +583,42 @@ exports.search = (req, res) => {
     var condition = {};
 
     var search = req.body.search;
+
     if (search) {
         condition = {
+
             [Op.or]: [{
-                    address: {
-                        [Op.like]: `N%${search}%`
-                    }
+                    [Op.and]: [{
+                            address: {
+                                [Op.like]: `%${search}%`
+                            }
+                        },
+                        {
+                            name: {
+                                [Op.like]: `%${search}%`
+                            }
+                        }
+                    ]
+                }, {
+                    [Op.or]: [{
+                            address: {
+                                [Op.like]: `%${search}%`
+                            }
+                        },
+                        {
+                            name: {
+                                [Op.like]: `%${search}%`
+                            }
+                        }
+                    ]
                 },
-                {
-                    name: {
-                        [Op.like]: `N%${search}%`
-                    }
-                }
+
             ],
+
         }
     }
 
 
-    // var condition = null;
     var status = req.query.status;
 
     if (status == 0 || status == 1) {
