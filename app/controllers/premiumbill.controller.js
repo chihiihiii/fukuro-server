@@ -48,11 +48,7 @@ exports.create = (req, res) => {
             // res.send(data);
 
             arr = data.dataValues;
-            if (arr.status == 0) {
-                arr.status = 'Đang xử lý';
-            } else if (res.status == 1) {
-                arr.status = 'Xử lý thành công';
-            }
+            arr.status = 'Đã kích hoạt';
             if (arr.paymentStatus == 0) {
                 arr.paymentStatus = 'Chưa thanh toán';
             } else if (arr.paymentStatus == 1) {
@@ -66,6 +62,7 @@ exports.create = (req, res) => {
                 style: 'currency',
                 currency: 'VND'
             }).format(arr.price);
+
             arr.totalPrice = new Intl.NumberFormat('vi-VN', {
                 style: 'currency',
                 currency: 'VND'
@@ -93,9 +90,11 @@ exports.create = (req, res) => {
     async function getDataCustomer(id) {
         await Customer.findByPk(id)
             .then(result => {
+                arr.lastName = result.dataValues.lastName;
+                arr.firstName = result.dataValues.firstName;
                 arr.customerUsername = result.dataValues.username;
                 arr.customerEmail = result.dataValues.email;
-                console.log(arr);
+
                 var transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
