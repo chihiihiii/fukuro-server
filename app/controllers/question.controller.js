@@ -168,16 +168,6 @@ exports.findAll = (req, res) => {
 
             });
 
-            // sequelize.query(`(
-            //     SELECT Answer.question_id, 
-            //     count(Answer.id) AS count 
-            //     FROM Answers AS Answer 
-            //     LEFT OUTER JOIN Questions AS Question 
-            //     ON Answer.question_id = Question.id 
-            //     GROUP BY question_id)`)
-
-
-
 
         })
         .catch(err => {
@@ -350,7 +340,39 @@ exports.findByCategoryId = (req, res) => {
             nest: true
         })
         .then(data => {
-            res.send(data);
+            // res.send(data);
+            data.rows.forEach((value, index, array) => {
+
+                console.log(value.id);
+                console.log(index);
+                // console.log(array);
+
+                Answer.count({
+                        where: {
+                            questionId: value.id
+                        },
+                        raw: true,
+                        nest: true
+                    })
+                    .then(dataAnswer => {
+
+                        data.rows[index].countAnswer = dataAnswer;
+
+                        if (index == array.length - 1) {
+                            console.log(data);
+                            res.send(data);
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: "Đã xảy ra một số lỗi khi truy xuất Answers!",
+                            error: err.message
+
+                        });
+                    });
+
+            });
+
 
         })
         .catch(err => {
