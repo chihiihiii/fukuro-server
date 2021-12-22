@@ -35,33 +35,43 @@ exports.login = (req, res) => {
     Customer.findOne({
             where: {
                 username: username
-            }
+            },
+            raw: true,
+            nest: true
         })
         .then(data => {
             // res.send(data);
             if (data) {
                 if (password != data.password) {
                     var result = {
-                        message: "Tên đăng nhập hoặc mật khẩu không đúng!"
+                        message: "Mật khẩu không đúng!"
                     }
-                    res.status(500).send(result);
-                } else {
-                    var token = jwt.sign({
-                        username: data.username,
-                        password: data.password
-                    }, 'secret', {
-                        noTimestamp: true,
-                        expiresIn: 60 * 60 * 24 * 7
-                    });
-                    var result = {
-                        message: "Đăng nhập thành công!",
-                        data: data,
-                        token: token
-                    }
-                    res.status(200).send(result);
+                    res.status(400).send(result);
+                    return;
                 }
+                if (data.status == 0) {
+                    var result = {
+                        message: "Tài khoản đã bị vô hiệu hóa!"
+                    }
+                    res.status(400).send(result);
+                    return;
+                }
+                var token = jwt.sign({
+                    username: data.username,
+                    password: data.password
+                }, 'secret', {
+                    noTimestamp: true,
+                    expiresIn: 60 * 60 * 24 * 7
+                });
+                var result = {
+                    message: "Đăng nhập thành công!",
+                    data: data,
+                    token: token
+                }
+                res.status(200).send(result);
+
             } else {
-                res.status(500).send('Tên đăng nhập không tồn tại. Vui lòng đăng ký tài khoản!');
+                res.status(400).send('Tên đăng nhập không tồn tại. Vui lòng đăng ký tài khoản!');
 
             }
 
@@ -108,11 +118,19 @@ exports.loginWithGoogle = (req, res) => {
         Customer.findOne({
                 where: {
                     email: email
-                }
+                },
+                raw: true
             })
             .then(data => {
                 // res.send(data);
                 if (data) {
+                    if (data.status == 0) {
+                        var result = {
+                            message: "Tài khoản đã bị vô hiệu hóa!"
+                        }
+                        res.status(400).send(result);
+                        return;
+                    }
                     if (data.email == email && data.googleId == googleId) {
                         var token = jwt.sign({
                             email: data.email,
@@ -563,7 +581,7 @@ exports.forgotPassword = (req, res) => {
                                 if (num == 1) {
                                     arr.mail = email;
                                     arr.token = token;
-                                    arr.link = process.env.PORT_CLIENT+'/reset-password';
+                                    arr.link = process.env.PORT_CLIENT + '/reset-password';
 
                                     ejs.renderFile(process.cwd() + "/email-templates/forgot-password.mail.ejs", arr, {}, function (err, str) {
                                         if (err) {
@@ -612,7 +630,7 @@ exports.forgotPassword = (req, res) => {
                             .then(data => {
                                 arr.mail = passwordReset.email;
                                 arr.token = passwordReset.token;
-                                arr.link = process.env.PORT_CLIENT+'/reset-password';
+                                arr.link = process.env.PORT_CLIENT + '/reset-password';
 
                                 // res.send(data);
                                 ejs.renderFile(process.cwd() + "/email-templates/forgot-password.mail.ejs", arr, {}, function (err, str) {
