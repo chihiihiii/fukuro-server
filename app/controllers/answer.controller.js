@@ -408,7 +408,12 @@ exports.findByQuestionId = (req, res) => {
 exports.updateLikeById = (req, res) => {
     var id = req.params.id;
     var likeCustomerId = req.body.customer_id;
-
+    if (!req.body.customer_id) {
+        res.status(400).send({
+            message: "Vui lòng đăng nhập!"
+        });
+        return;
+    }
 
     Answer.findOne({
             where: {
